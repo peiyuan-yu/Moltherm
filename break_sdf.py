@@ -1,7 +1,57 @@
 from sys import argv
 import os
+from pymatgen.core.structure import IMolecule, Molecule
 
 script, filename = argv
+
+
+class ProductSplit:
+
+    def __init__(self, input_path, input_file, output_path,
+                 breaking_bond_sites):
+        self.input_path = input_path
+        self.input_file = input_file
+        self.output_path = output_path
+        self.breaking_bond_sites = breaking_bond_sites
+
+    def split(self):
+        input = os.path.join(self.input_path, self.input_file)
+        print(input)
+        # try:
+        product = Molecule.from_file(input)
+        # except AttributeError:
+        #     print("This file {} cannot be parsed by pymatgen!".
+        #           format(self.input_file))
+        (reac1, reac2) = product.break_bond(self.breaking_bond_sites[0],
+                                            self.breaking_bond_sites[1])
+        print("Splitted reactant 1: {}".format(reac1.formula))
+        print("Splitted reactant 2: {}".format(reac2.formula))
+
+        reac1.to(filename=os.path.join(self.output_path,
+                                       product.formula + "_" + reac1.formula +
+                                       os.path.splitext(self.input_file)[1]))
+        reac2.to(filename=os.path.join(self.output_path,
+                                       product.formula + "_" + reac2.formula +
+                                       os.path.splitext(self.input_file)[1]))
+
+
+def mol_from_file(path, file):
+    """
+    Get pymatgen molecule object from input file.
+    Args:
+        path:
+        file:
+
+    Returns:
+        pymatgen molecule object
+    """
+    input_file = os.path.join(path, file)
+    try:
+        molecule = IMolecule.from_file(input_file)
+        return molecule
+    except AttributeError:
+        print("This file {} cannot be parsed by pymatgen!".format(file))
+
 
 def replace_number_of_bonds():
     with open(filename, 'r') as input_file, open('a.sdf', 'w') as output_file:
@@ -80,6 +130,14 @@ os.remove('d.sdf')
 os.remove('e.sdf')
 os.remove('f.sdf')
 
+
+
+if __name__ == '__main__':
+    ps = ProductSplit(input_path="/Users/Qi/wq-lbnl/0.Projects/1.mg-ml/moltherm/test_split",
+                      input_file="cyclohexene.sdf",
+                      output_path="/Users/Qi/wq-lbnl/0.Projects/1.mg-ml/moltherm/test_split",
+                      breaking_bond_sites=[6, 16])
+    ps.split()
 
 
 
