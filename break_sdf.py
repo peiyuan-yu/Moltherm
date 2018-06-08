@@ -34,6 +34,8 @@ class ProductSplit:
                                        head + "_2_" + reac2.formula + ext))
 
 
+
+
 # def mol_from_file(path, file):
 #     """
 #     Get pymatgen molecule object from input file.
