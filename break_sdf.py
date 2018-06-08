@@ -22,16 +22,16 @@ class ProductSplit:
         # except AttributeError:
         #     print("This file {} cannot be parsed by pymatgen!".
         #           format(self.input_file))
-        (reac1, reac2) = product.break_bond(self.breaking_bond_sites[0],
-                                            self.breaking_bond_sites[1])
-        print("Splitted reactant 1: {}".format(reac1.formula))
-        print("Splitted reactant 2: {}".format(reac2.formula))
+        reac1, reac2 = product.break_bond(self.breaking_bond_sites[0],
+                                          self.breaking_bond_sites[1])
+        print("Split reactant 1: {}".format(reac1.formula))
+        print("Split reactant 2: {}".format(reac2.formula))
 
-        (header, suffix) = os.path.splitext(self.input_file)
+        head, ext = os.path.splitext(self.input_file)
         reac1.to(filename=os.path.join(self.output_path,
-                                       header + "_1_" + reac1.formula + suffix))
+                                       head + "_1_" + reac1.formula + ext))
         reac2.to(filename=os.path.join(self.output_path,
-                                       header + "_2_" + reac2.formula + suffix))
+                                       head + "_2_" + reac2.formula + ext))
 
 
 # def mol_from_file(path, file):
