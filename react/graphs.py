@@ -1103,9 +1103,9 @@ class MoleculeGraph(MSONable):
                          edge_weight_name=None,
                          edge_weight_units=None):
         """
-        Constructor for StructureGraph, returns a StructureGraph
+        Constructor for MoleculeGraph, returns a MoleculeGraph
         object with an empty graph (no edges, only nodes defined
-        that correspond to Sites in Structure).
+        that correspond to Sites in Molecule).
 
         :param molecule (Molecule):
         :param name (str): name of graph, e.g. "bonds"
@@ -1150,7 +1150,7 @@ class MoleculeGraph(MSONable):
         :return:
         """
 
-        sg = StructureGraph.with_empty_graph(molecule, name="bonds",
+        mg = MoleculeGraph.with_empty_graph(molecule, name="bonds",
                                              edge_weight_name="weight",
                                              edge_weight_units="")
 
@@ -1177,10 +1177,8 @@ class MoleculeGraph(MSONable):
                 # for any one bond, one from site u to site v
                 # and another form site v to site u: this is
                 # harmless, so warn_duplicates=False
-                sg.add_edge(from_index=n,
-                            from_jimage=(0, 0, 0),
+                mg.add_edge(from_index=n,
                             to_index=neighbor['site_index'],
-                            to_jimage=(0, 0, 0),
                             weight=neighbor['weight'],
                             warn_duplicates=False)
 
@@ -1284,17 +1282,17 @@ class MoleculeGraph(MSONable):
 
         # ensure that edge exists before attempting to change it
         if not existing_edge:
-            raise RuntimeError("Edge between {} and {} cannot be altered;\
+            raise ValueError("Edge between {} and {} cannot be altered;\
                                 no edge exists between those sites.".format(
                                 from_index, to_index
                                 ))
 
         if new_weight is not None:
-            self.graph[u, v]['weight'] = new_weight
+            self.graph[u][v]['weight'] = new_weight
 
         if new_edge_properties is not None:
             for prop in list(new_edge_properties.keys()):
-                self.graph[u, v][prop] = new_edge_properties[prop]
+                self.graph[u][v][prop] = new_edge_properties[prop]
 
     def break_edge(self, from_index, to_index):
         """
@@ -1309,7 +1307,7 @@ class MoleculeGraph(MSONable):
         existing_edge = self.graph.get_edge_data(from_index, to_index)
 
         if not existing_edge:
-            raise RuntimeError("Edge cannot be broken between {} and {};\
+            raise ValueError("Edge cannot be broken between {} and {};\
                                 no edge exists between those sites.".format(
                                 from_index, to_index
                                 ))
@@ -1328,6 +1326,10 @@ class MoleculeGraph(MSONable):
         If the bonds parameter does not include sufficient
         bonds to separate two bonds, then this function will
         fail.
+        Currently, this function naively assigns the charge
+        of the total molecule to a single submolecule. A
+        later effort will be to actually accurately assign
+        charge.
 
         :param bonds: list of tuples (from_index, to_index)
         representing bonds to be broken to split the MoleculeGraph.
@@ -1336,7 +1338,65 @@ class MoleculeGraph(MSONable):
         properties to be changed following the split.
         :return: list of MoleculeGraphs
         """
-        pass
+
+        for bond in bonds:
+            self.break_edge(bond[0], bond[1])
+
+
+        if nx.is_weakly_connected(self.graph):
+            raise RuntimeError("Cannot split molecule; \
+                                MoleculeGraph is still connected.")
+        else:
+            sub_mols = []
+            weight_name = self.graph['edge_weight_name']
+            units = self.graph['edge_weight_units']
+
+            for subg in nx.weakly_connected_component_subgraphs(self.graph):
+
+                # start by extracting molecule information
+                pre_mol = self.molecule
+                nodes = subg.nodes
+
+                # create mapping to translate edges from old graph to new
+                # every list (species, coords, etc.) automatically uses this
+                # mapping, because they all form lists sorted by rising index
+                mapping = {}
+                for i in range(len(nodes)):
+                    mapping[nodes[i]] = i
+
+                species = [pre_mol.species[n] for n in
+                           range(len(pre_mol.species)) if n in nodes]
+
+                coords = [pre_mol.coords[n] for n in range(len(pre_mol.coords))
+                          if n in nodes]
+
+                # just give charge to whatever subgraph has node with index 0
+                # TODO: actually figure out how to distribute charge
+                if 0 in nodes:
+                    charge = pre_mol.charge
+                else:
+                    charge = 0
+
+                site_properties = {}
+                for prop in pre_mol.site_properties.keys():
+                    prop_list = pre_mol.site_properties[prop]
+                    site_properties[prop] = [prop_list[n] for n in
+                                             range(len(prop_list)) if n in nodes]
+
+                new_mol = Molecule(species, coords, charge=charge,
+                                   site_properties=site_properties)
+
+                # relabel nodes in graph to match mapping
+                new_graph = nx.relabel_nodes(subg, mapping)
+
+                graph_data = json_graph.adjacency_data(new_graph)
+
+                # create new MoleculeGraph
+                sub_mols.append(MoleculeGraph(new_mol, graph_data=graph_data)
+
+            return sub_mols
+
+
 
     def find_rings(self, including=None):
         """
@@ -1351,8 +1411,18 @@ class MoleculeGraph(MSONable):
         list will be a single ring (cycle, in graph
         theory terms) found in the Molecule.
         """
-        pass
 
+        all_cycles = nx.algorithms.cycles.simple_cycles(self.graph)
+
+        if including is None:
+            return all_cycles
+        else:
+            included_cycles = []
+            for cycle in all_cycles:
+                if any([(n in cycle) for n in including]):
+                    included_cycles.append(cycle)
+
+            return included_cycles
 
     def get_connected_sites(self, n):
         """
@@ -1578,14 +1648,14 @@ class MoleculeGraph(MSONable):
 
     def as_dict(self):
         """
-        As in :Class: `pymatgen.core.Structure` except
+        As in :Class: `pymatgen.core.Molecule` except
         with using `to_dict_of_dicts` from NetworkX
         to store graph information.
         """
 
         d = {"@module": self.__class__.__module__,
              "@class": self.__class__.__name__,
-             "structure": self.molecule.as_dict(),
+             "molecule": self.molecule.as_dict(),
              "graphs": json_graph.adjacency_data(self.graph)}
 
         return d
@@ -1593,12 +1663,12 @@ class MoleculeGraph(MSONable):
     @classmethod
     def from_dict(cls, d):
         """
-        As in :Class: `pymatgen.core.Structure` except
+        As in :Class: `pymatgen.core.Molecule` except
         restoring graphs using `from_dict_of_dicts`
         from NetworkX to restore graph information.
         """
-        s = Structure.from_dict(d['structure'])
-        return cls(s, d['graphs'])
+        m = Molecule.from_dict(d['molecule'])
+        return cls(m, d['graphs'])
 
     def _edges_to_string(self, g):
 
