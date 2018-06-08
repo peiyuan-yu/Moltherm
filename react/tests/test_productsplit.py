@@ -1,5 +1,6 @@
 import os
-from Moltherm.break_sdf import ProductSplit
+
+from Moltherm.react.mol_generate import ProductSplit
 
 test_dir = os.path.dirname(os.path.abspath(__file__))
 

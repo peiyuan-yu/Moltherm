@@ -70,6 +70,11 @@ def split_chain_mol(molecule, break_bond_sites):
     return reac1, reac2
 
 
+# class ReactantJoin:
+
+
+
+
 
 # def mol_from_file(path, file):
 #     """
