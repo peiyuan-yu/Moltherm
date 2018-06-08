@@ -31,7 +31,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-__author__ = "Matthew Horton"
+__author__ = "Matthew Horton, Evan Spotte-Smith"
 __version__ = "0.1"
 __maintainer__ = "Matthew Horton"
 __email__ = "mkhorton@lbl.gov"
@@ -43,13 +43,13 @@ ConnectedSite = namedtuple('ConnectedSite', 'site, jimage, index, weight, dist')
 
 class StructureGraph(MSONable):
     """
-    This is a class for annotating a Structure (or Molecule) with
+    This is a class for annotating a Structure with
     bond information, stored in the form of a graph. A "bond" does
     not necessarily have to be a chemical bond, but can store any
     kind of information that connects two Sites.
     """
 
-    def __init__(self, structure_or_molecule, graph_data=None):
+    def __init__(self, structure, graph_data=None):
         """
         If constructing this class manually, use the `with_empty_graph`
         method or `with_local_env_strategy` method (using an algorithm
@@ -70,21 +70,18 @@ class StructureGraph(MSONable):
         For periodic graphs, class stores information on the graph
         edges of what lattice image the edge belongs to.
 
-        :param structure_or_molecule: a Structure object or a
-        Molecule object (molecules are supported, but some
-        methods are for structures only, such as __mul__, in
-        future this may be broken into two separate classes)
+        :param structure: a Structure object
 
         :param graph_data: dict containing graph information in
         dict format (not intended to be constructed manually,
         see as_dict method for format)
         """
 
-        if isinstance(structure_or_molecule, StructureGraph):
+        if isinstance(structure, StructureGraph):
             # just make a copy from input
-            graph_data = structure_or_molecule.as_dict()['graphs']
+            graph_data = structure.as_dict()['graphs']
 
-        self.structure = structure_or_molecule
+        self.structure = structure
         self.graph = nx.readwrite.json_graph.adjacency_graph(graph_data)
 
         # tidy up edge attr dicts, reading to/from json duplicates
@@ -103,7 +100,7 @@ class StructureGraph(MSONable):
                 d['from_jimage'] = tuple(d['from_jimage'])
 
     @classmethod
-    def with_empty_graph(cls, structure_or_molecule, name="bonds",
+    def with_empty_graph(cls, structure, name="bonds",
                          edge_weight_name=None,
                          edge_weight_units=None):
         """
@@ -111,7 +108,7 @@ class StructureGraph(MSONable):
         object with an empty graph (no edges, only nodes defined
         that correspond to Sites in Structure).
 
-        :param structure_or_molecule (Structure):
+        :param structure (Structure):
         :param name (str): name of graph, e.g. "bonds"
         :param edge_weight_name (str): name of edge weights,
         e.g. "bond_length" or "exchange_constant"
@@ -132,14 +129,14 @@ class StructureGraph(MSONable):
         graph = nx.MultiDiGraph(edge_weight_name=edge_weight_name,
                                 edge_weight_units=edge_weight_units,
                                 name=name)
-        graph.add_nodes_from(range(len(structure_or_molecule)))
+        graph.add_nodes_from(range(len(structure)))
 
         graph_data = json_graph.adjacency_data(graph)
 
-        return cls(structure_or_molecule, graph_data=graph_data)
+        return cls(structure, graph_data=graph_data)
 
     @staticmethod
-    def with_local_env_strategy(structure_or_molecule, strategy):
+    def with_local_env_strategy(structure, strategy):
         """
         Constructor for StructureGraph, using a strategy
         from :Class: `pymatgen.analysis.local_env`.
@@ -148,32 +145,18 @@ class StructureGraph(MSONable):
         of bonds using a NearNeighbor strategy, since some strategies
         assume periodic boundary conditions.
 
-        :param structure_or_molecule: Structure object
+        :param structure: Structure object
         :param strategy: an instance of a
             :Class: `pymatgen.analysis.local_env.NearNeighbors` object
         :return:
         """
 
-        is_molecule = isinstance(structure_or_molecule, Molecule)
-
-        sg = StructureGraph.with_empty_graph(structure_or_molecule, name="bonds",
+        sg = StructureGraph.with_empty_graph(structure, name="bonds",
                                              edge_weight_name="weight",
                                              edge_weight_units="")
 
-        if is_molecule:
-            # NearNeighbor classes only (generally) work with structures
-            # molecules have to be boxed first
-            coords = structure_or_molecule.cart_coords
-
-            a = max(coords[:, 0]) - min(coords[:, 0]) + 100
-            b = max(coords[:, 1]) - min(coords[:, 1]) + 100
-            c = max(coords[:, 2]) - min(coords[:, 2]) + 100
-
-            structure_or_molecule = structure_or_molecule.get_boxed_structure(a, b, c,
-                                                                              no_cross=True)
-
-        for n in range(len(structure_or_molecule)):
-            neighbors = strategy.get_nn_info(structure_or_molecule, n)
+        for n in range(len(structure)):
+            neighbors = strategy.get_nn_info(structure, n)
             for neighbor in neighbors:
 
                 # all bonds in molecules should not cross
@@ -261,7 +244,7 @@ class StructureGraph(MSONable):
         # automatic detection of to_jimage if user doesn't specify
         # will try and detect all equivalent images and add multiple
         # edges if appropriate
-        if to_jimage is None and not isinstance(self.structure, Molecule):
+        if to_jimage is None:
             # assume we want the closest site
             warnings.warn("Please specify to_jimage to be unambiguous, "
                           "trying to automatically detect.")
@@ -341,29 +324,20 @@ class StructureGraph(MSONable):
 
         for u, v, d, dir in out_edges + in_edges:
 
-            if not isinstance(self.structure, Molecule):
+            to_jimage = d['to_jimage']
 
-                to_jimage = d['to_jimage']
+            if dir == 'in':
+                u, v = v, u
+                to_jimage = np.multiply(-1, to_jimage)
 
-                if dir == 'in':
-                    u, v = v, u
-                    to_jimage = np.multiply(-1, to_jimage)
+            site_d = self.structure[v].as_dict()
+            site_d['abc'] = np.add(site_d['abc'], to_jimage).tolist()
+            to_jimage = tuple(map(int, np.add(to_jimage, jimage)))
+            site = PeriodicSite.from_dict(site_d)
 
-                site_d = self.structure[v].as_dict()
-                site_d['abc'] = np.add(site_d['abc'], to_jimage).tolist()
-                to_jimage = tuple(map(int, np.add(to_jimage, jimage)))
-                site = PeriodicSite.from_dict(site_d)
-
-                # from_site if jimage arg != (0, 0, 0)
-                relative_jimage = np.subtract(to_jimage, jimage)
-                dist = self.structure[u].distance(self.structure[v], jimage=relative_jimage)
-
-            else:
-
-                # simpler case for molecules
-                site = self.structure[v]
-                dist = self.structure[u].distance(self.structure[v])
-                to_jimage = (0, 0, 0)
+            # from_site if jimage arg != (0, 0, 0)
+            relative_jimage = np.subtract(to_jimage, jimage)
+            dist = self.structure[u].distance(self.structure[v], jimage=relative_jimage)
 
             weight = d.get('weight', None)
 
@@ -616,11 +590,6 @@ class StructureGraph(MSONable):
         # computationally expensive than just keeping track of the
         # which new lattice images present, but should hopefully be
         # easier to extend to a general 3x3 scaling matrix.
-
-        if isinstance(self.structure, Molecule):
-            raise ValueError("Multiplying graphs is only-welled defined for "
-                             "structures not molecules or other objects without "
-                             "a well-defined periodic lattice.")
 
         # code adapted from Structure.__mul__
         scale_matrix = np.array(scaling_matrix, np.int16)
@@ -1239,7 +1208,6 @@ class MoleculeGraph(MSONable):
         return self.graph.graph['edge_weight_units']
 
     def add_edge(self, from_index, to_index,
-                 from_jimage=(0, 0, 0), to_jimage=None,
                  weight=None, warn_duplicates=True,
                  edge_properties=None):
         """
@@ -1278,8 +1246,7 @@ class MoleculeGraph(MSONable):
         if existing_edge_data and warn_duplicates:
             warnings.warn("Trying to add an edge that already exists from "
                             "site {} to site {}.".format(from_index,
-                                                         to_index,
-                                                         to_jimage))
+                                                         to_index))
             return
 
         # generic container for additional edge properties,
@@ -1293,6 +1260,99 @@ class MoleculeGraph(MSONable):
         else:
             self.graph.add_edge(from_index, to_index,
                                 **edge_properties)
+
+    def alter_edge(self, from_index, to_index,
+                   new_weight=None, new_edge_properties=None):
+        """
+        Alters either the weight or the edge_properties of
+        an edge in the MoleculeGraph.
+
+        :param from_index: int
+        :param to_index: int
+        :param new_weight: alter_edge does not require
+        that weight be altered. As such, by default, this
+        is None. If weight is to be changed, it should be a
+        float.
+        :param new_edge_properties: alter_edge does not require
+        that edge_properties be altered. As such, by default,
+        this is None. If any edge properties are to be changed,
+        it should be a dictionary of edge properties to be changed.
+        :return:
+        """
+
+        existing_edge = self.graph.get_edge_data(from_index, to_index)
+
+        # ensure that edge exists before attempting to change it
+        if not existing_edge:
+            raise RuntimeError("Edge between {} and {} cannot be altered;\
+                                no edge exists between those sites.".format(
+                                from_index, to_index
+                                ))
+
+        if new_weight is not None:
+            self.graph[u, v]['weight'] = new_weight
+
+        if new_edge_properties is not None:
+            for prop in list(new_edge_properties.keys()):
+                self.graph[u, v][prop] = new_edge_properties[prop]
+
+    def break_edge(self, from_index, to_index):
+        """
+        Remove an edge from the MoleculeGraph
+
+        :param from_index: int
+        :param to_index: int
+        :return:
+        """
+
+        # ensure that edge exists before attempting to remove it
+        existing_edge = self.graph.get_edge_data(from_index, to_index)
+
+        if not existing_edge:
+            raise RuntimeError("Edge cannot be broken between {} and {};\
+                                no edge exists between those sites.".format(
+                                from_index, to_index
+                                ))
+
+        self.graph.remove_edge(from_index, to_index)
+
+    def split(self, bonds, alterations=None):
+        """
+        Split MoleculeGraph into two MoleculeGraphs by
+        breaking a set of bonds. This function uses
+        MoleculeGraph.break_edge repeatedly to create
+        disjoint graphs (two or more separate molecules).
+        This function does not only alter the graph
+        information, but also changes the underlying
+        Moledules.
+        If the bonds parameter does not include sufficient
+        bonds to separate two bonds, then this function will
+        fail.
+
+        :param bonds: list of tuples (from_index, to_index)
+        representing bonds to be broken to split the MoleculeGraph.
+        :param alterations: a dict {(from_index, to_index): alt},
+        where alt is a dictionary including weight and/or edge
+        properties to be changed following the split.
+        :return: list of MoleculeGraphs
+        """
+        pass
+
+    def find_rings(self, including=None):
+        """
+        Find ring structures in the MoleculeGraph.
+
+        :param including: list of site indices. If
+        including is not None, then find_rings will
+        only return those rings including the specified
+        sites. By default, this parameter is None, and
+        all rings will be returned.
+        :return: list of lists of site indices. Each
+        list will be a single ring (cycle, in graph
+        theory terms) found in the Molecule.
+        """
+        pass
+
 
     def get_connected_sites(self, n):
         """
@@ -1540,221 +1600,6 @@ class MoleculeGraph(MSONable):
         s = Structure.from_dict(d['structure'])
         return cls(s, d['graphs'])
 
-    def __mul__(self, scaling_matrix):
-        """
-        Replicates the graph, creating a supercell,
-        intelligently joining together
-        edges that lie on periodic boundaries.
-        In principle, any operations on the expanded
-        graph could also be done on the original
-        graph, but a larger graph can be easier to
-        visualize and reason about.
-        :param scaling_matrix: same as Structure.__mul__
-        :return:
-        """
-
-        # Developer note: a different approach was also trialed, using
-        # a simple Graph (instead of MultiDiGraph), with node indices
-        # representing both site index and periodic image. Here, the
-        # number of nodes != number of sites in the Structure. This
-        # approach has many benefits, but made it more difficult to
-        # keep the graph in sync with its corresponding Structure.
-
-        # Broadly, it would be easier to multiply the Structure
-        # *before* generating the StructureGraph, but this isn't
-        # possible when generating the graph using critic2 from
-        # charge density.
-
-        # Multiplication works by looking for the expected position
-        # of an image node, and seeing if that node exists in the
-        # supercell. If it does, the edge is updated. This is more
-        # computationally expensive than just keeping track of the
-        # which new lattice images present, but should hopefully be
-        # easier to extend to a general 3x3 scaling matrix.
-
-        if isinstance(self.structure, Molecule):
-            raise ValueError("Multiplying graphs is only-welled defined for "
-                             "structures not molecules or other objects without "
-                             "a well-defined periodic lattice.")
-
-        # code adapted from Structure.__mul__
-        scale_matrix = np.array(scaling_matrix, np.int16)
-        if scale_matrix.shape != (3, 3):
-            scale_matrix = np.array(scale_matrix * np.eye(3), np.int16)
-        else:
-            # TODO: test __mul__ with full 3x3 scaling matrices
-            raise NotImplementedError('Not tested with 3x3 scaling matrices yet.')
-        new_lattice = Lattice(np.dot(scale_matrix, self.structure.lattice.matrix))
-
-        f_lat = lattice_points_in_supercell(scale_matrix)
-        c_lat = new_lattice.get_cartesian_coords(f_lat)
-
-        new_sites = []
-        new_graphs = []
-
-        for v in c_lat:
-
-            # create a map of nodes from original graph to its image
-            mapping = {n: n + len(new_sites) for n in range(len(self.structure))}
-
-            for idx, site in enumerate(self.structure):
-
-                s = PeriodicSite(site.species_and_occu, site.coords + v,
-                                 new_lattice, properties=site.properties,
-                                 coords_are_cartesian=True, to_unit_cell=False)
-
-                new_sites.append(s)
-
-            new_graphs.append(nx.relabel_nodes(self.graph, mapping, copy=True))
-
-        new_structure = Structure.from_sites(new_sites)
-
-        # merge all graphs into one big graph
-        new_g = nx.MultiDiGraph()
-        for new_graph in new_graphs:
-            new_g = nx.union(new_g, new_graph)
-
-        edges_to_remove = []  # tuple of (u, v, k)
-        edges_to_add = []  # tuple of (u, v, attr_dict)
-
-        # list of new edges inside supercell
-        # for duplicate checking
-        edges_inside_supercell = [{u, v} for u, v, d in new_g.edges(data=True)
-                                  if d['to_jimage'] == (0, 0, 0)]
-        new_periodic_images = []
-
-        orig_lattice = self.structure.lattice
-
-        # use k-d tree to match given position to an
-        # existing Site in Structure
-        kd_tree = KDTree(new_structure.cart_coords)
-
-        # tolerance in Å for sites to be considered equal
-        # this could probably be a lot smaller
-        tol = 0.05
-
-        for u, v, k, d in new_g.edges(keys=True, data=True):
-
-            to_jimage = d['to_jimage']  # for node v
-
-            # reduce unnecessary checking
-            if to_jimage != (0, 0, 0):
-
-                # get index in original site
-                n_u = u % len(self.structure)
-                n_v = v % len(self.structure)
-
-                # get fractional co-ordinates of where atoms defined
-                # by edge are expected to be, relative to original
-                # lattice (keeping original lattice has
-                # significant benefits)
-                v_image_frac = np.add(self.structure[n_v].frac_coords, to_jimage)
-                u_frac = self.structure[n_u].frac_coords
-
-                # using the position of node u as a reference,
-                # get relative Cartesian co-ordinates of where
-                # atoms defined by edge are expected to be
-                v_image_cart = orig_lattice.get_cartesian_coords(v_image_frac)
-                u_cart = orig_lattice.get_cartesian_coords(u_frac)
-                v_rel = np.subtract(v_image_cart, u_cart)
-
-                # now retrieve position of node v in
-                # new supercell, and get asgolute Cartesian
-                # co-ordinates of where atoms defined by edge
-                # are expected to be
-                v_expec = new_structure[u].coords + v_rel
-
-                # now search in new structure for these atoms
-                # query returns (distance, index)
-                v_present = kd_tree.query(v_expec)
-                v_present = v_present[1] if v_present[0] <= tol else None
-
-                # check if image sites now present in supercell
-                # and if so, delete old edge that went through
-                # periodic boundary
-                if v_present is not None:
-
-                    new_u = u
-                    new_v = v_present
-                    new_d = d.copy()
-
-                    # node now inside supercell
-                    new_d['to_jimage'] = (0, 0, 0)
-
-                    edges_to_remove.append((u, v, k))
-
-                    # make sure we don't try to add duplicate edges
-                    # will remove two edges for everyone one we add
-                    if {new_u, new_v} not in edges_inside_supercell:
-
-                        # normalize direction
-                        if new_v < new_u:
-                            new_u, new_v = new_v, new_u
-
-                        edges_inside_supercell.append({new_u, new_v})
-                        edges_to_add.append((new_u, new_v, new_d))
-
-                else:
-
-                    # want to find new_v such that we have
-                    # full periodic boundary conditions
-                    # so that nodes on one side of supercell
-                    # are connected to nodes on opposite side
-
-                    v_expec_frac = new_structure.lattice.get_fractional_coords(v_expec)
-
-                    # find new to_jimage
-                    # use np.around to fix issues with finite precision leading to incorrect image
-                    v_expec_image = np.around(v_expec_frac, decimals=3)
-                    v_expec_image = v_expec_image - v_expec_image%1
-
-                    v_expec_frac = np.subtract(v_expec_frac, v_expec_image)
-                    v_expec = new_structure.lattice.get_cartesian_coords(v_expec_frac)
-                    v_present = kd_tree.query(v_expec)
-                    v_present = v_present[1] if v_present[0] <= tol else None
-
-                    if v_present is not None:
-
-                        new_u = u
-                        new_v = v_present
-                        new_d = d.copy()
-                        new_to_jimage = tuple(map(int, v_expec_image))
-
-                        # normalize direction
-                        if new_v < new_u:
-                            new_u, new_v = new_v, new_u
-                            new_to_jimage = tuple(np.multiply(-1, d['to_jimage']).astype(int))
-
-                        new_d['to_jimage'] = new_to_jimage
-
-                        edges_to_remove.append((u, v, k))
-
-                        if (new_u, new_v, new_to_jimage) not in new_periodic_images:
-                            edges_to_add.append((new_u, new_v, new_d))
-                            new_periodic_images.append((new_u, new_v, new_to_jimage))
-
-        logger.debug("Removing {} edges, adding {} new edges.".format(len(edges_to_remove),
-                                                                      len(edges_to_add)))
-
-        # add/delete marked edges
-        for edges_to_remove in edges_to_remove:
-            new_g.remove_edge(*edges_to_remove)
-        for (u, v, d) in edges_to_add:
-            new_g.add_edge(u, v, **d)
-
-        # return new instance of StructureGraph with supercell
-        d = {"@module": self.__class__.__module__,
-             "@class": self.__class__.__name__,
-             "structure": new_structure.as_dict(),
-             "graphs": json_graph.adjacency_data(new_g)}
-
-        sg = StructureGraph.from_dict(d)
-
-        return sg
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
-
     def _edges_to_string(self, g):
 
         header = "from    to  to_image    "
@@ -1790,40 +1635,40 @@ class MoleculeGraph(MSONable):
         return s
 
     def __str__(self):
-        s = "Structure Graph"
-        s += "\nStructure: \n{}".format(self.structure.__str__())
+        s = "Molecule Graph"
+        s += "\nMolecule: \n{}".format(self.molecule.__str__())
         s += "\nGraph: {}\n".format(self.name)
         s += self._edges_to_string(self.graph)
         return s
 
     def __repr__(self):
-        s = "Structure Graph"
-        s += "\nStructure: \n{}".format(self.structure.__repr__())
+        s = "Molecule Graph"
+        s += "\nMolecule: \n{}".format(self.molecule.__repr__())
         s += "\nGraph: {}\n".format(self.name)
         s += self._edges_to_string(self.graph)
         return s
 
     def __len__(self):
         """
-        :return: length of Structure / number of nodes in graph
+        :return: length of Molecule / number of nodes in graph
         """
-        return len(self.structure)
+        return len(self.molecule)
 
     def sort(self, key=None, reverse=False):
         """
-        Same as Structure.sort(), also remaps nodes in graph.
+        Same as Molecule.sort(), also remaps nodes in graph.
         :param key:
         :param reverse:
         :return:
         """
 
-        old_structure = self.structure.copy()
+        old_structure = self.molecule.copy()
 
-        # sort Structure
-        self.structure._sites = sorted(self.structure._sites, key=key, reverse=reverse)
+        # sort Molecule
+        self.molecule._sites = sorted(self.molecule._sites, key=key, reverse=reverse)
 
-        # apply Structure ordering to graph
-        mapping = {idx:self.structure.index(site) for idx, site in enumerate(old_structure)}
+        # apply Molecule ordering to graph
+        mapping = {idx:self.molecule.index(site) for idx, site in enumerate(old_structure)}
         self.graph = nx.relabel_nodes(self.graph, mapping, copy=True)
 
         # normalize directions of edges
@@ -1832,7 +1677,7 @@ class MoleculeGraph(MSONable):
         for u, v, k, d in self.graph.edges(keys=True, data=True):
             if v < u:
                 new_v, new_u, new_d = u, v, d.copy()
-                new_d['to_jimage'] = tuple(np.multiply(-1, d['to_jimage']).astype(int))
+                new_d['to_jimage'] = (0, 0, 0)
                 edges_to_remove.append((u, v, k))
                 edges_to_add.append((new_u, new_v, new_d))
 
@@ -1843,85 +1688,84 @@ class MoleculeGraph(MSONable):
             self.graph.add_edge(u, v, **d)
 
     def __copy__(self):
-        return StructureGraph.from_dict(self.as_dict())
+        return MoleculeGraph.from_dict(self.as_dict())
 
     def __eq__(self, other):
         """
-        Two StructureGraphs are equal if they have equal Structures,
+        Two MoleculeGraphs are equal if they have equal Molecules,
         and have the same edges between Sites. Edge weights can be
-        different and StructureGraphs can still be considered equal.
+        different and MoleculeGraphs can still be considered equal.
 
-        :param other: StructureGraph
+        :param other: MoleculeGraph
         :return (bool):
         """
 
         # sort for consistent node indices
         # PeriodicSite should have a proper __hash__() value,
         # using its frac_coords as a convenient key
-        mapping = {tuple(site.frac_coords):self.structure.index(site) for site in other.structure}
+        mapping = {tuple(site.frac_coords):self.molecule.index(site) for site in other.structure}
         other_sorted = other.__copy__()
         other_sorted.sort(key=lambda site: mapping[tuple(site.frac_coords)])
 
-        edges = {(u, v, d['to_jimage'])
+        edges = {(u, v, d.get('to_jimage', (0, 0, 0)))
                  for u, v, d in self.graph.edges(keys=False, data=True)}
 
-        edges_other = {(u, v, d['to_jimage'])
+        edges_other = {(u, v, d.get('to_jimage', (0, 0, 0)))
                        for u, v, d in other_sorted.graph.edges(keys=False, data=True)}
 
         return (edges == edges_other) and \
-               (self.structure == other_sorted.structure)
+               (self.molecule == other_sorted.molecule)
 
     def diff(self, other, strict=True):
         """
-        Compares two StructureGraphs. Returns dict with
+        Compares two MoleculeGraphs. Returns dict with
         keys 'self', 'other', 'both' with edges that are
-        present in only one StructureGraph ('self' and
+        present in only one MoleculeGraph ('self' and
         'other'), and edges that are present in both.
 
         The Jaccard distance is a simple measure of the
-        dissimilarity between two StructureGraphs (ignoring
+        dissimilarity between two MoleculeGraphs (ignoring
         edge weights), and is defined by 1 - (size of the
         intersection / size of the union) of the sets of
         edges. This is returned with key 'dist'.
 
         Important note: all node indices are in terms
-        of the StructureGraph this method is called
-        from, not the 'other' StructureGraph: there
+        of the MoleculeGraph this method is called
+        from, not the 'other' MoleculeGraph: there
         is no guarantee the node indices will be the
-        same if the underlying Structures are ordered
+        same if the underlying Molecules are ordered
         differently.
 
-        :param other: StructureGraph
+        :param other: MoleculeGraph
         :param strict: if False, will compare bonds
-        from different Structures, with node indices
+        from different Molecules, with node indices
         replaced by Specie strings, will not count
         number of occurrences of bonds
         :return:
         """
 
-        if self.structure != other.structure and strict:
-            return ValueError("Meaningless to compare StructureGraphs if "
-                              "corresponding Structures are different.")
+        if self.molecule != other.molecule and strict:
+            return ValueError("Meaningless to compare MoleculeGraphs if "
+                              "corresponding Molecules are different.")
 
         if strict:
-
             # sort for consistent node indices
             # PeriodicSite should have a proper __hash__() value,
             # using its frac_coords as a convenient key
-            mapping = {tuple(site.frac_coords):self.structure.index(site) for site in other.structure}
+            mapping = {tuple(site.frac_coords):self.molecule.index(site) for site in other.molecule}
             other_sorted = other.__copy__()
             other_sorted.sort(key=lambda site: mapping[tuple(site.frac_coords)])
 
-            edges = {(u, v, d['to_jimage'])
+            edges = {(u, v, d.get('to_jimage', (0, 0, 0)))
                      for u, v, d in self.graph.edges(keys=False, data=True)}
 
-            edges_other = {(u, v, d['to_jimage'])
+            edges_other = {(u, v, d.get('to_jimage', (0, 0, 0)))
                            for u, v, d in other_sorted.graph.edges(keys=False, data=True)}
 
         else:
 
-            edges = {(str(self.structure[u].specie),
-                      str(self.structure[v].specie))
+            edges = {(str(self.molecule[u].specie),
+                      str(self.molecule[v].specie))
                      for u, v, d in self.graph.edges(keys=False, data=True)}
 
             edges_other = {(str(other.structure[u].specie),
@@ -1939,87 +1783,3 @@ class MoleculeGraph(MSONable):
             'both': edges.intersection(edges_other),
             'dist': jaccard_dist
         }
-
-    def get_subgraphs_as_molecules(self, use_weights=False):
-        """
-        Retrieve subgraphs as molecules, useful for extracting
-        molecules from periodic crystals.
-
-        Will only return unique molecules, not any duplicates
-        present in the crystal (a duplicate defined as an
-        isomorphic subgraph).
-
-        :param use_weights (bool): If True, only treat subgraphs
-        as isomorphic if edges have the same weights. Typically,
-        this means molecules will need to have the same bond
-        lengths to be defined as duplicates, otherwise bond
-        lengths can differ. This is a fairly robust approach,
-        but will treat e.g. enantiomers as being duplicates.
-
-        :return: list of unique Molecules in Structure
-        """
-
-        # creating a supercell is an easy way to extract
-        # molecules (and not, e.g., layers of a 2D crystal)
-        # without adding extra logic
-        if getattr(self, '_supercell_sg', None) is None:
-            self._supercell_sg = supercell_sg = self*(3,3,3)
-
-        # make undirected to find connected subgraphs
-        supercell_sg.graph = nx.Graph(supercell_sg.graph)
-
-        # find subgraphs
-        all_subgraphs = list(nx.connected_component_subgraphs(supercell_sg.graph))
-
-        # discount subgraphs that lie across *supercell* boundaries
-        # these will subgraphs representing crystals
-        molecule_subgraphs = []
-        for subgraph in all_subgraphs:
-            intersects_boundary = any([d['to_jimage'] != (0, 0, 0)
-                                      for u, v, d in subgraph.edges(data=True)])
-            if not intersects_boundary:
-                molecule_subgraphs.append(subgraph)
-
-        # add specie names to graph to be able to test for isomorphism
-        for subgraph in molecule_subgraphs:
-            for n in subgraph:
-                subgraph.add_node(n, specie=str(supercell_sg.structure[n].specie))
-
-        # now define how we test for isomorphism
-        def node_match(n1, n2):
-            return n1['specie'] == n2['specie']
-        def edge_match(e1, e2):
-            if use_weights:
-                return e1['weight'] == e2['weight']
-            else:
-                return True
-
-        # prune duplicate subgraphs
-        unique_subgraphs = []
-        for subgraph in molecule_subgraphs:
-
-            already_present = [nx.is_isomorphic(subgraph, g,
-                                                node_match=node_match,
-                                                edge_match=edge_match)
-                               for g in unique_subgraphs]
-
-            if not any(already_present):
-                unique_subgraphs.append(subgraph)
-
-        # get Molecule objects for each subgraph
-        molecules = []
-        for subgraph in unique_subgraphs:
-
-            coords = [supercell_sg.structure[n].coords for n
-                      in subgraph.nodes()]
-            species = [supercell_sg.structure[n].specie for n
-                      in subgraph.nodes()]
-
-            molecule = Molecule(species, coords)
-
-            # shift so origin is at center of mass
-            molecule = molecule.get_centered_molecule()
-
-            molecules.append(molecule)
-
-        return molecules
