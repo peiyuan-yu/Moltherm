@@ -12,6 +12,15 @@ class ProductSplit:
     Currently supports breaking one bond, breaking two bonds for circular
     molecules to be added.
     Args:
+        mol: pymatgen molecule object.
+        mol_name: name of the molecule, to be used when generating output
+                  files. If not set, will take the formula of molecule.
+        write_output: whether to write output files of split molecules.
+        output_path: path to store output files.
+        output_type: type of output files. Options include "xyz", "gjf",
+                     "g03", "g09", "com", "inp", "json". Other options are
+                     "pdb|mol|mdl|sdf|sd|ml2|sy2|mol2|cml|mrv" if OpenBabel
+                     is installed (see http://openbabel.org).
 
     """
     def __init__(self, mol, mol_name=None, write_output=True,
@@ -42,7 +51,7 @@ class ProductSplit:
         reac2 = None
         # TODO: current break_bond method use distances to separate reactants, due to lost bonding message in Molecule object. -qw
         # TODO: only supports break_chain_mol now. -qw
-        # TODO: output filename of react1 and react2 needs improvement as one molecule can be split many times. -qw
+        # TODO: output filename of react1 and react2 needs improvement as one input molecule can be split many times. -qw
         for sites in break_bond_sites:
             reac1, reac2 = split_chain_mol(mol, sites)
             if MoleculeMatcher(reac1, reac2):
