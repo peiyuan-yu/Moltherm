@@ -6,7 +6,16 @@ from pymatgen.core.structure import Molecule
 
 
 class ProductSplit:
+    """
+    Split product molecule to reactants by breaking bonds.
+    Currently supports breaking one bond, breaking two bonds for circular
+    molecules to be added.
+    Args:
+        input_path:
+        input_file:
+        output_path:
 
+    """
     def __init__(self, input_path, input_file, output_path,
                  breaking_bond_sites):
         self.input_path = input_path
