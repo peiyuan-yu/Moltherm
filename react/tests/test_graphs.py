@@ -10,15 +10,18 @@ import matplotlib
 matplotlib.use("pdf")
 
 from pymatgen.command_line.critic2_caller import Critic2Output
-from pymatgen.analysis.graphs import *
-from pymatgen.analysis.local_env import MinimumDistanceNN, MinimumOKeeffeNN
+# from pymatgen.analysis.graphs import *
+# from pymatgen.analysis.local_env import MinimumDistanceNN, MinimumOKeeffeNN
+
+from Moltherm.react.graphs import *
+from Moltherm.react.local_env import MinimumDistanceNN, MinimumOKeeffeNN
 
 try:
     import openbabel as ob
 except ImportError:
     ob = None
 
-__author__ = "Matthew Horton"
+__author__ = "Matthew Horton, Evan Spotte-Smith"
 __version__ = "0.1"
 __maintainer__ = "Matthew Horton"
 __email__ = "mkhorton@lbl.gov"
@@ -313,15 +316,58 @@ from    to  to_image
         molecules = self.mos2_sg.get_subgraphs_as_molecules()
         self.assertEqual(len(molecules), 0)
 
-    def test_from_molecule(self):
+class MoleculeGraphTest(unittest.TestCase):
 
+    def setUp(self):
+
+        molecule = Molecule.from_file("cyclohexene.xyz")
+        self.ethylene = MoleculeGraph.with_empty_graph(molecule,
+                                                 edge_weight_name="strength",
+                                                 edge_weight_units="")
+        self.ethylene.add_edge(0, 1, weight=1.0)
+        self.ethylene.add_edge(1, 2, weight=1.0)
+        self.ethylene.add_edge(2, 3, weight=2.0)
+        self.ethylene.add_edge(3, 4, weight=1.0)
+        self.ethylene.add_edge(4, 5, weight=1.0)
+        self.ethylene.add_edge(5, 0, weight=1.0)
+        self.ethylene.add_edge(0, 6, weight=1.0)
+        self.ethylene.add_edge(0, 7, weight=1.0)
+        self.ethylene.add_edge(1, 8, weight=1.0)
+        self.ethylene.add_edge(1, 9, weight=1.0)
+        self.ethylene.add_edge(2, 10, weight=1.0)
+        self.ethylene.add_edge(3, 11, weight=1.0)
+        self.ethylene.add_edge(4, 12, weight=1.0)
+        self.ethylene.add_edge(4, 13, weight=1.0)
+        self.ethylene.add_edge(5, 14, weight=1.0)
+        self.ethylene.add_edge(5, 15, weight=1.0)
+
+        warnings.simplefilter("ignore")
+
+    def tearDown(self):
+        warnings.resetwarnings()
+
+    def test_properties(self):
+        self.assertEqual(self.ethylene.name, "bonds")
+        self.assertEqual(self.ethylene.edge_weight_name, "strength")
+        self.assertEqual(self.ethylene.edge_weight_unit, "")
+        self.assertEqual(self.ethylene.get_coordination_of_site(0), 4)
+        self.assertEqual(self.ethylene.get_coordination_of_site(2), 3)
+        self.assertEqual(self.ethylene.get_coordination_of_site(15), 1)
+        self.assertEqual(len(self.ethylene.get_connected_sites(0)), 4)
+        self.assertTrue(isinstance(self.ethylene.get_connected_sites(0)[0].site, PeriodicSite))
+        self.assertEqual(str(self.ethylene.get_connected_sites(0)[0].site.specie), 'C')
+
+
+    def test_coordination(self):
         molecule = Molecule(['C', 'C'], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
 
-        sg = StructureGraph.with_empty_graph(molecule)
-        self.assertEqual(sg.get_coordination_of_site(0), 0)
+        mg = MoleculeGraph.with_empty_graph(molecule)
+        self.assertEqual(mg.get_coordination_of_site(0), 0)
 
-        sg = StructureGraph.with_local_env_strategy(molecule, MinimumDistanceNN())
-        self.assertEqual(sg.get_coordination_of_site(0), 1)
+        mg = StructureGraph.with_local_env_strategy(molecule, MinimumDistanceNN())
+        self.assertEqual(mg.get_coordination_of_site(0), 1)
+
+
 
 
 if __name__ == "__main__":

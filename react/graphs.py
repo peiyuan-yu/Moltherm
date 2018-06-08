@@ -1412,17 +1412,20 @@ class MoleculeGraph(MSONable):
         theory terms) found in the Molecule.
         """
 
-        all_cycles = nx.algorithms.cycles.simple_cycles(self.graph)
+        #TODO: find a way to ensure that this catches all cycles
+        # all_cycles = nx.algorithms.cycles.simple_cycles(self.graph)
+        #
+        # if including is None:
+        #     return all_cycles
+        # else:
+        #     included_cycles = []
+        #     for cycle in all_cycles:
+        #         if any([(n in cycle) for n in including]):
+        #             included_cycles.append(cycle)
+        #
+        #     return included_cycles
+        pass
 
-        if including is None:
-            return all_cycles
-        else:
-            included_cycles = []
-            for cycle in all_cycles:
-                if any([(n in cycle) for n in including]):
-                    included_cycles.append(cycle)
-
-            return included_cycles
 
     def get_connected_sites(self, n):
         """
