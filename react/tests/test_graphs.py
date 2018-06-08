@@ -6,6 +6,7 @@ from __future__ import division, unicode_literals
 
 import unittest
 import os
+import copy
 import matplotlib
 matplotlib.use("pdf")
 
@@ -357,7 +358,6 @@ class MoleculeGraphTest(unittest.TestCase):
         self.assertTrue(isinstance(self.ethylene.get_connected_sites(0)[0].site, PeriodicSite))
         self.assertEqual(str(self.ethylene.get_connected_sites(0)[0].site.specie), 'C')
 
-
     def test_coordination(self):
         molecule = Molecule(['C', 'C'], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
 
@@ -367,7 +367,33 @@ class MoleculeGraphTest(unittest.TestCase):
         mg = StructureGraph.with_local_env_strategy(molecule, MinimumDistanceNN())
         self.assertEqual(mg.get_coordination_of_site(0), 1)
 
+    def test_edge_editing(self):
+        #TODO: test alter_edge, break_edge
+        pass
 
+    def test_split(self):
+        #TODO: test split with alterations and without
+        pass
+
+    def test_find_rings(self):
+        #TODO: test find_rings
+        pass
+
+    def test_draw_to_file(self):
+        #TODO: test draw_to_file
+        pass
+
+    def test_as_from_dict(self):
+        #TODO: copy from above
+        pass
+
+    def test_str(self):
+        #TODO: copy from above
+        pass
+
+    def test_sort_eq_diff(self):
+        #TODO: copy from above, if possible
+        pass
 
 
 if __name__ == "__main__":

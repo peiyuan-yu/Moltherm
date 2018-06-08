@@ -1339,6 +1339,7 @@ class MoleculeGraph(MSONable):
         :return: list of MoleculeGraphs
         """
 
+        #TODO: allow for alterations after (or before) creating new molecules
         for bond in bonds:
             self.break_edge(bond[0], bond[1])
 
@@ -1348,8 +1349,6 @@ class MoleculeGraph(MSONable):
                                 MoleculeGraph is still connected.")
         else:
             sub_mols = []
-            weight_name = self.graph['edge_weight_name']
-            units = self.graph['edge_weight_units']
 
             for subg in nx.weakly_connected_component_subgraphs(self.graph):
 
@@ -1392,7 +1391,7 @@ class MoleculeGraph(MSONable):
                 graph_data = json_graph.adjacency_data(new_graph)
 
                 # create new MoleculeGraph
-                sub_mols.append(MoleculeGraph(new_mol, graph_data=graph_data)
+                sub_mols.append(MoleculeGraph(new_mol, graph_data=graph_data))
 
             return sub_mols
 
