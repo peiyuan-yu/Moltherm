@@ -1273,13 +1273,13 @@ class MoleculeGraph(MSONable):
                                 from_index, to_index
                                 ))
 
-        #TODO: Need to make sure this is right with networkx code
+        # Third index should always be 0 because there should only be one edge between any two nodes
         if new_weight is not None:
-            self.graph[from_index][to_index]['weight'] = new_weight
+            self.graph[from_index][to_index][0]['weight'] = new_weight
 
         if new_edge_properties is not None:
             for prop in list(new_edge_properties.keys()):
-                self.graph[from_index][to_index][prop] = new_edge_properties[prop]
+                self.graph[from_index][to_index][0][prop] = new_edge_properties[prop]
 
     def break_edge(self, from_index, to_index):
         """
@@ -1326,7 +1326,6 @@ class MoleculeGraph(MSONable):
         :return: list of MoleculeGraphs
         """
 
-        #TODO: allow for alterations after (or before) creating new molecules
         for bond in bonds:
             self.break_edge(bond[0], bond[1])
 
@@ -1334,6 +1333,20 @@ class MoleculeGraph(MSONable):
             raise RuntimeError("Cannot split molecule; \
                                 MoleculeGraph is still connected.")
         else:
+
+            if alterations is not None:
+                for (u, v) in alterations.keys():
+                    if "weight" in alterations[(u, v)]:
+                        weight = alterations[(u, v)]["weight"]
+                        del alterations[(u, v)]["weight"]
+                        edge_properties = alterations[(u, v)] \
+                            if len(alterations[(u, v)]) != 0 else None
+                        self.alter_edge(u, v, new_weight=new_weight,
+                                        new_edge_properties=edge_properties)
+                    else:
+                        self.alter_edge(u, v,
+                                        new_edge_properties=alterations[(u, v)])
+
             sub_mols = []
 
             for subg in nx.weakly_connected_component_subgraphs(self.graph):
