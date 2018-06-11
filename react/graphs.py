@@ -141,10 +141,6 @@ class StructureGraph(MSONable):
         Constructor for StructureGraph, using a strategy
         from :Class: `pymatgen.analysis.local_env`.
 
-        Molecules will be put into a large artificial box for calculation
-        of bonds using a NearNeighbor strategy, since some strategies
-        assume periodic boundary conditions.
-
         :param structure: Structure object
         :param strategy: an instance of a
             :Class: `pymatgen.analysis.local_env.NearNeighbors` object
@@ -158,11 +154,6 @@ class StructureGraph(MSONable):
         for n in range(len(structure)):
             neighbors = strategy.get_nn_info(structure, n)
             for neighbor in neighbors:
-
-                # all bonds in molecules should not cross
-                # (artificial) periodic boundaries
-                if is_molecule and not np.array_equal(neighbor['image'], [0, 0, 0]):
-                    continue
 
                 # local_env will always try to add two edges
                 # for any one bond, one from site u to site v
@@ -1059,15 +1050,10 @@ class MoleculeGraph(MSONable):
 
         This class uses the NetworkX package to store and operate
         on the graph itself, but contains a lot of helper methods
-        to make associating a graph with a given crystallographic
-        structure easier.
+        to make associating a graph with a given molecule easier.
 
         Use cases for this include storing bonding information,
         NMR J-couplings, Heisenberg exchange parameters, etc.
-
-        For periodic graphs, class stores information on the graph
-        edges of what lattice image the edge belongs to.
-        TODO: Do I need to store this information?
 
         :param molecule: Molecule object
 
@@ -1076,7 +1062,7 @@ class MoleculeGraph(MSONable):
         see as_dict method for format)
         """
 
-        if isinstance(molecule, StructureGraph):
+        if isinstance(molecule, MoleculeGraph):
             # just make a copy from input
             graph_data = molecule.as_dict()['graphs']
 
@@ -1182,7 +1168,7 @@ class MoleculeGraph(MSONable):
                             weight=neighbor['weight'],
                             warn_duplicates=False)
 
-        return sg
+        return mg
 
     @property
     def name(self):
@@ -1287,12 +1273,13 @@ class MoleculeGraph(MSONable):
                                 from_index, to_index
                                 ))
 
+        #TODO: Need to make sure this is right with networkx code
         if new_weight is not None:
-            self.graph[u][v]['weight'] = new_weight
+            self.graph[from_index][to_index]['weight'] = new_weight
 
         if new_edge_properties is not None:
             for prop in list(new_edge_properties.keys()):
-                self.graph[u][v][prop] = new_edge_properties[prop]
+                self.graph[from_index][to_index][prop] = new_edge_properties[prop]
 
     def break_edge(self, from_index, to_index):
         """
@@ -1342,7 +1329,6 @@ class MoleculeGraph(MSONable):
         #TODO: allow for alterations after (or before) creating new molecules
         for bond in bonds:
             self.break_edge(bond[0], bond[1])
-
 
         if nx.is_weakly_connected(self.graph):
             raise RuntimeError("Cannot split molecule; \
@@ -1395,8 +1381,6 @@ class MoleculeGraph(MSONable):
 
             return sub_mols
 
-
-
     def find_rings(self, including=None):
         """
         Find ring structures in the MoleculeGraph.
@@ -1424,7 +1408,6 @@ class MoleculeGraph(MSONable):
         #
         #     return included_cycles
         pass
-
 
     def get_connected_sites(self, n):
         """
@@ -1693,7 +1676,7 @@ class MoleculeGraph(MSONable):
         edges = list(g.edges(data=True))
 
         # sort edges for consistent ordering
-        edges.sort(key=itemgetter(0,1))
+        edges.sort(key=itemgetter(0, 1))
 
         if print_weights:
             for u, v, data in edges:
@@ -1734,13 +1717,13 @@ class MoleculeGraph(MSONable):
         :return:
         """
 
-        old_structure = self.molecule.copy()
+        old_molecule = self.molecule.copy()
 
         # sort Molecule
         self.molecule._sites = sorted(self.molecule._sites, key=key, reverse=reverse)
 
         # apply Molecule ordering to graph
-        mapping = {idx:self.molecule.index(site) for idx, site in enumerate(old_structure)}
+        mapping = {idx: self.molecule.index(site) for idx, site in enumerate(old_molecule)}
         self.graph = nx.relabel_nodes(self.graph, mapping, copy=True)
 
         # normalize directions of edges
