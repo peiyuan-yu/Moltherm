@@ -13,8 +13,6 @@ matplotlib.use("pdf")
 from pymatgen.command_line.critic2_caller import Critic2Output
 from pymatgen.analysis.graphs import *
 from pymatgen.analysis.local_env import MinimumDistanceNN, MinimumOKeeffeNN
-from pymatgen.core.structure import Structure, Molecule
-from pymatgen.core.lattice import Lattice
 
 try:
     import openbabel as ob
@@ -32,6 +30,8 @@ __date__ = "August 2017"
 class StructureGraphTest(unittest.TestCase):
 
     def setUp(self):
+
+        self.maxDiff = None
 
         # trivial example, simple square lattice for testing
         structure = Structure(Lattice.tetragonal(5.0, 50.0), ['H'], [[0, 0, 0]])
