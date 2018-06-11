@@ -11,6 +11,7 @@ import os.path
 import copy
 
 from pymatgen.core import Structure, Lattice, PeriodicSite, Molecule, Site
+from pymatgen.core.structure import FunctionalGroups
 from pymatgen.util.coord import lattice_points_in_supercell
 from pymatgen.vis.structure_vtk import EL_COLORS
 
@@ -1402,6 +1403,138 @@ class MoleculeGraph(MSONable):
 
             return sub_mols
 
+    def substitute_group(self, index, func_grp, bond_order=1, graph_dict=None, strategy=None, strategy_params=None):
+        """
+        Builds off of Molecule.substitute to replace an atom in self.molecule
+        with a functional group. This method also amends self.graph to
+        incorporate the new functional group.
+
+        TODO: Clean up this code. There's some repetition here between cases.
+
+        :param index: Index of atom to substitute.
+        :param func_grp: Substituent molecule. There are two options:
+
+                1. Providing an actual molecule as the input. The first atom
+                   must be a DummySpecie X, indicating the position of
+                   nearest neighbor. The second atom must be the next
+                   nearest atom. For example, for a methyl group
+                   substitution, func_grp should be X-CH3, where X is the
+                   first site and C is the second site. What the code will
+                   do is to remove the index site, and connect the nearest
+                   neighbor to the C atom in CH3. The X-C bond indicates the
+                   directionality to connect the atoms.
+                2. A string name. The molecule will be obtained from the
+                   relevant template in func_groups.json.
+                3. A MoleculeGraph object.
+        :param bond_order: A specified bond order to calculate the bond
+                length between the attached functional group and the nearest
+                neighbor site. Defaults to 1.
+        :param grp_graph: Dictionary representing the bonds of the functional
+                group (format: {(u, v): props}, where props is a dictionary of
+                properties, including weight. If None, then the algorithm
+                will attempt to automatically determine bonds using one of
+                a list of strategies defined in pymatgen.analysis.local_env.
+        :param strategy: Class from pymatgen.analysis.local_env. If None,
+                MinimumDistanceNN will be used.
+        :param strategy_params: dictionary of keyword arguments for strategy.
+                If None, default parameters will be used.
+        :return:
+        """
+
+        def map_indices(func_grp):
+            mapping = {}
+
+            # Get indices now occupied by functional group
+            grp_now = self.molecule[-(len(func_grp)):]
+
+            for i in range(len(func_grp)):
+                mapping[i] = grp_now[i]
+
+            return mapping
+
+        # Work is simplified if a graph is already in place
+        if isinstance(func_grp, MoleculeGraph):
+            self.molecule.substitute(index, func_grp.molecule,
+                                     bond_order=bond_order)
+
+            mapping = map_indices(func_grp.molecule)
+
+            for (u, v) in list(func_grp.graph.edges()):
+                edge_props = func_grp.graph.get_edge_data(u, v)[0]
+                weight = None
+                if "weight" in edge_props.keys():
+                    weight = edge_props["weight"]
+                    del edge_props["weight"]
+                self.add_edge(mapping[u], mapping[v],
+                              weight=weight, edge_properties=edge_props)
+
+        elif isinstance(func_grp, Molecule):
+            self.molecule.substitute(index, func_grp, bond_order=bond_order)
+
+            mapping = map_indices(func_grp)
+
+            if graph_dict is not None:
+                for (u, v) in graph_dict.keys():
+                    edge_props = graph_dict[(u, v)]
+                    if "weight" in edge_props.keys():
+                        weight = edge_props["weight"]
+                        del edge_props["weight"]
+                    self.add_edge(mapping[u], mapping[v],
+                                  weight=weight, edge_properties=edge_props)
+
+            else:
+                strat = MinimumDistanceNN(**strategy_params) \
+                    if strategy is None else strategy(**strategy_params)
+                graph = self.with_local_env_strategy(func_grp, strat)
+
+                for (u, v) in list(graph.edges()):
+                    edge_props = graph.get_edge_data(u, v)[0]
+                    weight = None
+                    if "weight" in edge_props.keys():
+                        weight = edge_props["weight"]
+                        del edge_props["weight"]
+                    self.add_edge(mapping[u], mapping[v],
+                                  weight=weight, edge_properties=edge_props)
+
+        elif isinstance(func_grp, str):
+            if func_grp not in FunctionalGroups:
+                raise RuntimeError("Can't find functional group in list. "
+                                   "Provide explicit coordinate instead")
+
+            func_grp = FunctionalGroups[func_grp]
+            self.molecule.substitute(index, func_grp, bond_order=bond_order)
+
+            mapping = map_indices(func_grp)
+
+            if graph_dict is not None:
+                for (u, v) in graph_dict.keys():
+                    edge_props = graph_dict[(u, v)]
+                    if "weight" in edge_props.keys():
+                        weight = edge_props["weight"]
+                        del edge_props["weight"]
+                    self.add_edge(mapping[u], mapping[v],
+                                  weight=weight, edge_properties=edge_props)
+
+            else:
+                strat = MinimumDistanceNN(**strategy_params) \
+                    if strategy is None else strategy(**strategy_params)
+                graph = self.with_local_env_strategy(func_grp, strat)
+
+                for (u, v) in list(graph.edges()):
+                    edge_props = graph.get_edge_data(u, v)[0]
+                    weight = None
+                    if "weight" in edge_props.keys():
+                        weight = edge_props["weight"]
+                        del edge_props["weight"]
+                    self.add_edge(mapping[u], mapping[v],
+                                  weight=weight, edge_properties=edge_props)
+
+        else:
+            raise ValueError("Functional groups must be MoleculeGraph, \
+            Molecule, or string types.")
+
+
+
     def find_rings(self, including=None):
         """
         Find ring structures in the MoleculeGraph.
@@ -1411,24 +1544,36 @@ class MoleculeGraph(MSONable):
         only return those rings including the specified
         sites. By default, this parameter is None, and
         all rings will be returned.
-        :return: list of lists of site indices. Each
-        list will be a single ring (cycle, in graph
-        theory terms) found in the Molecule.
+        :return: dict {index:cycle}. Each
+        entry will be a ring (cycle, in graph
+        theory terms) including the index found in the Molecule.
+        If there is no cycle including an index, the value will
+        be an empty list.
         """
 
-        #TODO: find a way to ensure that this catches all cycles
-        # all_cycles = nx.algorithms.cycles.simple_cycles(self.graph)
-        #
-        # if including is None:
-        #     return all_cycles
-        # else:
-        #     included_cycles = []
-        #     for cycle in all_cycles:
-        #         if any([(n in cycle) for n in including]):
-        #             included_cycles.append(cycle)
-        #
-        #     return included_cycles
-        pass
+        cycles = {}
+
+        if including is not None:
+            for i in including:
+                try:
+                    cycle = nx.find_cycle(self.graph,
+                                          source=i,
+                                          orientation="ignore")
+                    cycles[i] = [(u, v) for (u, v, k, d) in list(cycle)]
+                except nx.exception.NetworkXNoCycle:
+                    cycles[i] = []
+        else:
+            all_nodes = list(self.graph.nodes)
+            for i in range(len(all_nodes)):
+                try:
+                    cycle = nx.find_cycle(self.graph,
+                                          source=i,
+                                          orientation="ignore")
+                    cycles[i] = [(u, v) for (u, v, k, d) in list(cycle)]
+                except nx.exception.NetworkXNoCycle:
+                    cycles[i] = []
+
+        return cycles
 
     def get_connected_sites(self, n):
         """
