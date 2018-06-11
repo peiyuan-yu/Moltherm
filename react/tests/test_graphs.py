@@ -11,13 +11,10 @@ import matplotlib
 matplotlib.use("pdf")
 
 from pymatgen.command_line.critic2_caller import Critic2Output
-# from pymatgen.analysis.graphs import *
-# from pymatgen.analysis.local_env import MinimumDistanceNN, MinimumOKeeffeNN
+from pymatgen.analysis.graphs import *
+from pymatgen.analysis.local_env import MinimumDistanceNN, MinimumOKeeffeNN
 from pymatgen.core.structure import Structure, Molecule
 from pymatgen.core.lattice import Lattice
-
-from ..graphs import *
-from ..local_env import MinimumDistanceNN, MinimumOKeeffeNN
 
 try:
     import openbabel as ob
@@ -357,7 +354,7 @@ class MoleculeGraphTest(unittest.TestCase):
         self.butadiene.add_edge(1, 6, weight=1.0)
         self.butadiene.add_edge(2, 7, weight=1.0)
         self.butadiene.add_edge(3, 8, weight=1.0)
-        self.butadiene.add_edge(4, 9, weight=1.0)
+        self.butadiene.add_edge(3, 9, weight=1.0)
 
         ethylene = Molecule.from_file("ethylene.xyz")
         self.ethylene = MoleculeGraph.with_empty_graph(ethylene,
@@ -382,8 +379,8 @@ class MoleculeGraphTest(unittest.TestCase):
         self.assertEqual(self.cyclohexene.get_coordination_of_site(2), 3)
         self.assertEqual(self.cyclohexene.get_coordination_of_site(15), 1)
         self.assertEqual(len(self.cyclohexene.get_connected_sites(0)), 4)
-        self.assertTrue(isinstance(self.cyclohexene.get_connected_sites(0)[0].site, PeriodicSite))
-        self.assertEqual(str(self.cyclohexene.get_connected_sites(0)[0].site.specie), 'C')
+        self.assertTrue(isinstance(self.cyclohexene.get_connected_sites(0)[0].site, Site))
+        self.assertEqual(str(self.cyclohexene.get_connected_sites(0)[0].site.specie), 'H')
 
     def test_coordination(self):
         molecule = Molecule(['C', 'C'], [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
@@ -391,8 +388,7 @@ class MoleculeGraphTest(unittest.TestCase):
         mg = MoleculeGraph.with_empty_graph(molecule)
         self.assertEqual(mg.get_coordination_of_site(0), 0)
 
-        mg = MoleculeGraph.with_local_env_strategy(molecule, MinimumDistanceNN())
-        self.assertEqual(mg.get_coordination_of_site(0), 1)
+        self.assertEqual(self.cyclohexene.get_coordination_of_site(0), 4)
 
     def test_edge_editing(self):
         self.cyclohexene.alter_edge(0, 1, new_weight=0.0, new_edge_properties={"foo":"bar"})
@@ -430,49 +426,6 @@ class MoleculeGraphTest(unittest.TestCase):
         mg = MoleculeGraph.from_dict(d)
         d2 = mg.as_dict()
         self.assertDictEqual(d, d2)
-
-    def test_str(self):
-        mg_string = """Molecule Graph
-Molecule: 
-Molecule Summary
-Site: C (-0.5924, 2.4916, -1.1940)
-Site: C (-1.7268, 1.5387, -0.7267)
-Site: C (-1.2546, 0.2392, -0.2718)
-Site: C (0.0242, -0.0136, 0.0585)
-Site: C (1.0923, 0.9726, -0.0249)
-Site: C (0.6041, 2.4361, -0.2132)
-Site: H (-0.2306, 2.1019, -2.1455)
-Site: H (-0.9927, 3.5038, -1.1365)
-Site: H (-2.1802, 1.9899, 0.1558)
-Site: H (-2.3388, 1.3173, -1.6011)
-Site: H (-1.9170, -0.6204, -0.1695)
-Site: H (0.1977, -1.0343, 0.3992)
-Site: H (1.5831, 0.9240, 0.9471)
-Site: H (1.6415, 0.7024, -0.9269)
-Site: H (0.2253, 2.7647, 0.7546)
-Site: H (1.4205, 2.9774, -0.6913)
-Graph: bonds
-from    to  to_image    
-----  ----  ------------
-   0     1  (0, 0, 0)   
-   0     5  (0, 0, 0)   
-   0     6  (0, 0, 0)   
-   0     7  (0, 0, 0)   
-   1     2  (0, 0, 0)   
-   1     8  (0, 0, 0)   
-   1     9  (0, 0, 0)   
-   2     3  (0, 0, 0)   
-   2    10  (0, 0, 0)   
-   3     4  (0, 0, 0)   
-   3    11  (0, 0, 0)   
-   4     5  (0, 0, 0)   
-   4    12  (0, 0, 0)   
-   4    13  (0, 0, 0)   
-   5    14  (0, 0, 0)   
-   5    15  (0, 0, 0)  
-"""
-
-        self.assertEqual(mg_string, str(self.cyclohexene))
 
 if __name__ == "__main__":
     unittest.main()

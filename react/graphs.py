@@ -10,7 +10,7 @@ import numpy as np
 import os.path
 import copy
 
-from pymatgen.core import Structure, Lattice, PeriodicSite, Molecule
+from pymatgen.core import Structure, Lattice, PeriodicSite, Molecule, Site
 from pymatgen.util.coord import lattice_points_in_supercell
 from pymatgen.vis.structure_vtk import EL_COLORS
 
@@ -1348,7 +1348,7 @@ class MoleculeGraph(MSONable):
                         del alterations[(u, v)]["weight"]
                         edge_properties = alterations[(u, v)] \
                             if len(alterations[(u, v)]) != 0 else None
-                        original.alter_edge(u, v, new_weight=new_weight,
+                        original.alter_edge(u, v, new_weight=weight,
                                         new_edge_properties=edge_properties)
                     else:
                         original.alter_edge(u, v,
@@ -1367,13 +1367,14 @@ class MoleculeGraph(MSONable):
                 # mapping, because they all form lists sorted by rising index
                 mapping = {}
                 for i in range(len(nodes)):
-                    mapping[nodes[i]] = i
+                    mapping[list(nodes)[i]] = i
 
-                species = [pre_mol.species[n] for n in
-                           range(len(pre_mol.species)) if n in nodes]
+                # there must be a more elegant way to do this
+                sites = [pre_mol._sites[n] for n in
+                           range(len(pre_mol._sites)) if n in nodes]
 
-                coords = [pre_mol.coords[n] for n in range(len(pre_mol.coords))
-                          if n in nodes]
+                species = [site.specie for site in sites]
+                coords = [site.coords for site in sites]
 
                 # just give charge to whatever subgraph has node with index 0
                 # TODO: actually figure out how to distribute charge
@@ -1778,15 +1779,14 @@ class MoleculeGraph(MSONable):
         # sort for consistent node indices
         # PeriodicSite should have a proper __hash__() value,
         # using its frac_coords as a convenient key
-        mapping = {tuple(site.frac_coords):self.molecule.index(site) for site in other.structure}
+        mapping = {tuple(site.coords):self.molecule.index(site) for site in other.molecule}
         other_sorted = other.__copy__()
-        other_sorted.sort(key=lambda site: mapping[tuple(site.frac_coords)])
+        other_sorted.sort(key=lambda site: mapping[tuple(site.coords)])
 
-        edges = {(u, v, d.get('to_jimage', (0, 0, 0)))
+        edges = {(u, v)
                  for u, v, d in self.graph.edges(keys=False, data=True)}
 
-        edges_other = {(u, v, d.get('to_jimage', (0, 0, 0)))
-                       for u, v, d in other_sorted.graph.edges(keys=False, data=True)}
+        edges_other = {(u, v) for u, v, d in other_sorted.graph.edges(keys=False, data=True)}
 
         return (edges == edges_other) and \
                (self.molecule == other_sorted.molecule)
