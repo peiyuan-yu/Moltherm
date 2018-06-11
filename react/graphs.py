@@ -8,6 +8,7 @@ import warnings
 import subprocess
 import numpy as np
 import os.path
+import copy
 
 from pymatgen.core import Structure, Lattice, PeriodicSite, Molecule
 from pymatgen.util.coord import lattice_points_in_supercell
@@ -1301,7 +1302,7 @@ class MoleculeGraph(MSONable):
 
         self.graph.remove_edge(from_index, to_index)
 
-    def split(self, bonds, alterations=None):
+    def split_molecule_subgraphs(self, bonds, alterations=None):
         """
         Split MoleculeGraph into two MoleculeGraphs by
         breaking a set of bonds. This function uses
@@ -1317,6 +1318,9 @@ class MoleculeGraph(MSONable):
         of the total molecule to a single submolecule. A
         later effort will be to actually accurately assign
         charge.
+        NOTE: This function does not modify the original
+        MoleculeGraph. It creates a copy, modifies that, and
+        returns two or more new MoleculeGraph objects.
 
         :param bonds: list of tuples (from_index, to_index)
         representing bonds to be broken to split the MoleculeGraph.
@@ -1326,14 +1330,17 @@ class MoleculeGraph(MSONable):
         :return: list of MoleculeGraphs
         """
 
-        for bond in bonds:
-            self.break_edge(bond[0], bond[1])
+        original = copy.deepcopy(self)
 
-        if nx.is_weakly_connected(self.graph):
+        for bond in bonds:
+            original.break_edge(bond[0], bond[1])
+
+        if nx.is_weakly_connected(original.graph):
             raise RuntimeError("Cannot split molecule; \
                                 MoleculeGraph is still connected.")
         else:
 
+            # alter any bonds before partition, to avoid remapping
             if alterations is not None:
                 for (u, v) in alterations.keys():
                     if "weight" in alterations[(u, v)]:
@@ -1341,18 +1348,18 @@ class MoleculeGraph(MSONable):
                         del alterations[(u, v)]["weight"]
                         edge_properties = alterations[(u, v)] \
                             if len(alterations[(u, v)]) != 0 else None
-                        self.alter_edge(u, v, new_weight=new_weight,
+                        original.alter_edge(u, v, new_weight=new_weight,
                                         new_edge_properties=edge_properties)
                     else:
-                        self.alter_edge(u, v,
+                        original.alter_edge(u, v,
                                         new_edge_properties=alterations[(u, v)])
 
             sub_mols = []
 
-            for subg in nx.weakly_connected_component_subgraphs(self.graph):
+            for subg in nx.weakly_connected_component_subgraphs(original.graph):
 
                 # start by extracting molecule information
-                pre_mol = self.molecule
+                pre_mol = original.molecule
                 nodes = subg.nodes
 
                 # create mapping to translate edges from old graph to new
