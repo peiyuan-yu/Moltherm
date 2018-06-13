@@ -1,8 +1,12 @@
 import os
+
 import numpy as np
 import pandas as pd
-from pymatgen.core.structure import Molecule
+
+from pymatgen.core.structure import Molecule, FunctionalGroups
 from pymatgen.analysis.molecule_matcher import MoleculeMatcher
+from pymatgen.analysis.graphs import MoleculeGraph
+from pymatgen.analysis.local_env import *
 
 
 # TODO: add bonding information to pymatgen molecule object? -qw
@@ -80,4 +84,3 @@ def split_chain_mol(molecule, break_bond_sites):
 
 
 # class ReactantJoin:
-
