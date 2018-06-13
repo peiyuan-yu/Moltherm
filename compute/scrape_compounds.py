@@ -1,11 +1,13 @@
 import os
 import time
 import re
+import urllib.request
+
 
 # Unfortunately, not super useful, because of timeouts
 import pubchempy as pcp
 
-import urllib3
+import ftplib
 from bs4 import BeautifulSoup
 
 import pybel
@@ -20,10 +22,6 @@ cids = {"products": [8079],
         "dienes": [7845],
         "dienophiles": [6325]
         }
-
-diene_dir = "/Users/espottesmith/data/dienes/"
-dienophile_dir = "/Users/espottesmith/data/dienophiles/"
-product_dir = "/Users/espottesmith/data/products/"
 
 
 class PUGScraper:
@@ -116,13 +114,28 @@ class PUGScraper:
               </PCT-QueryUids_ids>
             </PCT-QueryUids>
           </PCT-Download_uids>
-          <PCT-Download_format value="sdf"/>
+          <PCT-Download_format value="%(format)s"/>
           <PCT-Download_compression value="gzip"/>
         </PCT-Download>
       </PCT-InputData_download>
     </PCT-InputData>
   </PCT-Data_input>
 </PCT-Data>"""
+
+            self.template_check = """
+<PCT-Data>
+  <PCT-Data_input>
+    <PCT-InputData>
+      <PCT-InputData_request>
+        <PCT-Request>
+          <PCT-Request_reqid>%(request_id)s</PCT-Request_reqid>
+          <PCT-Request_type value="status"/>
+        </PCT-Request>
+      </PCT-InputData_request>
+    </PCT-InputData>
+  </PCT-Data_input>
+</PCT-Data>            
+"""
 
     def create_dirs(self):
         """
@@ -142,25 +155,198 @@ class PUGScraper:
                              "strings have been input correctly, and that you"
                              "have permission to use the given directories.")
 
-    def download_files(self, cids):
+    def download_files(self, cids, pngs=True, download_parents=False):
         """
+        Generalized function for downloading files (both SDF and PNG, for quick
+        reference of structure and for full coordinate and bonding information),
+        which calls either download_files_rest or download_files_pug, depending
+        on if REST is being used.
 
-        :param cids: A dict {"category": [ids]}, where each category is a
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
         molecular type of interest.
+        :param pngs: If True, PNG files will be downloaded alongside SDF files.
+        :param download_parents: If True, then files will be downloaded for
+        parent molecules, in addition to the molecules returned from their
+        queries.
         :return:
         """
 
-        pass
+        if self.use_rest:
+            self.download_files_rest(cids, pngs=pngs,
+                                     download_parents=download_parents)
+        else:
+            self.download_files_pug(cids, pngs=pngs,
+                                    download_parents=download_parents)
+
+    def download_files_rest(self, cids, pngs=True, download_parents=False):
+        """
+        Downloads SDF files (and, potentially, PNG files) from PUG-REST.
+
+        The PUB-REST API only allows a maximum of 5 requests per second and 400
+        total requests per minute. In order to ensure that this function never
+        exceeds this limit, after every five queries, the program will halt for
+        one second.
+        TODO: Find a more elegant way to handle this
+
+        NOTE: Each compound will receive a file cid.sdf if it is a "parent"
+        molecule (it was used to start a query), where id is the CID of the
+        molecule, or id_parent if it was a hit from a query, where id is the CID
+        of the molecule, and parent is the CID from the parent molecule. This
+        naming is a way to keep track of where each file came from.
+        TODO: Is this a good naming convention? How should I go about naming?
+
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
+        molecular type of interest.
+        :param pngs: If True, PNG files will be downloaded alongside SDF files.
+        :return:
+        """
+
+        queries_run = 0
+
+        def check_queries(queries):
+            if queries == 5:
+                time.sleep(1)
+                return 0
+            else:
+                return queries + 1
+
+        formats = ["SDF"]
+        if pngs:
+            formats.append("PNG")
+
+        for cat in cids.keys():
+            if self.sub_dirs is not None:
+                cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
+            else:
+                cat_path = os.path.join(self.base_dir)
+
+            for parent in cids[cat].keys():
+
+                if download_parents:
+                    for format in formats:
+                        filename = str(parent) + "." + format.lower()
+                        filepath = os.path.join(cat_path, filename)
+
+                        queries_run = check_queries(queries_run)
+                        pcp.download(format, filepath, parent)
+
+                for cid in cids[cat][parent]:
+                    for format in formats:
+                        filename = str(cid) + "_" + str(parent) + "." + format.lower()
+                        filepath = os.path.join(cat_path, filename)
+
+                        queries_run = check_queries(queries_run)
+                        pcp.download(format, filepath, cid)
+
+    def download_files_pug(self, cids, pngs=True, download_parents=False):
+        """
+        Downloads SDF files (and, potentially, PNG files) from PUG.
+
+        NOTE: PUG will zip the results of each job together. This means that we
+        cannot add our own naming scheme to each file, as in
+        download_files_rest. However, we will still split the job into
+        categories. This may be somewhat inefficient, but helps with data
+        processing.
+
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
+        molecular type of interest.
+        :param pngs: If True, PNG files will be downloaded alongside SDF files.
+        :return:
+        """
+
+        formats = ["sdf"]
+        if pngs:
+            formats.append("png")
+
+        uid_template = "<PCT-ID-List_uids_E>%(cid)s</PCT-ID-List_uids_E>"
+
+        for cat in cids.keys():
+            download_ids = []
+
+            if self.sub_dirs is not None:
+                cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
+            else:
+                cat_path = os.path.join(self.base_dir)
+
+            for parent in cids[cat].keys():
+
+                if download_parents:
+                    download_ids.append(parent)
+
+                for cid in cids[cat][parent]:
+                    download_ids.append(cid)
+
+
+            uid_templates = [uid_template % {"cid": str(cid)}
+                             for cid in download_ids]
+            uid_strings = "\n".join(uid_templates)
+
+            for format in formats:
+                xml = self.template_download % {"format":format,
+                                                "uid_strings": uid_strings}
+                output = urllib.request.urlopen(self.base_url, data=xml)
+                filename = str(cat) + "_." + format + ".gz"
+                filepath = os.path.join(cat_path, filename)
+                self.check_and_process(output, filepath)
+
+    def check_and_process(self, output, path):
+        """
+        Parses output XML. If the output returns a file, downloads that file
+        at the specified path; if the output returns a request id, continue to
+        check at that id until the request is complete.
+
+        :param output: An XML file generated by download_files_pug
+        :param path: A path string for downloads, generated by
+        download_files_pug
+        :return:
+        """
+
+        wait_time = 2
+        num_checks = 450
+
+        for i in range(num_checks):
+            parsed = BeautifulSoup(output)
+
+            finished = parsed.find("PCT-Download-URL_url")
+            if finished is not None:
+                ftp_url = finished.text
+                opener = urllib.request.URLopener()
+                opener.retrieve(ftp_url, path)
+                break
+
+            else:
+                time.sleep(wait_time)
+
+                request_id = parsed.find("PCT-Request_reqid").text
+                request = self.template_check % {"request_id": request_id}
+                output = urllib.request.urlopen(self.base_url, data=request)
+
 
     def store_cids(self, cids):
         """
+        Store cids in a text (.txt) file.
 
-        :param cids: A dict {"category": [ids]}, where each category is a
+        By default, this stores not only the category and the cids, but also the
+        CID that caused each other CID to be matched.
+
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
         molecular type of interest.
         :return:
         """
 
-        pass
+        for cat in cids.keys():
+            if self.sub_dirs is not None:
+                filepath = os.path.join(self.base_dir, self.sub_dirs[cat],
+                                        "cids.txt")
+            else:
+                filepath = os.path.join(self.base_dir, "cids.txt")
+
+            with open(filepath, 'a') as cidfile:
+                cidfile.write("Category: " + cat + "\n")
+                for parent in cids[cat].keys():
+                    cidfile.write("\t" + "Parent: " + str(parent) + "\n")
+                    for cid in cids[cat][parent]:
+                        cidfile.write("\t\t" + str(cid) + "\n")
 
     def scrape_similar(self, cids, threshold=90, max_records=10000):
         """
@@ -202,9 +388,10 @@ class PUGScraper:
                      stereo="ignore",
                      max_records=10000):
         """
-        Generalized function that either calls scrape_similar_rest
-        scrape_similar_pug, depending on if REST is being used. Kwargs are
-        those used by PUG and PUG-REST for similarity queries.
+        Generalized function for superstructure searches (searching for
+        molecules that contain a given molecule within them) that either calls
+        scrape_similar_rest or scrape_similar_pug, depending on if REST is being
+        used. Kwargs are those used by PUG and PUG-REST for similarity queries.
 
         :param cids: A dict {"category": [ids]}, where each category is a
         molecular type of interest.
