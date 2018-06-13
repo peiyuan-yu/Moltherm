@@ -14,6 +14,7 @@ __status__ = "Beta"
 __date__ = "June 2018"
 
 
+# Todo: consider whether to move confm_search to BabelMolAdaptor. -qw
 class OBMolecule:
     __hash__ = None
 
@@ -47,10 +48,10 @@ class OBMolecule:
                             "MoleculeGraph".format(type(mol)))
         return cls(obmol)
 
-    def confm_search_ob(self, forcefield="mmff94", freeze_atoms=None,
-                        rmsd_cutoff=0.5, energy_cutoff=50.0,
-                        conf_cutoff=100000, verbose=False,
-                        include_original=False):
+    def confm_search(self, forcefield="mmff94", freeze_atoms=None,
+                     rmsd_cutoff=0.5, energy_cutoff=50.0,
+                     conf_cutoff=100000, verbose=False,
+                     include_original=False):
         """
         Perform conformer search.
         Args:
@@ -71,7 +72,7 @@ class OBMolecule:
             print("Could not find forcefield {} in openbabel, the forcefield "
                   "will be reset as default 'mmff94'".format(forcefield))
             ff = ob.OBForceField_FindType("mmff94")
-        # Make sure setup works OK
+        # Make sure setup works
         assert (ff.Setup(obmol))
 
         if freeze_atoms:
