@@ -7,9 +7,9 @@ import pubchempy as pcp
 
 from bs4 import BeautifulSoup
 
-test_cids = {"products": [8079],
-        "dienes": [7845],
-        "dienophiles": [6325]
+test_cids = {"products": [8079, 638051, 522835],
+        "dienes": [7845, 7612, 8029, 11378474],
+        "dienophiles": [6325, 8882, 7923]
         }
 
 
@@ -262,6 +262,8 @@ class PUGScraper:
         :return:
         """
 
+        order = 0
+
         formats = ["SDF"]
         if pngs:
             formats.append("PNG")
@@ -284,8 +286,10 @@ class PUGScraper:
 
             for format in formats:
                 for cid in download_ids:
-                    filename = str(cid) + "." + format.lower()
-                    pcp.download(format, filename, cid)
+                    filename = str(cid) + "_" + str(order) + "." + format.lower()
+                    filepath = os.path.join(cat_path, filename)
+                    pcp.download(format, filepath, cid, overwrite=True)
+                    order += 1
 
     def download_files_pug(self, cids, pngs=True, download_parents=False):
         """
