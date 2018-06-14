@@ -1,6 +1,6 @@
 import os
 import time
-import re
+from io import StringIO
 import urllib.request
 
 
@@ -78,7 +78,7 @@ class PUGScraper:
                   </PCT-QueryCompoundCS_query>
                   <PCT-QueryCompoundCS_type>
                     <PCT-QueryCompoundCS_type_%(query_type)s>
-                      %(type_specific_string)s
+                      %(type_specific)s
                     </PCT-QueryCompoundCS_type_%(query_type)s>
                   </PCT-QueryCompoundCS_type>
                   <PCT-QueryCompoundCS_results>300</PCT-QueryCompoundCS_results>
@@ -92,7 +92,7 @@ class PUGScraper:
   </PCT-Data_input>
 </PCT-Data> 
 """
-            
+
         self.template_download = """<?xml version="1.0"?>
 <!DOCTYPE PCT-Data PUBLIC "-//NCBI//NCBI PCTools/EN" "http://pubchem.ncbi.nlm.nih.gov/pug/pug.dtd">
 <PCT-Data>
@@ -161,7 +161,7 @@ class PUGScraper:
         else:
             return queries + 1
 
-    def check_and_process(self, output, path):
+    def check_and_process(self, output, request_type, path=None):
         """
         Parses output XML. If the output returns a file, downloads that file
         at the specified path; if the output returns a request id, continue to
@@ -222,7 +222,10 @@ class PUGScraper:
             time.sleep(wait_time)
 
             request = self.template_check % {"request_id": request_id}
-            page = urllib.request.urlopen(self.base_url, data=request)
+            request_file = StringIO()
+            request_file.write(request)
+
+            page = urllib.request.urlopen(self.base_url, data=request_file)
             output = page.read()
             page.close()
 
@@ -275,7 +278,9 @@ class PUGScraper:
             for format in formats:
                 xml = self.template_download % {"format":format,
                                                 "uid_strings": uid_strings}
-                output = urllib.request.urlopen(self.base_url, data=xml)
+                xml_file = StringIO()
+                xml_file.write(xml)
+                output = urllib.request.urlopen(self.base_url, data=xml_file)
                 filename = str(cat) + "_." + format + ".gz"
                 filepath = os.path.join(cat_path, filename)
                 self.check_and_process(output, "download", path=filepath)
@@ -379,7 +384,9 @@ class PUGScraper:
 
         cid_results = {}
 
-        url = """https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/similarity/cid/%(cid)s/XML?Threshold=%(threshold)s&MaxRecords=%(max_records)s"""
+        threshold_tag = """"<PCT-CSSimilarity_threshold>
+        %(threshold)s
+        </PCT-CSSimilarity_threshold>""" % {"threshold": str(threshold)}
 
         for cat in cids.keys():
             cid_results[cat] = {}
@@ -387,16 +394,17 @@ class PUGScraper:
                 cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
 
             for cid in cids[cat]:
-                params["cid"] = str(cid)
-
-                url_formatted = url % params
-
-                page = urllib.request.urlopen(url_formatted)
+                xml = self.template_query % {"id": cid,
+                                             "query_type": "similarity",
+                                             "type_specific": threshold_tag,
+                                             "max_records": str(max_records)}
+                xml_file = StringIO()
+                xml_file.write(xml)
+                page = urllib.request.urlopen(self.base_url, data=xml_file)
                 output = page.read()
                 page.close()
 
-                cid_results[cat][cid] = self.check_and_process(output,
-                                                               "query")
+                cid_results[cid] = self.check_and_process(output, "query")
 
         return cid_results
 
@@ -434,24 +442,88 @@ class PUGScraper:
         category is stored along with its matches (which take the form of CIDs.
         """
 
+        if self.use_rest:
+            self.scrape_super_rest(cids, match_isotopes=match_isotopes,
+                                   match_charges=match_charges,
+                                   match_tautomers=match_tautomers,
+                                   rings_not_embedded=rings_not_embedded,
+                                   single_double_bonds_match=single_double_bonds_match,
+                                   chains_match_rings=chains_match_rings,
+                                   strip_hydrogen=strip_hydrogen,
+                                   stereo=stereo)
+        else:
+            self.scrape_super_pug(cids)
+
+    def scrape_super_rest(self, cids, match_isotopes=False, match_charges=False,
+                          match_tautomers=False,
+                          rings_not_embedded=False,
+                          single_double_bonds_match=True,
+                          chains_match_rings=True,
+                          strip_hydrogen=False,
+                          stereo="ignore",
+                          max_records=10000):
+        """
+        Generalized function for superstructure searches (searching for
+        molecules that contain a given molecule within them).
+        Kwargs are those used by PUG and PUG-REST for similarity queries.
+
+        Parameter descriptions are largely taken from
+        http://pubchemdocs.ncbi.nlm.nih.gov/pug-rest
+
+        :param cids: A dict {"category": [ids]}, where each category is a
+        molecular type of interest.
+        :param match_isotopes: Atoms must be of the same specified isotope.
+        :param match_charges: Atoms must match the specified charge.
+        :param match_tautomers: Allows matching with tautomers.
+        :param rings_not_embedded: Rings may not be embedded in a larger system.
+        :param single_double_bonds_match: In an aromatic compound, either single
+        or double bonds may match the aromatic bonds.
+        :param chains_match_rings: Chain bonds in the query may match rings in hits.
+        :param strip_hydrogen: Remove explicit hydrogens before searching.
+        :param stereo: How to handle stereoisomers: either "ignore", "exact",
+        "relative", or "nonconflicting".
+        :param max_records: Maximum number of hits.
+        :return: A dict {"category": {id:[matches]}}, where each id in each
+        category is stored along with its matches (which take the form of CIDs.
+        """
+
+        output = {}
+        queries_run = 0
+
+        for cat in cids.keys():
+            output[cat] = {}
+            for cid in cids[cat]:
+                queries_run = self.check_queries(queries_run)
+                result = pcp.get_cids(cid, match_isotopes=match_isotopes,
+                                      match_charges=match_charges,
+                                      match_tautomers=match_tautomers,
+                                      rings_not_embedded=rings_not_embedded,
+                                      single_double_bonds_match=single_double_bonds_match,
+                                      chains_match_rings=chains_match_rings,
+                                      strip_hydrogen=strip_hydrogen,
+                                      stereo=stereo,
+                                      searchtype="superstructure")
+                output[cat][cid] = result
+
+        return output
+
+    def scrape_super_pug(self, cids):
+        """
+        Generalized function for superstructure searches (searching for
+        molecules that contain a given molecule within them).
+
+        NOTE: I cannot find documentation on this kind of search online. As such,
+        I'm only even attempting to create the most basic possible XML file for
+        this type of search.
+        TODO: Figure out what the schema is actually supposed to look like.
+
+        :param cids: A dict {"category": [ids]}, where each category is a
+        molecular type of interest.
+        :return: A dict {"category": {id:[matches]}}, where each id in each
+        category is stored along with its matches (which take the form of CIDs.
+        """
+
         cid_results = {}
-
-        params = {"match_isotopes": str(match_isotopes).lower(),
-                  "match_charges": str(match_charges).lower(),
-                  "match_tautomers": str(match_tautomers).lower(),
-                  "rings_not_embedded": str(rings_not_embedded).lower(),
-                  "single_double_bonds_match": str(single_double_bonds_match).lower(),
-                  "chains_match_rings": str(chains_match_rings).lower(),
-                  "strip_hydrogen": str(strip_hydrogen).lower(),
-                  "stereo": stereo}
-
-        url = """https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/superstructure
-/cid/%(cid)s/XML?MatchTautomers=%(match_tautomers)s&MatchCharges=%(match_charges)s
-&MatchIsotopes=%(match_isotopes)s&RingsNotEmbedded=%(rings_not_embedded)s
-&SingleDoubleBondsMatch=%(single_double_bonds_match)s
-&ChainsNotRings=%(chains_not_rings)s&StripHydrogen=%(strip_hydrogen)s
-&Stereo=%(stereo)s&MaxRecords=%(max_records)s"""
-        url = url.replace("\n", "")
 
         for cat in cids.keys():
             cid_results[cat] = {}
@@ -459,15 +531,16 @@ class PUGScraper:
                 cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
 
             for cid in cids[cat]:
-                params["cid"] = str(cid)
-
-                url_formatted = url % params
-
-                page = urllib.request.urlopen(url_formatted)
+                xml = self.template_query % {"id": cid,
+                                             "query_type": "superstructure",
+                                             "type_specific": "",
+                                             "max_records": str(max_records)}
+                xml_file = StringIO()
+                xml_file.write(xml)
+                page = urllib.request.urlopen(self.base_url, data=xml_file)
                 output = page.read()
                 page.close()
 
-                cid_results[cat][cid] = self.check_and_process(output,
-                                                               "query")
+                cid_results[cid] = self.check_and_process(output, "query")
 
         return cid_results
