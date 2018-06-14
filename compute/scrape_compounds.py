@@ -282,7 +282,7 @@ class PUGScraper:
                     download_ids.append(parent)
 
                 for cid in cids[cat][parent]:
-                    download_ids.append(parent)
+                    download_ids.append(cid)
 
             for format in formats:
                 for cid in download_ids:
