@@ -3,17 +3,9 @@ import time
 from io import StringIO
 import urllib.request
 
-
-# Unfortunately, not super useful, because of timeouts
 import pubchempy as pcp
 
 from bs4 import BeautifulSoup
-
-# Notes:
-# record_type should be 3d, if possible (2d by default)
-# Could search by superstructure (default options should be good, except maybe ChainsMatchRings - defaults true)
-# Get SMILES string of cyclohexene, use that as superstructure
-# Could search by similarity (play around with Threshold - default 90)
 
 test_cids = {"products": [8079],
         "dienes": [7845],
@@ -90,7 +82,7 @@ class PUGScraper:
       </PCT-InputData_query>
     </PCT-InputData>
   </PCT-Data_input>
-</PCT-Data> 
+</PCT-Data>
 """
 
         self.template_download = """<?xml version="1.0"?>
@@ -132,7 +124,7 @@ class PUGScraper:
       </PCT-InputData_request>
     </PCT-InputData>
   </PCT-Data_input>
-</PCT-Data>            
+</PCT-Data>
 """
 
     def create_dirs(self):
@@ -229,7 +221,6 @@ class PUGScraper:
             output = page.read()
             page.close()
 
-
     def download_files(self, cids, pngs=True, download_parents=False):
         """
         Generalized function for downloading files (both SDF and PNG, for quick
@@ -247,6 +238,70 @@ class PUGScraper:
         """
 
         self.create_dirs()
+
+        if self.use_rest:
+            self.download_files_rest(cids, pngs=pngs,
+                                     download_parents=download_parents)
+        else:
+            self.download_files_pug(cids, pngs=pngs,
+                                    download_parents=download_parents)
+
+    def download_files_rest(self, cids, pngs=True, download_parents=False):
+        """
+        Generalized function for downloading files (both SDF and PNG, for quick
+        reference of structure and for full coordinate and bonding information),
+        which calls either download_files_rest or download_files_pug, depending
+        on if REST is being used.
+
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
+        molecular type of interest.
+        :param pngs: If True, PNG files will be downloaded alongside SDF files.
+        :param download_parents: If True, then files will be downloaded for
+        parent molecules, in addition to the molecules returned from their
+        queries.
+        :return:
+        """
+
+        formats = ["SDF"]
+        if pngs:
+            formats.append("PNG")
+
+        for cat in cids.keys():
+            download_ids = []
+
+            if self.sub_dirs is not None:
+                cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
+            else:
+                cat_path = os.path.join(self.base_dir)
+
+            for parent in cids[cat].keys():
+
+                if download_parents:
+                    download_ids.append(parent)
+
+                for cid in cids[cat][parent]:
+                    download_ids.append(parent)
+
+            for format in formats:
+                for cid in download_ids:
+                    filename = str(cid) + "." + format.lower()
+                    pcp.download(format, filename, cid)
+
+    def download_files_pug(self, cids, pngs=True, download_parents=False):
+        """
+        Generalized function for downloading files (both SDF and PNG, for quick
+        reference of structure and for full coordinate and bonding information),
+        which calls either download_files_rest or download_files_pug, depending
+        on if REST is being used.
+
+        :param cids: A dict {"category": {id:[ids]}}, where each category is a
+        molecular type of interest.
+        :param pngs: If True, PNG files will be downloaded alongside SDF files.
+        :param download_parents: If True, then files will be downloaded for
+        parent molecules, in addition to the molecules returned from their
+        queries.
+        :return:
+        """
 
         formats = ["sdf"]
         if pngs:
@@ -333,10 +388,10 @@ class PUGScraper:
 
 
         if self.use_rest:
-            self.scrape_similar_rest(cids, threshold=threshold,
+            return self.scrape_similar_rest(cids, threshold=threshold,
                                      max_records=max_records)
         else:
-            self.scrape_similar_pug(cids, threshold=threshold,
+            return self.scrape_similar_pug(cids, threshold=threshold,
                                     max_records=max_records)
 
     def scrape_similar_rest(self, cids, threshold=90, max_records=10000):
@@ -357,9 +412,11 @@ class PUGScraper:
             output[cat] = {}
             for cid in cids[cat]:
                 queries_run = self.check_queries(queries_run)
-                result = pcp.get_cids(cid, searchtype="similar",
-                                      threshold=threshold,
-                                      max_records=max_records, record_type="3d")
+                result = pcp.get_compounds(cid, namespace="cid",
+                                           domain="compound",
+                                           searchtype="similarity",
+                                           threshold=threshold,
+                                           max_records=max_records)
                 output[cat][cid] = result
 
         return output
@@ -443,7 +500,7 @@ class PUGScraper:
         """
 
         if self.use_rest:
-            self.scrape_super_rest(cids, match_isotopes=match_isotopes,
+            return self.scrape_super_rest(cids, match_isotopes=match_isotopes,
                                    match_charges=match_charges,
                                    match_tautomers=match_tautomers,
                                    rings_not_embedded=rings_not_embedded,
@@ -452,7 +509,7 @@ class PUGScraper:
                                    strip_hydrogen=strip_hydrogen,
                                    stereo=stereo)
         else:
-            self.scrape_super_pug(cids)
+            return self.scrape_super_pug(cids)
 
     def scrape_super_rest(self, cids, match_isotopes=False, match_charges=False,
                           match_tautomers=False,
@@ -494,7 +551,10 @@ class PUGScraper:
             output[cat] = {}
             for cid in cids[cat]:
                 queries_run = self.check_queries(queries_run)
-                result = pcp.get_cids(cid, match_isotopes=match_isotopes,
+                result = pcp.get_cids(cid, namespace="cid",
+                                      domain="compound",
+                                      searchtype="superstructure",
+                                      match_isotopes=match_isotopes,
                                       match_charges=match_charges,
                                       match_tautomers=match_tautomers,
                                       rings_not_embedded=rings_not_embedded,
@@ -502,7 +562,7 @@ class PUGScraper:
                                       chains_match_rings=chains_match_rings,
                                       strip_hydrogen=strip_hydrogen,
                                       stereo=stereo,
-                                      searchtype="superstructure")
+                                      max_records=max_records)
                 output[cat][cid] = result
 
         return output

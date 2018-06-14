@@ -1,2 +1,3 @@
 pymatgen
 openbabel
+bs4
