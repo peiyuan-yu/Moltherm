@@ -83,6 +83,11 @@ class OBMolecule:
                     constraints.AddAtomConstraint(atom_id)
             ff.SetConstraints(constraints)
 
+        # To get 3D coordinates from 2D files
+        # TODO: If we integrate this into BabelMolAdapter, we can use localopt
+        # to optimize 3D structure
+        ff.WeightedRotorSearch(500, 25)
+
         # Run Confab conformer generation
         ff.DiverseConfGen(rmsd_cutoff, conf_cutoff, energy_cutoff,
                           verbose)
