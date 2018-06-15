@@ -1,5 +1,4 @@
 import re
-import copy
 import openbabel as ob
 import pybel as pb
 from pymatgen.io.babel import BabelMolAdaptor

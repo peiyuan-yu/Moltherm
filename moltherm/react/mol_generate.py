@@ -5,7 +5,6 @@ import pandas as pd
 
 from pymatgen.core.structure import Molecule, FunctionalGroups
 from pymatgen.analysis.molecule_matcher import MoleculeMatcher
-from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import *
 
 
