@@ -13,6 +13,7 @@ test_cids = {"products": [8079, 638051, 522835],
         "dienophiles": [6325, 8882, 7923]
         }
 
+
 class PUGScraper:
     """
     Uses the PubChem Power User Gateway (PUG) as well as the PUG REST API to
@@ -728,10 +729,10 @@ class ReaxysScraper:
             # Create reactant files, named with their Reaxys IDs
             reactants = reaction["meta"]["rct_meta"]
             for i, e in enumerate(reactants):
-                with open(os.path.join(path, "rct_" + str(i + 1) + "_" + str(e[0]) + ".ctab"), 'w') as file:
+                with open(os.path.join(path, "rct_" + str(i + 1) + "_" + str(e[0]) + ".mol"), 'w') as file:
                     file.write(reaction["rct_" + str(i + 1)])
 
             # Create product file, named with its Reaxys ID
             product_id = reaction["meta"]["pro_meta"][0]
-            with open(os.path.join(path, "pro_" + str(product_id)) + ".ctab", 'w') as file:
+            with open(os.path.join(path, "pro_" + str(product_id)) + ".mol", 'w') as file:
                 file.write(reaction["pro"])
