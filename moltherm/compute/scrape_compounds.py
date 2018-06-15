@@ -723,16 +723,18 @@ class ReaxysScraper:
                     file.write("Reactant %(num)s: %(name)s, ID %(id)s\n" % rct_info)
 
                 pro_info = {"name": reaction["meta"]["pro_meta"][1],
-                            "id": reaction["meta"]["pro_meta"][0]}
+                            "id": str(reaction["meta"]["pro_meta"][0])}
                 file.write("Product: %(name)s, ID %(id)s\n" % pro_info)
 
             # Create reactant files, named with their Reaxys IDs
             reactants = reaction["meta"]["rct_meta"]
             for i, e in enumerate(reactants):
-                with open(os.path.join(path, "rct_" + str(i + 1) + "_" + str(e[0]) + ".mol"), 'w') as file:
+                filename = "rct_" + str(i + 1) + "_" + str(e[0]) + ".mol"
+                with open(os.path.join(path, filename), 'w') as file:
                     file.write(reaction["rct_" + str(i + 1)])
 
             # Create product file, named with its Reaxys ID
             product_id = reaction["meta"]["pro_meta"][0]
-            with open(os.path.join(path, "pro_" + str(product_id)) + ".mol", 'w') as file:
+            filename = "pro_" + str(product_id)) + ".mol"
+            with open(os.path.join(path, filename, 'w') as file:
                 file.write(reaction["pro"])

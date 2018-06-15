@@ -2,3 +2,4 @@ pymatgen
 openbabel
 bs4
 lxml
+pubchempy
