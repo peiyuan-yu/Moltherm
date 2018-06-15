@@ -30,8 +30,8 @@ class OBMolecule:
 
     @classmethod
     def from_file(cls, filename, fmt=None):
-        fmt = filename.strip().split('.')[-1] if format is None else fmt
-        fmt_std = re.search(r"\.(pdb|mol|mdl|sdf|sd|ml2|sy2|mol2|cml|mrv)",
+        fmt = filename.strip().split('.')[-1] if fmt is None else fmt
+        fmt_std = re.search(r"(pdb|mol|mdl|sdf|sd|ml2|sy2|mol2|cml|mrv)",
                             fmt.lower()).group(1)
         obmol = list(pb.readfile(str(fmt_std), str(filename)))[0].OBMol
         return cls(obmol)
@@ -50,8 +50,7 @@ class OBMolecule:
 
     def confm_search(self, forcefield="mmff94", freeze_atoms=None,
                      rmsd_cutoff=0.5, energy_cutoff=50.0,
-                     conf_cutoff=100000, verbose=False,
-                     include_original=False):
+                     conf_cutoff=100000, verbose=False):
         """
         Perform conformer search.
         Args:
@@ -61,12 +60,12 @@ class OBMolecule:
             energy_cutoff:
             conf_cutoff:
             verbose:
-            include_original:
-
         Returns:
 
         """
-        obmol = copy.deepcopy(self.obmol)
+
+        # Had to remove the copying, as apparently self.obmol cannot be copied
+        obmol = self.obmol
         ff = ob.OBForceField_FindType(forcefield)
         if ff == 0:
             print("Could not find forcefield {} in openbabel, the forcefield "
@@ -86,7 +85,7 @@ class OBMolecule:
 
         # Run Confab conformer generation
         ff.DiverseConfGen(rmsd_cutoff, conf_cutoff, energy_cutoff,
-                          verbose, include_original)
+                          verbose)
 
         ff.GetConformers(obmol)
         print("Generated {} conformers total".format(obmol.NumConformers()))
