@@ -338,7 +338,6 @@ class PUGScraper:
                 for cid in cids[cat][parent]:
                     download_ids.append(cid)
 
-
             uid_templates = [uid_template % {"cid": str(cid)}
                              for cid in download_ids]
             uid_strings = "\n".join(uid_templates)
@@ -460,8 +459,6 @@ class PUGScraper:
 
         for cat in cids.keys():
             cid_results[cat] = {}
-            if self.sub_dirs is not None:
-                cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
 
             for cid in cids[cat]:
                 xml = self.template_query % {"id": cid,
@@ -744,6 +741,6 @@ class ReaxysScraper:
 
             # Create product file, named with its Reaxys ID
             product_id = reaction["meta"]["pro_meta"][0]
-            filename = "pro_" + str(product_id)) + ".mol"
+            filename = "pro_" + str(product_id) + ".mol"
             with open(os.path.join(path, filename, 'w') as file:
                 file.write(reaction["pro"])
