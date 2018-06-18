@@ -3,7 +3,7 @@ import openbabel as ob
 import pybel as pb
 from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.core.structure import Molecule
-from .graphs import MoleculeGraph
+from pymatgen.analysis.graphs import MoleculeGraph
 
 __author__ = "Qi Wang, Peiyuan Yu"
 __version__ = "0.1"

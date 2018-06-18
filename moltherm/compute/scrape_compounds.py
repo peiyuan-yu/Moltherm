@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import os
 import time
 from io import StringIO
@@ -7,6 +9,13 @@ from collections import namedtuple
 import pubchempy as pcp
 
 from bs4 import BeautifulSoup
+
+__author__ = "Evan Spotte-Smith"
+__version__ = "0.1"
+__maintainer__ = "Evan Spotte-Smith"
+__email__ = "espottesmith@gmail.com"
+__status__ = "Alpha"
+__date__ = "June 2018"
 
 test_cids = {"products": [8079, 638051, 522835],
         "dienes": [7845, 7612, 8029, 11378474],
