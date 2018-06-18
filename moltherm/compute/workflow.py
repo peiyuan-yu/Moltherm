@@ -41,11 +41,9 @@ def generate_input(filein, fileout):
     """
 
     obmol = OBMolecule.from_file(filein)
-    obmol = obmol.confm_search()
-    obmol.obmol.AddHydrogens()
     # OBMolecule does not contain pymatgen Molecule information
     # So, we need to wrap the obmol in a BabelMolAdapter and extract
-    obmol = obmol.confm_search().obmol
+    obmol = obmol.confm_search(make_3d=True, add_hydrogens=True).obmol
     mol = BabelMolAdaptor(obmol).pymatgen_mol
 
     # Right now, just use all defaults.

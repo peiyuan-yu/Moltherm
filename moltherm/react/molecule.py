@@ -49,7 +49,8 @@ class OBMolecule:
 
     def confm_search(self, forcefield="mmff94", freeze_atoms=None,
                      rmsd_cutoff=0.5, energy_cutoff=50.0,
-                     conf_cutoff=100000, verbose=False):
+                     conf_cutoff=100000, verbose=False, make_3d=False,
+                     add_hydrogens=False):
         """
         Perform conformer search.
         Args:
@@ -59,12 +60,24 @@ class OBMolecule:
             energy_cutoff:
             conf_cutoff:
             verbose:
+            make_3d:
+            add_hydrogens:
         Returns:
 
         """
 
         # Had to remove the copying, as apparently self.obmol cannot be copied
         obmol = self.obmol
+
+        # TODO: Does this belong here? Is this functionality general enough?
+        if make_3d:
+            builder = ob.OBBuilder()
+            builder.Build(obmol)
+
+        if add_hydrogens:
+            obmol.AddHydrogens()
+
+
         ff = ob.OBForceField_FindType(forcefield)
         if ff == 0:
             print("Could not find forcefield {} in openbabel, the forcefield "
@@ -82,7 +95,7 @@ class OBMolecule:
                     constraints.AddAtomConstraint(atom_id)
             ff.SetConstraints(constraints)
 
-        # To get 3D coordinates from 2D files
+        # To improve 3D coordinates
         # TODO: If we integrate this into BabelMolAdapter, we can use localopt
         # to optimize 3D structure
         ff.WeightedRotorSearch(500, 25)
