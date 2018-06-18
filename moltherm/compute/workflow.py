@@ -1,4 +1,4 @@
-from moltherm.compute.compounds import ReaxysScraper
+from moltherm.compute.scrape_compounds import ReaxysScraper
 from moltherm.react.molecule import OBMolecule
 
 from pymatgen.core.structure import Molecule, FunctionalGroups
@@ -7,7 +7,7 @@ from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.io.qchem_io.inputs import QCInput
 from pymatgen.io.qchem_io.outputs import QCOutput
-from pymatgen.io.qhem_io.sets import OptSet
+from pymatgen.io.qchem_io.sets import OptSet
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -29,6 +29,7 @@ For now, we want to:
     - Perform some analysis to rank candidate reactions
 """
 
+
 def generate_input(filein, fileout):
     """
     Generates a QChem input file from Molecule after conformer search.
@@ -40,6 +41,8 @@ def generate_input(filein, fileout):
     """
 
     obmol = OBMolecule.from_file(filein)
+    obmol = obmol.confm_search()
+    obmol.obmol.AddHydrogens()
     # OBMolecule does not contain pymatgen Molecule information
     # So, we need to wrap the obmol in a BabelMolAdapter and extract
     obmol = obmol.confm_search().obmol
