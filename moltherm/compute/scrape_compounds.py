@@ -4,7 +4,6 @@ import os
 import time
 from io import StringIO
 import urllib.request
-from collections import namedtuple
 
 import pubchempy as pcp
 
@@ -144,7 +143,7 @@ class PUGScraper:
         """
         try:
             if not os.path.exists(self.base_dir):
-                os.makedirs(directory)
+                os.makedirs(self.base_dir)
             if self.sub_dirs is not None:
                 for cat in self.sub_dirs.keys():
                     sub_dir = os.path.join(self.base_dir, self.sub_dirs[cat])
@@ -597,14 +596,12 @@ class PUGScraper:
 
         for cat in cids.keys():
             cid_results[cat] = {}
-            if self.sub_dirs is not None:
-                cat_path = os.path.join(self.base_dir, self.sub_dirs[cat])
 
             for cid in cids[cat]:
                 xml = self.template_query % {"id": cid,
                                              "query_type": "superstructure",
                                              "type_specific": "",
-                                             "max_records": str(max_records)}
+                                             "max_records": 1000000}
                 xml_file = StringIO()
                 xml_file.write(xml)
                 page = urllib.request.urlopen(self.base_url, data=xml_file)
@@ -742,5 +739,5 @@ class ReaxysScraper:
             # Create product file, named with its Reaxys ID
             product_id = reaction["meta"]["pro_meta"][0]
             filename = "pro_" + str(product_id) + ".mol"
-            with open(os.path.join(path, filename, 'w') as file:
+            with open(os.path.join(path, filename), 'w') as file:
                 file.write(reaction["pro"])
