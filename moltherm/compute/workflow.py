@@ -135,8 +135,47 @@ class MolTherm:
         self.with_freq = with_freq
         self.db_file = db_file
 
-    def get_reaction_thermo_files(self, path=None, index=None):
-        pass
+    def get_reaction_thermo_files(self, path=None):
+        """
+        Naively scrape thermo data from QChem output files.
+
+        TODO: Rewrite this using pymatgen.borg features
+
+        :param path: Path to a subdirectory. Will be ignored if self.subdirs
+        is False.
+
+        :return: dict {prop: value}, where properties are enthalpy, entropy.
+        """
+        thermo_data = {}
+
+        rct_thermo = {"enthalpy": 0, "entropy": 0}
+        pro_thermo = {"enthalpy": 0, "entropy": 0}
+
+        if self.subdirs and path is not None:
+            base_path = join(self.base_dir, path)
+        else:
+            base_path = self.base_dir
+
+        files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                 and f.endswith(".out")]
+        rcts = [f for f in files if f.startswith(self.reactant_pre)]
+        pros = [f for f in files if f.startswith(self.product_pre)]
+
+        for rct in rcts:
+            qcout = QCOutput(join(base_path, rct))
+            rct_thermo["enthalpy"] += qcout.data["enthalpy"]
+            rct_thermo["entropy"] += qcout.data["entropy"]
+
+        for pro in pros:
+            qcout = QCOutput(join(base_path, pro))
+            pro_thermo["enthalpy"] += qcout.data["enthalpy"]
+            pro_thermo["entropy"] += qcout.data["entropy"]
+
+        # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
+        thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
+        thermo_data["entropy"] = pro_thermo["entropy"] - pro_thermo["entropy"]
+
+        return thermo_data
 
     def get_reaction_thermo_db(self, db_file):
         pass
@@ -165,11 +204,14 @@ class MolTherm:
             base_path = self.base_dir
 
         if filenames:
-            rcts = [f for f in filenames if f.startswith(self.reactant_pre)]
-            pros = [f for f in filenames if f.startswith(self.product_pre)]
+            rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
+                    f.endswith(".mol")]
+            pros = [f for f in filenames if f.startswith(self.product_pre) and
+                    f.endswith(".mol")]
         else:
             # Assume that every file in the directory is part of the reaction
-            files = [f for f in listdir(base_path) if isfile(join(base_path, f))]
+            files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                     and f.endswith(".mol")]
             rcts = [f for f in files if f.startswith(self.reactant_pre)]
             pros = [f for f in files if f.startswith(self.product_pre)]
 
