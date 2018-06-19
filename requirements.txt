@@ -1,4 +1,8 @@
 pymatgen
+pymatgen-db
+atomate
+custodian
+fireworks
 openbabel
 bs4
 lxml
