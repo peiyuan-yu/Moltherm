@@ -5,9 +5,8 @@ from pymatgen.core.structure import Molecule, FunctionalGroups
 from pymatgen.analysis.graphs import MoleculeGraph
 
 from pymatgen.io.babel import BabelMolAdaptor
-from pymatgen.io.qchem_io.inputs import QCInput
 from pymatgen.io.qchem_io.outputs import QCOutput
-from pymatgen.io.qchem_io.sets import OptSet
+from pymatgen.io.qchem_io.sets import OptSet, FreqSet
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -30,17 +29,17 @@ For now, we want to:
 """
 
 
-def generate_input(filein, fileout):
+def generate_opt_input(molfile, qinfile):
     """
     Generates a QChem input file from Molecule after conformer search.
 
-    :param filein: Absolute path to the input file (.mol, .sdf, etc.)
-    :param fileout: Absolute path to the output file (.in)
+    :param molfile: Absolute path to the input file (.mol, .sdf, etc.)
+    :param qinfile: Absolute path to the output file (.in)
     :return:
 
     """
 
-    obmol = OBMolecule.from_file(filein)
+    obmol = OBMolecule.from_file(molfile)
     # OBMolecule does not contain pymatgen Molecule information
     # So, we need to wrap the obmol in a BabelMolAdapter and extract
     obmol = obmol.confm_search(make_3d=True, add_hydrogens=True).obmol
@@ -49,4 +48,26 @@ def generate_input(filein, fileout):
     # Right now, just use all defaults.
     qcinput = OptSet(mol)
 
-    qcinput.write_file(fileout)
+    qcinput.write_file(qinfile)
+
+
+def generate_freq_input(qoutfile, qinfile):
+    """
+    Parses a QChem output file for ideal structure and then returns a QChem
+    input file for frequency calculations (to determine enthalpy and entropy).
+
+    :param qoutfile: Absolute path to the QChem output file (.out)
+    :param qinfile: Absolute path to the QChem input file (.in)
+    :return:
+    """
+
+    output = QCOutput(qoutfile)
+
+    if len(output.data["molecule_from_optimized_geometry"]) > 0:
+        mol = output.data["molecule_from_optimized_geometry"]
+    else:
+        mol = output.data["molecule_from_last_geometry"]
+
+    qcinput = FreqSet(mol)
+
+    qcinput.write_file(qinfile)
