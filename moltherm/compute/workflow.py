@@ -63,10 +63,13 @@ def generate_freq_input(qoutfile, qinfile):
 
     output = QCOutput(qoutfile)
 
-    if len(output.data["molecule_from_optimized_geometry"]) > 0:
+    if len(output.data.get("molecule_from_optimized_geometry", [])) > 0:
         mol = output.data["molecule_from_optimized_geometry"]
     else:
-        mol = output.data["molecule_from_last_geometry"]
+	try:
+            mol = output.data["molecule_from_last_geometry"]
+	except KeyError:
+	    raise RuntimeError("No molecule to use as input")
 
     qcinput = FreqSet(mol)
 
