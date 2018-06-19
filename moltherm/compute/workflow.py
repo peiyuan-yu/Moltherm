@@ -11,6 +11,7 @@ from pymatgen.io.qchem_io.outputs import QCOutput
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet
 
 from fireworks import Firework, Workflow, LaunchPad, FWorker
+from fireworks.core.rocket_launcher import rapidfire
 
 from custodian.qchem.new_handlers import QChemErrorHandler
 from custodian.qchem.new_jobs import QCJob
@@ -40,6 +41,10 @@ For now, we want to:
     - Calculate heat capacity as function of temperature
     - Determine working temperature range using QSPR (or database, if available?)
     - Perform some analysis to rank candidate reactions
+    
+TODO list:
+    - Learn how to use Drones and Queens to parallelize for large sets of data
+    - Figure out how to query with pymatgen-db and pymongo
 """
 
 
@@ -109,15 +114,12 @@ class MolTherm:
     workflows on molecular data.
     """
 
-    def __init__(self, base_dir, subdirs=False, indexing=False,
-                 reactant_pre="rct_", product_pre="pro_", with_freq=True,
-                 db_file="db.json"):
+    def __init__(self, base_dir, subdirs=False, reactant_pre="rct_",
+                 product_pre="pro_", with_freq=True, db_file="db.json"):
         """
         :param base_dir: Directory where input and output data should be stored.
         :param subdirs: Is data all stored in one directory (False), or is it
         separated among subdirectories (True)?
-        :param indexing: If True, then assume that files (or subdirectories, if
-        applicable) are indexed by number.
         :param reactant_pre: Prefix for reactant files.
         :param product_pre: Prefix for product files.
         :param with_freq: Should the workflow only optimize the structure of
@@ -128,16 +130,15 @@ class MolTherm:
 
         self.base_dir = base_dir
         self.subdirs = subdirs
-        self.indexing = indexing
         self.reactant_pre = reactant_pre
         self.product_pre = product_pre
         self.with_freq = with_freq
         self.db_file = db_file
 
-    def get_reaction_enthalpy_files(self, path=None, index=None):
+    def get_reaction_thermo_files(self, path=None, index=None):
         pass
 
-    def get_reaction_enthalpy_db(self, db_file):
+    def get_reaction_thermo_db(self, db_file):
         pass
 
     def record_data(self):
@@ -145,10 +146,11 @@ class MolTherm:
 
     def get_single_reaction_workflow(self, path=None, filenames=None):
         """
-        Runs an atomate workflow on a single reaction.
+        Generates a Fireworks Workflow to find the structures and energies of
+        the reactants and products of a single reaction.
 
-        :param path: Specified (sub)path in which to run the reaction. By default,
-        this is None, and the Fireworks will run in self.base_dir
+        :param path: Specified (sub)path in which to run the reaction. By
+        default, this is None, and the Fireworks will run in self.base_dir
         :param filenames: Specified files within the path (if self.base_dir or
         a subdirectory) that should be considered a part of this reaction. If
         None, assume all files in the directory are to be involved.
@@ -166,6 +168,7 @@ class MolTherm:
             rcts = [f for f in filenames if f.startswith(self.reactant_pre)]
             pros = [f for f in filenames if f.startswith(self.product_pre)]
         else:
+            # Assume that every file in the directory is part of the reaction
             files = [f for f in listdir(base_path) if isfile(join(base_path, f))]
             rcts = [f for f in files if f.startswith(self.reactant_pre)]
             pros = [f for f in files if f.startswith(self.product_pre)]
@@ -173,26 +176,107 @@ class MolTherm:
         for i, rct in enumerate(rcts):
             mol = get_molecule(join(base_path, rct))
 
+            infile = join(self.base_dir, self.reactant_pre + str(i) + ".in")
+            outfile = join(self.base_dir, self.reactant_pre + str(i) + ".out")
+
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                name=("opt+freq: " + rct),
-                                               input_file=(self.reactant_pre + str(i) + ".in"),
-                                               output_file=(self.reactant_pre + str(i) + ".out"),
+                                               qchem_cmd="qchem -slurm",
+                                               input_file=infile,
+                                               output_file=outfile,
                                                db_file=self.db_file)
 
             fws.append(fw)
 
-        for pro in pros:
+        for i, pro in enumerate(pros):
             mol = get_molecule(join(base_path, pro))
+
+            infile = join(self.base_dir, self.product_pre + str(i) + ".in")
+            outfile = join(self.base_dir, self.product_pre + str(i) + ".out")
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                name=("opt+freq: " + pro),
-                                               input_file=(self.product_pre + str(i) + ".in"),
-                                               output_file=(self.product_pre + str(i) + ".out"),
+                                               qchem_cmd="qchem -slurm",
+                                               input_file=infile,
+                                               output_file=outfile,
                                                db_file=self.db_file)
 
             fws.append(fw)
 
         return Workflow(fws)
 
-    def get_n_reaction_workflow(self, n):
-        pass
+    def get_reaction_set_workflow(self):
+        """Generates a Fireworks Workflow to find the structures and energies of
+        the reactants and products of a single reaction.
+
+        Note: as written now, this function will only work if self.subdirs is
+        True; that is, only if each reaction is in a separate subdirectory.
+        Later additions could allow for some other means of specifying the
+        separate reactions within a single directory.
+
+        :return: Workflow
+        """
+
+        if not self.subdirs:
+            raise RuntimeError("Cannot run get_reaction_set_workflow();"
+                               "Need reactions components to be isolated in"
+                               "different subdirectories.")
+
+        fws = []
+
+        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d))]
+
+        for d in dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+            for i, rct in enumerate(rcts):
+                mol = get_molecule(join(base_path, rct))
+
+                infile = join(self.base_dir, self.reactant_pre + str(i) + ".in")
+                outfile = join(self.base_dir,
+                               self.reactant_pre + str(i) + ".out")
+
+                fw = FrequencyFlatteningOptimizeFW(molecule=mol,
+                                                   name=("opt+freq: " + infile),
+                                                   qchem_cmd="qchem -slurm",
+                                                   input_file=infile,
+                                                   output_file=outfile,
+                                                   db_file=self.db_file)
+
+                fws.append(fw)
+
+            for i, pro in enumerate(pros):
+                mol = get_molecule(join(base_path, pro))
+
+                infile = join(self.base_dir, self.product_pre + str(i) + ".in")
+                outfile = join(self.base_dir,
+                               self.product_pre + str(i) + ".out")
+
+                fw = FrequencyFlatteningOptimizeFW(molecule=mol,
+                                                   name=("opt+freq: " + infile),
+                                                   qchem_cmd="qchem -slurm",
+                                                   input_file=infile,
+                                                   output_file=outfile,
+                                                   db_file=self.db_file)
+
+                fws.append(fw)
+
+        return Workflow(fws)
+
+    @staticmethod
+    def perform_workflow(workflow):
+        """
+        Use Fireworks to run a generated workflow.
+
+        :param workflow: a Workflow object (should have been generated by one
+        of the workflow-generating functions about).
+        :return:
+        """
+
+        launchpad = LaunchPad.auto_load()
+        launchpad.add_wf(workflow)
+
+        rapidfire(launchpad, FWorker())
