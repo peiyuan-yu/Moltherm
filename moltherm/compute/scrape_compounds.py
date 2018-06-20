@@ -9,17 +9,17 @@ import pubchempy as pcp
 
 from bs4 import BeautifulSoup
 
+from monty.json import jsanitize
+from pymongo import MongoClient
+
+from matgendb.dbconfig import DBConfig
+
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
 __maintainer__ = "Evan Spotte-Smith"
 __email__ = "espottesmith@gmail.com"
 __status__ = "Alpha"
 __date__ = "June 2018"
-
-test_cids = {"products": [8079, 638051, 522835],
-        "dienes": [7845, 7612, 8029, 11378474],
-        "dienophiles": [6325, 8882, 7923]
-        }
 
 
 class PUGScraper:
@@ -660,6 +660,8 @@ class ReaxysScraper:
                 # Will be passed along with CTAB information
                 index = int(reaction["index"])
                 rxn_id = int(reaction.find("RX.ID").text)
+                solvents = set([sol.text for sol
+                                in reaction.find_all("RXD.SOL")])
 
                 rct_ids = reaction.find_all("RX.RXRN")
                 rct_names = reaction.find_all("RX.RCT")
@@ -671,6 +673,7 @@ class ReaxysScraper:
 
                 meta = {"index": index,
                         "rxn_id": rxn_id,
+                        "solvents": solvents,
                         "rct_meta": sorted(rct_meta, key=lambda x: x[0]),
                         "pro_meta": pro_meta}
 
@@ -689,11 +692,11 @@ class ReaxysScraper:
 
         return results
 
-    def store_reaxys_reactions(self, reactions):
+    def store_reaxys_reactions_files(self, reactions):
         """
-        Create CTAB files from parsed XML data.
+        Create CTAB (.mol) files from parsed XML data.
 
-        :param reactions: List of Reactions.
+        :param reactions: List of reactions, defined as above.
         :return:
         """
 
@@ -718,6 +721,8 @@ class ReaxysScraper:
                 file.write("Index: %(index)s\n" % {"index": str(reaction["meta"]["index"])})
                 file.write("Reaxys ID: %(id)s\n" % {"id": str(reaction["meta"]["rxn_id"])})
 
+                file.write("Potential Solvents: %(solvents)s\n" % {"solvents": ", ".join(reaction["meta"]["solvents"])})
+
                 for i, rct in enumerate(reaction["meta"]["rct_meta"]):
                     rct_info = {"num": str(i),
                                 "name": rct[1],
@@ -741,3 +746,41 @@ class ReaxysScraper:
             filename = "pro_" + str(product_id) + ".mol"
             with open(os.path.join(path, filename), 'w') as file:
                 file.write(reaction["pro"])
+
+    @staticmethod
+    def store_reaxys_reactions_db(reactions, dbfile="db.json",
+                                  collection="reactions"):
+        """
+        Insert reaction information into a MongoDB database.
+
+        :param reactions: List of reactions, defined as above.
+        :param dbfile: A config file indicating the database into which the
+        reactions will be inserted.
+        :param collection: Collection within the database in which to store
+        the reactions.
+        :return: List of rxn_ids that were
+        """
+
+        # Set up MongoDB database with pymatgen-db and pymongo
+        config = DBConfig(config_file=dbfile)
+
+        client = MongoClient(config.host, config.port, username=config.user,
+                             password=config.password)
+
+        db = client[config.dbname]
+        collection = db[collection]
+
+        just_added = []
+
+        if "rxn_id" not in collection.index_information():
+            collection.create_index("rxn_id", unique=True)
+
+        for reaction in reactions:
+            try:
+                reaction["rxn_id"] = reaction["meta"]["rxn_id"]
+                collection.insert_one(reaction)
+                just_added.append(reaction["rxn_id"])
+            except DuplicateKeyError:
+                continue
+
+        return just_added
