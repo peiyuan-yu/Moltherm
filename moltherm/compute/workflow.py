@@ -1,8 +1,6 @@
 from os import listdir
 from os.path import join, isfile, isdir
 
-from moltherm.react.molecule import OBMolecule
-
 from pymatgen.io.qchem_io.outputs import QCOutput
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet
 from pymatgen.io.babel import BabelMolAdaptor
