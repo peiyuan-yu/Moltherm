@@ -111,20 +111,24 @@ class BabelMolAdaptor(object):
         pbmol.localopt(forcefield=forcefield, steps=steps)
         self._obmol = pbmol.OBMol
 
-    def build_3d(self):
+    def make3D(self, forcefield="mmff94", steps=50):
         """
-        Generate a 3D structure from a 2D or 0D structure. The 3D structure
-        is made very quickly using a combination of rules (e.g. sp3 atoms
-        should have four bonds arranged in a tetrahedron) and ring templates
-        (e.g. cyclohexane is shaped like a chair).
+        A wrapper to pybel's make3D method generate a 3D structure from a
+        2D or 0D structure.
+        The 3D structure is made very quickly using a combination of rules 
+        (e.g. sp3 atoms should have four bonds arranged in a tetrahedron) and 
+        ring templates (e.g. cyclohexane is shaped like a chair). Once 3D
+        coordinates are generated, hydrogens are added and a quick local
+        optimization is carried out as default.
         
         The generated 3D structure can have clashes or have high energy
         structures due to some strain. Please consider to use the conformer
         search or geometry optimization methods to optimize the structure.
 
         """
-        builder = ob.OBBuilder()
-        builder.Build(self._obmol)
+        pbmol = pb.Molecule(self._obmol)
+        pbmol.make3D(forcefield=forcefield, steps=steps)
+        self._obmol = pbmol.OBMol
 
     def add_hydrogen(self):
         """
@@ -134,25 +138,24 @@ class BabelMolAdaptor(object):
         self._obmol.AddHydrogens()
 
     def rotor_conformer(self, algo="WeightedRotorSearch", forcefield="mmff94",
-                        steps=500, build_3d=False, add_hydrogen=False):
+                        *rotor_args):
         """
         Conformer search based on several Rotor Search algorithms of openbabel.
+        If the input molecule is not 3D, make3D will be called (generate 3D
+        structure, add hydrogen, a quick localopt). All hydrogen atoms need
+        to be made explicit.
         Args:
             algo (str): Default is "WeightedRotorSearch". Options are
                 "SystematicRotorSearch", "FastRotorSearch", "RandomRotorSearch",
                 and "WeightedRotorSearch".
             forcefield (str): Default is mmff94. Options are 'gaff', 'ghemical',
                 'mmff94', 'mmff94s', and 'uff'.
-            steps (int): Default is 500.
-            build_3d: whether to make 3d before conformer search, should be set
-                as True if the input structures are not 3d.
-            add_hydrogen: whether to add hydrogen before conformer search.
+            rotor_args: pass args to the Rotor Search class.
 
         """
-        if build_3d:
-            self.build_3d()
-
-        if add_hydrogen:
+        if self._obmol.GetDimension() != 3:
+            self.make3D()
+        else:
             self.add_hydrogen()
 
         ff = ob.OBForceField_FindType(forcefield)
@@ -173,7 +176,7 @@ class BabelMolAdaptor(object):
                           "The algorithm will be reset as default "
                           "'WeightedRotorSearch' for now.".format(algo))
             rotor_search = ff.WeightedRotorSearch
-        rotor_search(25, 500)
+        rotor_search(*rotor_args)
         ff.GetConformers(self._obmol)
 
     def gen3d_conformer(self):
@@ -200,8 +203,7 @@ class BabelMolAdaptor(object):
 
     def confab_conformers(self, forcefield="mmff94", freeze_atoms=None,
                           rmsd_cutoff=0.5, energy_cutoff=50.0,
-                          conf_cutoff=100000, verbose=False,
-                          build_3d=False, add_hydrogen=False):
+                          conf_cutoff=100000, verbose=False):
         """
         Conformer generation based on Confab to generate all diverse low-energy
         conformers for molecules. This is different from rotor_conformer or
@@ -219,16 +221,13 @@ class BabelMolAdaptor(object):
                 default is 1 million.
             verbose (bool): whether to display information on torsions found,
                 default is False.
-            build_3d: whether to make 3d before conformer search
-            add_hydrogen: whether to add hydrogens before conformer search
 
         Returns:
              (list): list of OBMol conformers generated.
         """
-        if build_3d:
-            self.build_3d()
-
-        if add_hydrogen:
+        if self._obmol.GetDimension() != 3:
+            self.make3D()
+        else:
             self.add_hydrogen()
 
         ff = ob.OBForceField_FindType(forcefield)
