@@ -13,7 +13,6 @@ __status__ = "Beta"
 __date__ = "June 2018"
 
 
-# Todo: consider whether to move confm_search to BabelMolAdaptor. -qw
 class OBMolecule:
     __hash__ = None
 
@@ -46,68 +45,6 @@ class OBMolecule:
                             "Please input a pymatgen Molecule object or"
                             "MoleculeGraph".format(type(mol)))
         return cls(obmol)
-
-    def confm_search(self, forcefield="mmff94", freeze_atoms=None,
-                     rmsd_cutoff=0.5, energy_cutoff=50.0,
-                     conf_cutoff=100000, verbose=False, make_3d=False,
-                     add_hydrogens=False):
-        """
-        Perform conformer search.
-        Args:
-            forcefield:
-            freeze_atoms:
-            rmsd_cutoff:
-            energy_cutoff:
-            conf_cutoff:
-            verbose:
-            make_3d:
-            add_hydrogens:
-        Returns:
-
-        """
-
-        # Had to remove the copying, as apparently self.obmol cannot be copied
-        obmol = self.obmol
-
-        # TODO: Does this belong here? Is this functionality general enough?
-        if make_3d:
-            builder = ob.OBBuilder()
-            builder.Build(obmol)
-
-        if add_hydrogens:
-            obmol.AddHydrogens()
-
-
-        ff = ob.OBForceField_FindType(forcefield)
-        if ff == 0:
-            print("Could not find forcefield {} in openbabel, the forcefield "
-                  "will be reset as default 'mmff94'".format(forcefield))
-            ff = ob.OBForceField_FindType("mmff94")
-        # Make sure setup works
-        assert (ff.Setup(obmol))
-
-        if freeze_atoms:
-            print('{} atoms will be freezed'.format(len(freeze_atoms)))
-            constraints = ob.OBFFConstraints()
-            for atom in ob.OBMolAtomIter(obmol):
-                atom_id = atom.GetIndex() + 1
-                if id in freeze_atoms:
-                    constraints.AddAtomConstraint(atom_id)
-            ff.SetConstraints(constraints)
-
-        # To improve 3D coordinates
-        # TODO: If we integrate this into BabelMolAdapter, we can use localopt
-        # to optimize 3D structure
-        ff.WeightedRotorSearch(500, 25)
-
-        # Run Confab conformer generation
-        ff.DiverseConfGen(rmsd_cutoff, conf_cutoff, energy_cutoff,
-                          verbose)
-
-        ff.GetConformers(obmol)
-        print("Generated {} conformers total".format(obmol.NumConformers()))
-        # return the best conformer.
-        return OBMolecule(obmol)
 
     def to(self, filename=None, fmt=None):
         """
