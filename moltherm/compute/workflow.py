@@ -5,7 +5,7 @@ from moltherm.react.molecule import OBMolecule
 
 from pymatgen.io.qchem_io.outputs import QCOutput
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet
-from pymatgen.io.babel import BabelMolAdapter
+from pymatgen.io.babel import BabelMolAdaptor
 
 from fireworks import Workflow, LaunchPad
 
@@ -49,12 +49,11 @@ def get_molecule(molfile):
     :return: Molecule.
     """
 
-    obmol = OBMolecule.from_file(molfile)
+    obmol = BabelMolAdaptor.from_file(molfile, file_format="mol")
     # OBMolecule does not contain pymatgen Molecule information
     # So, we need to wrap the obmol in a BabelMolAdapter and extract
-    babmol = BabelMolAdapter(obmol)
-    babmol.confm_search(make_3d=True, add_hydrogens=True)
-    return babmol.pymatgen_mol
+    obmol.confm_search(make_3d=True, add_hydrogens=True)
+    return obmol.pymatgen_mol
 
 
 def generate_opt_input(molfile, qinfile):
