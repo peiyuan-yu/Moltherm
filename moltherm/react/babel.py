@@ -137,8 +137,8 @@ class BabelMolAdaptor(object):
         """
         self._obmol.AddHydrogens()
 
-    def rotor_conformer(self, algo="WeightedRotorSearch", forcefield="mmff94",
-                        *rotor_args):
+    def rotor_conformer(self, *rotor_args, algo="WeightedRotorSearch",
+                        forcefield="mmff94"):
         """
         Conformer search based on several Rotor Search algorithms of openbabel.
         If the input molecule is not 3D, make3D will be called (generate 3D
