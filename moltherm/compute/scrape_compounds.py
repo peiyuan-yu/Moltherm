@@ -717,22 +717,27 @@ class ReaxysScraper:
                 os.makedirs(path)
 
             # Create metadata file
-            with open(os.path.join(path, "meta.txt"), 'w') as file:
-                file.write("Index: %(index)s\n" % {"index": str(reaction["meta"]["index"])})
-                file.write("Reaxys ID: %(id)s\n" % {"id": str(reaction["meta"]["rxn_id"])})
+            with open(os.path.join(path, "meta.xml"), 'w') as file:
+                file.write("<index>%(index)s</index>\n" % {"index": str(reaction["meta"]["index"])})
+                file.write("<reaxysid>%(id)s</reaxysid>\n" % {"id": str(reaction["meta"]["rxn_id"])})
 
-                file.write("Potential Solvents: %(solvents)s\n" % {"solvents": ", ".join(reaction["meta"]["solvents"])})
+                file.write("<solvents>%(solvents)s</solvents>\n" % {"solvents": ",".join(reaction["meta"]["solvents"])})
 
                 for i, rct in enumerate(reaction["meta"]["rct_meta"]):
                     rct_info = {"num": str(i),
                                 "name": rct[1],
                                 "id": str(rct[0])
                                 }
-                    file.write("Reactant %(num)s: %(name)s, ID %(id)s\n" % rct_info)
+                    file.write(""""<rct num=%(num)s>
+<rctname>%(name)s</rctname>
+<rctid>%(id)s</rctid>
+</rct>\n""" % rct_info)
 
                 pro_info = {"name": reaction["meta"]["pro_meta"][1],
                             "id": str(reaction["meta"]["pro_meta"][0])}
-                file.write("Product: %(name)s, ID %(id)s\n" % pro_info)
+                file.write("""<pro>
+<proname>%(name)s</proname>
+<proid>%(id)s</proid>\n""" % pro_info)
 
             # Create reactant files, named with their Reaxys IDs
             reactants = reaction["meta"]["rct_meta"]
@@ -780,7 +785,7 @@ class ReaxysScraper:
                 reaction["rxn_id"] = reaction["meta"]["rxn_id"]
                 collection.insert_one(reaction)
                 just_added.append(reaction["rxn_id"])
-            except DuplicateKeyError:
+            except:
                 continue
 
         return just_added

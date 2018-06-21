@@ -1,6 +1,8 @@
 from os import listdir
 from os.path import join, isfile, isdir
 
+from bs4 import BeautifulSoup
+
 from pymatgen.io.qchem_io.outputs import QCOutput
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet
 from pymatgen.io.babel import BabelMolAdaptor
@@ -69,6 +71,34 @@ def generate_opt_input(molfile, qinfile):
     qcinput = OptSet(mol)
 
     qcinput.write_file(qinfile)
+
+def find_common_solvents(base_dir):
+    """
+    Iteratively scrape through list of reaction subdirectories to create a
+    {solvent: occurrence} mapping.
+
+    :param base_dir: Directory to begin search in.
+    :return: dict {solvent: occurrence}
+    """
+
+    rct_dirs = [d for d in listdir(base_dir) if isdir(d)]
+
+    solvent_occurrence = {}
+
+    for rct_dir in rct_dirs:
+        if "meta.xml" not in listdir(base_dir):
+            # If metadata has not been recorded, solvent cannot be determined
+            continue
+
+        with open(join(base_dir, rct_dir, "meta.xml"), "r") as file:
+            parsed = BeautifulSoup(file.read(), "lxml-xml")
+            solvents = parsed.find("solvents").text.split(",")
+
+            for solvent in solvents:
+                current_value = solvent_occurrence.get(solvent, 0)
+                solvent_occurrence[solvent] = current_value + 1
+
+    return solvent_occurrence
 
 
 def generate_freq_input(qoutfile, qinfile):
