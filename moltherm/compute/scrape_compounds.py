@@ -718,6 +718,7 @@ class ReaxysScraper:
 
             # Create metadata file
             with open(os.path.join(path, "meta.xml"), 'w') as file:
+                file.write("<metadata>")
                 file.write("<index>%(index)s</index>\n" % {"index": str(reaction["meta"]["index"])})
                 file.write("<reaxysid>%(id)s</reaxysid>\n" % {"id": str(reaction["meta"]["rxn_id"])})
 
@@ -728,7 +729,7 @@ class ReaxysScraper:
                                 "name": rct[1],
                                 "id": str(rct[0])
                                 }
-                    file.write(""""<rct num=%(num)s>
+                    file.write("""<rct num=%(num)s>
 <rctname>%(name)s</rctname>
 <rctid>%(id)s</rctid>
 </rct>\n""" % rct_info)
@@ -737,7 +738,10 @@ class ReaxysScraper:
                             "id": str(reaction["meta"]["pro_meta"][0])}
                 file.write("""<pro>
 <proname>%(name)s</proname>
-<proid>%(id)s</proid>\n""" % pro_info)
+<proid>%(id)s</proid>
+</pro>\n""" % pro_info)
+
+                file.write("</metadata>")
 
             # Create reactant files, named with their Reaxys IDs
             reactants = reaction["meta"]["rct_meta"]
