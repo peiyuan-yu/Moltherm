@@ -22,6 +22,7 @@ import copy
 import warnings
 from pymatgen.core.structure import Molecule
 from pymatgen.io.xyz import XYZ
+from pymatgen.analysis.molecule_matcher import MoleculeMatcher
 # from pymatgen.io.babel import BabelMolAdaptor
 from ..babel import BabelMolAdaptor
 
@@ -133,17 +134,19 @@ class BabelMolAdaptorTest(unittest.TestCase):
         mol[1] = "H", [0, 0, 1.05]
         adaptor = BabelMolAdaptor(mol)
         # adaptor.gen3d_conformer()
-        # temporally auto-pass this test as sthe demand for memory is large
+        # temporally auto-pass this test as the demand for memory is large
         pass
 
     def test_confab_conformers(self):
-        mol = copy.deepcopy(self.mol)
-        mol[1] = "H", [0, 0, 1.05]
+        mol = pb.readstring("smi", "CCCC").OBMol
         adaptor = BabelMolAdaptor(mol)
+        adaptor.make3D()
         conformers = adaptor.confab_conformers()
-        self.assertEquals(BabelMolAdaptor(mol).openbabel_mol.NumRotors(), 0)
-        self.assertAlmostEquals(BabelMolAdaptor(conformers[0]).pymatgen_mol[1].
-                                coords[2], 1.05)
+        self.assertEquals(adaptor.openbabel_mol.NumRotors(), 1)
+        self.assertGreaterEqual(len(conformers), 1)
+        if len(conformers) > 1:
+            self.assertNotAlmostEqual(
+                MoleculeMatcher().get_rmsd(conformers[0], conformers[1]), 0)
 
 if __name__ == "__main__":
     unittest.main()
