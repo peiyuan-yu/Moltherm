@@ -652,8 +652,8 @@ class ReaxysScraper:
             for reaction in reactions:
                 # Screen for reactions with more than two reactants
                 # or more than one product
-                if len(reaction.find_all("RY.PRO")) != 1\
-                        or len(reaction.find_all("RY.RCT")) != 2:
+                if len(reaction.find_all("RY.PRO")) > 2\
+                        or len(reaction.find_all("RY.RCT")) > 2:
                     continue
 
                 # Generate metadata from reaction header information
@@ -668,14 +668,16 @@ class ReaxysScraper:
                 rct_meta = [(int(e.text), rct_names[i].text) for i, e
                             in enumerate(rct_ids)]
 
-                pro_meta = (int(reaction.find("RX.PXRN").text),
-                            reaction.find("RX.PRO").text)
+                pro_ids = reaction.find_all("RX.PXRN")
+                pro_names = reaction.find_all("RX.PRO")
+                pro_meta = [(int(e.text), pro_names[i].text) for i, e
+                            in enumerate(pro_ids)]
 
                 meta = {"index": index,
                         "rxn_id": rxn_id,
                         "solvents": solvents,
                         "rct_meta": sorted(rct_meta, key=lambda x: x[0]),
-                        "pro_meta": pro_meta}
+                        "pro_meta": sorted(pro_meta, key=lambda x: x[0])}
 
                 # Capture reactant CTAB information
                 # Make sure that ordering is the same for metadata and CTAB
@@ -683,10 +685,12 @@ class ReaxysScraper:
                               key=lambda x: int(x["rn"]))
                 rcts = [rct.text for rct in rcts]
 
-                pro = reaction.find("RY.PRO").text
+                pros = sorted(reaction.find_all("RY.PRO"),
+                              key=lambda x: int(x["rn"]))
 
-                rxn = {"rct_1": rcts[0], "rct_2": rcts[1],
-                       "pro": pro, "meta": meta}
+                pros = [pro.text for pro in pros]
+
+                rxn = {"rcts": rcts, "pros": pros, "meta": meta}
 
                 results.append(rxn)
 
@@ -701,12 +705,6 @@ class ReaxysScraper:
         """
 
         for reaction in reactions:
-            # Screen again for number of reactants and products
-            if not (type(reaction["rct_1"]) == str and
-                    type(reaction["rct_2"]) == str and
-                    type(reaction["pro"]) == str and
-                    len(reaction["meta"]["rct_meta"]) == 2):
-                continue
 
             # Label directories by index and reaction id
             dir_name = str(reaction["meta"]["index"]) + "_" + \
@@ -734,9 +732,11 @@ class ReaxysScraper:
 <rctid>%(id)s</rctid>
 </rct>\n""" % rct_info)
 
-                pro_info = {"name": reaction["meta"]["pro_meta"][1],
-                            "id": str(reaction["meta"]["pro_meta"][0])}
-                file.write("""<pro>
+                for i, pro in enumerate(reaction["meta"]["pro_meta"]):
+                    pro_info = {"num": str(i),
+                                "name": pro[1],
+                                "id": str(pro[0])}
+                    file.write("""<pro>
 <proname>%(name)s</proname>
 <proid>%(id)s</proid>
 </pro>\n""" % pro_info)
@@ -746,15 +746,16 @@ class ReaxysScraper:
             # Create reactant files, named with their Reaxys IDs
             reactants = reaction["meta"]["rct_meta"]
             for i, e in enumerate(reactants):
-                filename = "rct_" + str(i + 1) + "_" + str(e[0]) + ".mol"
+                filename = "rct_" + str(i) + "_" + str(e[0]) + ".mol"
                 with open(os.path.join(path, filename), 'w') as file:
-                    file.write(reaction["rct_" + str(i + 1)])
+                    file.write(reaction["rcts"][i])
 
             # Create product file, named with its Reaxys ID
-            product_id = reaction["meta"]["pro_meta"][0]
-            filename = "pro_" + str(product_id) + ".mol"
-            with open(os.path.join(path, filename), 'w') as file:
-                file.write(reaction["pro"])
+            products = reaction["meta"]["pro_meta"]
+            for i, e in enumerate(products):
+                filename = "pro_" + str(i) + ".mol"
+                with open(os.path.join(path, filename), 'w') as file:
+                    file.write(reaction["pros"][i])
 
     @staticmethod
     def store_reaxys_reactions_db(reactions, dbfile="db.json",
