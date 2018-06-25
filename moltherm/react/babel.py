@@ -24,7 +24,7 @@ installed. Please consult the
 `openbabel documentation <http://openbabel.org/wiki/Main_Page>`_.
 """
 
-__author__ = "Shyue Ping Ong"
+__author__ = "Shyue Ping Ong, Qi Wang"
 __copyright__ = "Copyright 2012, The Materials Project"
 __version__ = "0.1"
 __maintainer__ = "Shyue Ping Ong"
@@ -111,20 +111,24 @@ class BabelMolAdaptor(object):
         pbmol.localopt(forcefield=forcefield, steps=steps)
         self._obmol = pbmol.OBMol
 
-    def make3D(self, forcefield="mmff94", steps=50):
+    def make3d(self, forcefield="mmff94", steps=50):
         """
         A wrapper to pybel's make3D method generate a 3D structure from a
         2D or 0D structure.
-        The 3D structure is made very quickly using a combination of rules 
-        (e.g. sp3 atoms should have four bonds arranged in a tetrahedron) and 
+        The 3D structure is made very quickly using a combination of rules
+        (e.g. sp3 atoms should have four bonds arranged in a tetrahedron) and
         ring templates (e.g. cyclohexane is shaped like a chair). Once 3D
         coordinates are generated, hydrogens are added and a quick local
         optimization is carried out as default.
-        
+
         The generated 3D structure can have clashes or have high energy
         structures due to some strain. Please consider to use the conformer
-        search or geometry optimization methods to optimize the structure.
+        search or geometry optimization to further optimize the structure.
 
+        Args:
+            forcefield: Default is mmff94. Options are 'gaff', 'ghemical',
+                'mmff94', 'mmff94s', and 'uff'.
+            steps: Default is 50.
         """
         pbmol = pb.Molecule(self._obmol)
         pbmol.make3D(forcefield=forcefield, steps=steps)
@@ -133,7 +137,6 @@ class BabelMolAdaptor(object):
     def add_hydrogen(self):
         """
         Add hydrogens (make all hydrogen explicit).
-
         """
         self._obmol.AddHydrogens()
 
@@ -141,20 +144,26 @@ class BabelMolAdaptor(object):
                         forcefield="mmff94"):
         """
         Conformer search based on several Rotor Search algorithms of openbabel.
-        If the input molecule is not 3D, make3D will be called (generate 3D
+        If the input molecule is not 3D, make3d will be called (generate 3D
         structure, add hydrogen, a quick localopt). All hydrogen atoms need
         to be made explicit.
+
         Args:
+            rotor_args: pass args to Rotor Search in openbabel.
+                for "WeightedRotorSearch": (conformers, geomSteps,
+                sampleRingBonds-default False)
+                for "SystematicRotorSearch": (geomSteps-default 2500,
+                sampleRingBonds-default False)
+                for "RandomRotorSearch": (conformers, geomSteps-default 2500,
+                sampleRingBonds-default False)
             algo (str): Default is "WeightedRotorSearch". Options are
-                "SystematicRotorSearch", "FastRotorSearch", "RandomRotorSearch",
-                and "WeightedRotorSearch".
+                "SystematicRotorSearch", "RandomRotorSearch", and
+                "WeightedRotorSearch".
             forcefield (str): Default is mmff94. Options are 'gaff', 'ghemical',
                 'mmff94', 'mmff94s', and 'uff'.
-            rotor_args: pass args to the Rotor Search class.
-
         """
         if self._obmol.GetDimension() != 3:
-            self.make3D()
+            self.make3d()
         else:
             self.add_hydrogen()
 
@@ -164,15 +173,14 @@ class BabelMolAdaptor(object):
                           "in openbabel. The forcefield will be reset as "
                           "default 'mmff94' for now.".format(forcefield))
             ff = ob.OBForceField_FindType("mmff94")
-        assert (ff.Setup(self._obmol))
 
         try:
             rotor_search = getattr(ff, algo)
         except AttributeError:
             warnings.warn("This input conformer search algorithm {} is not "
                           "supported in openbabel. Options are "
-                          "'SystematicRotorSearch', 'FastRotorSearch', "
-                          "'RandomRotorSearch' and 'WeightedRotorSearch'. "
+                          "'SystematicRotorSearch', 'RandomRotorSearch' "
+                          "and 'WeightedRotorSearch'. "
                           "The algorithm will be reset as default "
                           "'WeightedRotorSearch' for now.".format(algo))
             rotor_search = ff.WeightedRotorSearch
@@ -190,13 +198,13 @@ class BabelMolAdaptor(object):
            (optimizing each conformer with 25 steps of a steepest descent)
         4. Do 250 steps of a conjugate gradient geometry optimization.
 
-        Warning from openbabel doc:
-        for many applications where 100s if not 1000s of molecules need to be
-        processed, gen3d is rather slow.
+        Warning from openbabel docs:
+        For many applications where 100s if not 1000s of molecules need to be
+        processed, gen3d is rather SLOW. Sometimes this function can cause a
+        segmentation fault.
         A future version of Open Babel will provide options for slow/medium/fast
         3D structure generation which will involve different compromises
         between speed and finding the global energy minimum.
-
         """
         gen3d = ob.OBOp.FindType("Gen3D")
         gen3d.Do(self._obmol)
@@ -226,19 +234,18 @@ class BabelMolAdaptor(object):
              (list): list of pymatgen Molecule objects for generated conformers.
         """
         if self._obmol.GetDimension() != 3:
-            self.make3D()
+            self.make3d()
         else:
             self.add_hydrogen()
 
         ff = ob.OBForceField_FindType(forcefield)
         if ff == 0:
-            print("Could not find forcefield {} in openbabel, the forcefield "
-                  "will be reset as default 'mmff94'".format(forcefield))
+            warnings.warn("This input forcefield {} is not supported "
+                          "in openbabel. The forcefield will be reset as "
+                          "default 'mmff94' for now.".format(forcefield))
             ff = ob.OBForceField_FindType("mmff94")
-        assert (ff.Setup(self._obmol))
 
         if freeze_atoms:
-            print('{} atoms will be freezed'.format(len(freeze_atoms)))
             constraints = ob.OBFFConstraints()
             for atom in ob.OBMolAtomIter(self._obmol):
                 atom_id = atom.GetIndex() + 1
@@ -250,7 +257,6 @@ class BabelMolAdaptor(object):
         ff.DiverseConfGen(rmsd_cutoff, conf_cutoff, energy_cutoff,
                           verbose)
         ff.GetConformers(self._obmol)
-        print(BabelMolAdaptor(self._obmol).pymatgen_mol.sites)
 
         # Number of conformers generated by Confab conformer generation
         conformer_num = self._obmol.NumConformers()
@@ -261,9 +267,6 @@ class BabelMolAdaptor(object):
             conformer = copy.deepcopy(BabelMolAdaptor(self._obmol).pymatgen_mol)
             conformers.append(conformer)
         self._obmol.SetConformer(0)
-        # conformers = pb.ob.toConformerData(
-        #     self._obmol.GetData(pb.ob.ConformerData))
-        # energies = conformers.GetEnergies()
         return conformers
 
     @property
@@ -302,7 +305,8 @@ class BabelMolAdaptor(object):
     @staticmethod
     def from_molecule_graph(mol):
         """
-        Read a pymatgen MoleculeGraph object.
+        Read a molecule from a pymatgen MoleculeGraph object.
+
         Args:
             mol: pymatgen MoleculeGraph object.
 
