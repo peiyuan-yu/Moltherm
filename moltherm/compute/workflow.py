@@ -1,6 +1,7 @@
 from os import listdir
 from os.path import join, isfile, isdir
 import operator
+import shutil
 
 from bs4 import BeautifulSoup
 
@@ -33,12 +34,6 @@ For now, we want to:
     - Calculate heat capacity as function of temperature
     - Determine working temperature range using QSPR (or database, if available?)
     - Perform some analysis to rank candidate reactions
-    
-        {"pcm": {"heavypoints": "194",
-            "hpoints": "194",
-            "radii": "BONDI",
-            "theory": "IEFPCM",
-            "vdwscale": "1.2"}
     
 TODO list:
     - Learn how to use Drones and Queens to parallelize for large sets of data
@@ -168,6 +163,43 @@ def find_common_solvents(base_dir):
                 solvent_occurrence[solvent] = current_value + 1
 
     return sorted(solvent_occurrence.items(), key=operator.itemgetter(1))
+
+
+def get_reactions_common_solvent(base_dir, outdir, solvent):
+    """
+    Identify all reactions from a set of reactions which share a solvent.
+
+    :param base_dir: Directory to begin search in.
+    :param outdir: Directory to put all reactions with the common solvent
+    :param solvent: Solvent of interest
+    :return:
+    """
+
+    rct_dirs = [d for d in listdir(base_dir) if isdir(join(base_dir, d))]
+
+    common_solvent = []
+
+    for rct_dir in rct_dirs:
+        if "meta.xml" not in listdir(join(base_dir, rct_dir)):
+            # If metadata has not been recorded, solvent cannot be determined
+            continue
+
+        with open(join(base_dir, rct_dir, "meta.xml"), "r") as file:
+            parsed = BeautifulSoup(file.read(), "lxml-xml")
+
+            solvents = parsed.find("solvents").text.split(",")
+            solvents = [s.lower() for s in solvents]
+
+            if solvent.lower() in solvents:
+                common_solvent.append(rct_dir)
+
+
+    num_copied = 0
+    for rct_dir in common_solvent:
+        shutil.copytree(join(base_dir, rct_dir), join(outdir, rct_dir))
+        num_copied += 1
+
+    print("{} reactions with solvent {}".format(str(num_copied), solvent))
 
 
 class MolTherm:

@@ -1,39 +1,28 @@
-from os import listdir
-from os.path import join, isfile, isdir
-import operator
-import copy
-
-from pymatgen.io.babel import BabelMolAdaptor
-
-from atomate.qchem.database import QChemCalcDb
-from atomate.qchem.drones import QChemDrone
 from atomate.qchem.firetasks.write_inputs import WriteInputFromIOSet
 from atomate.qchem.firetasks.parse_outputs import QChemToDb
 
-from pymatgen.core.structure import Molecule
-
-from atomate.utils.utils import load_class
+from atomate.utils.utils import env_chk, get_logger
 from fireworks import FiretaskBase, explicit_serialize
-from pymatgen.io.qchem_io.inputs import QCInput
-from pymatgen.io.qchem_io.outputs import QCOutputs
-from pymatgen.io.qchem_io.sets import OptSet, SinglePointSet, FreqSet
 from fireworks import Firework
 
-from custodian.qchem.new_jobs import QCJob
+from custodian import Custodian
 from custodian.qchem.new_handlers import QChemErrorHandler
+
+from moltherm.compute.drones import MolThermDrone
+from moltherm.compute.outputs import QCOutput
+from moltherm.compute.jobs import QCJob
 
 
 class OptFreqSPFW(Firework):
     def __init(self, molecule=None,
-               name="opt-freq-sp",
+               name="opt_freq_sp",
                qchem_cmd="qchem",
                multimode="openmp",
                input_file="mol.qin",
                output_file="mol.qout",
-               max_cores=32,
+               max_cores=64,
                qchem_input_params=None,
-               max_iterations=1,
-               max_molecule_perturb_scale=0.3,
+               sp_params=None,
                reversed_direction=False,
                db_file=None,
                parents=None,
@@ -53,6 +42,7 @@ class OptFreqSPFW(Firework):
             qchem_input_params (dict): Specify kwargs for instantiating the input set parameters.
                                        For example, if you want to change the DFT_rung, you should
                                        provide: {"DFT_rung": ...}. Defaults to None.
+            sp_params (dict): Specify inputs for single-point calculation.
             max_iterations (int): Number of perturbation -> optimization -> frequency
                                   iterations to perform. Defaults to 10.
             max_molecule_perturb_scale (float): The maximum scaled perturbation that can be
@@ -79,13 +69,9 @@ class OptFreqSPFW(Firework):
                 input_file=input_file,
                 output_file=output_file,
                 max_cores=max_cores,
+                sp_params=sp_params,
                 job_type="opt_freq_sp",
-                max_iterations=max_iterations,
-                max_molecule_perturb_scale=max_molecule_perturb_scale,
                 reversed_direction=reversed_direction,
-                sp_basis=qchem_input_params["sp"]["basis"],
-                sp_dielectric=qchem_input_params["sp"]["pcm_dielectric"],
-                sp_overwrite_inputs=["sp"]["other"]
             ))
         t.append(
             QChemToDb(
@@ -130,10 +116,6 @@ class RunQChemCustodian(FiretaskBase):
         handler_group (str): Group of handlers to use. See handler_groups dict in the code
                              for the groups and complete list of handlers in each group.
         gzip_output (bool): gzip output (default=T)
-        sp_basis (str): Basis for single-point calculations (assumes that this
-        will use a different basis than the opt and freq calculations
-        sp_dielectric (float): dielectric constant for pcm
-        sp_overwrite_inputs (dict): overwrite any default settings
 
         *** Just for opt_with_frequency_flattener ***
         max_iterations (int): Number of perturbation -> optimization -> frequency iterations
@@ -143,14 +125,17 @@ class RunQChemCustodian(FiretaskBase):
         reversed_direction (bool): Whether to reverse the direction of the vibrational
                                    frequency vectors. Defaults to False.
 
+        *** Just for opt_with_freq_sp ***
+        sp_params (dict): Describes parameters for single-point calculation, if
+                          different from opt and freq.
+
     """
     required_params = ["qchem_cmd"]
     optional_params = [
         "multimode", "input_file", "output_file", "max_cores", "qclog_file",
         "suffix", "scratch_dir", "save_scratch", "save_name", "max_errors",
         "max_iterations", "max_molecule_perturb_scale", "reversed_direction",
-        "job_type", "handler_group", "gzipped_output", "sp_basis", "sp_dielectric",
-        "sp_overwrite_inputs"
+        "job_type", "handler_group", "gzipped_output", "sp_params"
     ]
 
     def run_task(self, fw_spec):
@@ -174,6 +159,7 @@ class RunQChemCustodian(FiretaskBase):
                                               0.3)
         job_type = self.get("job_type", "normal")
         gzipped_output = self.get("gzipped_output", True)
+        sp_params = self.get("sp_params", None)
 
         handler_groups = {
             "default": [
@@ -211,52 +197,19 @@ class RunQChemCustodian(FiretaskBase):
                 save_scratch=save_scratch,
                 save_name=save_name,
                 max_cores=max_cores)
+
         elif job_type == "opt_freq_sp":
-            orig_opt_input = QCInput.from_file(input_file)
-            orig_freq_rem = copy.deepcopy(orig_opt_input.rem)
-            orig_freq_rem["job_type"] = "freq"
-            opt_job = QCJob(qchem_command=qchem_cmd,
-                    multimode=multimode,
-                    input_file=input_file,
-                    output_file=(output_file + ".opt"),
-                    max_cores=max_cores,
-                    qclog_file=qclog_file,
-                    suffix=suffix,
-                    scratch_dir=scratch_dir,
-                    save_scratch=save_scratch,
-                    save_name=save_name)
-            opt_outdata = QCOutput(output_file + ".opt").data
-            freq_input = QCInput(
-                molecule=opt_outdata.get("molecule_from_optimized_geometry"),
-                rem=orig_freq_rem,
-                opt=orig_opt_input.opt,
-                pcm=orig_opt_input.pcm,
-                solvent=orig_opt_input.solvent)
-            freq_input.write_file(input_file + ".freq")
-            freq_job = QCJob(
+            jobs = QCJob.opt_with_freq_sp(
                 qchem_command=qchem_cmd,
                 multimode=multimode,
-                input_file=(input_file + ".freq"),
-                output_file=(output_file + ".freq"),
+                input_file=input_file,
+                output_file=output_file,
                 qclog_file=qclog_file,
-                suffix=".freq",
-                **QCJob_kwargs)
-            sp_input = SinglePointSet(
-                opt_outdata.get("molecule_from_optimized_geometry"),
-                dft_rung=4,
-                basis_set=self.get("sp_basis", "6-311++G*"),
-                pcm_dielectric=self.get("sp_dielectric", 8.93),
-                max_scf_cycles=200,
-                overwrite_inputs=self.get("sp_overwrite_inputs", None))
-            sp_input.write_file(input_file + ".sp")
-            sp_job = QCJob(qchem_command=qchem_cmd,
-                multimode=multimode,
-                input_file=(input_file + ".sp"),
-                output_file=(output_file + ".sp"),
-                qclog_file=qclog_file,
-                suffix=".sp",
-                **QCJob_kwargs)
-            jobs = [opt_job, freq_job, sp_job]
+                sp_params=sp_params,
+                max_cores=max_cores,
+                scratch_dir=scratch_dir,
+                save_scratch=save_scratch,
+                save_name=save_name)
 
 
         else:
