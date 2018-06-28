@@ -10,10 +10,7 @@ from pymatgen.io.babel import BabelMolAdaptor
 
 from fireworks import Workflow, LaunchPad
 
-from atomate.qchem.database import QChemCalcDb
-from atomate.qchem.fireworks.core import FrequencyFlatteningOptimizeFW
-
-from moltherm.compute.drones import MolThermDrone
+from moltherm.compute.fireworks import OptFreqSPFW
 from moltherm.compute.outputs import QCOutput
 
 __author__ = "Evan Spotte-Smith"
@@ -209,16 +206,13 @@ class MolTherm:
     """
 
     def __init__(self, base_dir, subdirs=False, reactant_pre="rct_",
-                 product_pre="pro_", with_freq=True, db_file="db.json"):
+                 product_pre="pro_", db_file="db.json"):
         """
         :param base_dir: Directory where input and output data should be stored.
         :param subdirs: Is data all stored in one directory (False), or is it
         separated among subdirectories (True)?
         :param reactant_pre: Prefix for reactant files.
         :param product_pre: Prefix for product files.
-        :param with_freq: Should the workflow only optimize the structure of
-        the molecules (False), or should it also perform frequency calculations
-        (True)?
         :param db_file: Path to database config file.
         """
 
@@ -226,7 +220,6 @@ class MolTherm:
         self.subdirs = subdirs
         self.reactant_pre = reactant_pre
         self.product_pre = product_pre
-        self.with_freq = with_freq
         self.db_file = db_file
 
     def get_reaction_thermo_files(self, path=None):
@@ -275,7 +268,10 @@ class MolTherm:
     def record_data(self):
         pass
 
-    def get_single_reaction_workflow(self, path=None, filenames=None):
+    def get_single_reaction_workflow(self, path=None, filenames=None,
+                                     max_cores=64,
+                                     qchem_input_params=None,
+                                     sp_params=None):
         """
         Generates a Fireworks Workflow to find the structures and energies of
         the reactants and products of a single reaction.
@@ -285,6 +281,12 @@ class MolTherm:
         :param filenames: Specified files within the path (if self.base_dir or
         a subdirectory) that should be considered a part of this reaction. If
         None, assume all files in the directory are to be involved.
+        :param max_cores: int specifying number of processes/threads that can
+        be used for this workflow.
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
         :return: Workflow
         """
 
@@ -313,12 +315,15 @@ class MolTherm:
             infile = join(self.base_dir, self.reactant_pre + str(i) + ".in")
             outfile = join(self.base_dir, self.reactant_pre + str(i) + ".out")
 
-            fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                               name=("opt+freq: " + rct),
-                                               qchem_cmd="qchem -slurm",
-                                               input_file=infile,
-                                               output_file=outfile,
-                                               db_file=self.db_file)
+            fw = OptFreqSPFW(molecule=mol,
+                             name=("opt_freq_sp_: " + rct),
+                             qchem_cmd="qchem -slurm",
+                             input_file=infile,
+                             output_file=outfile,
+                             max_cores=max_cores,
+                             qchem_input_params=qchem_input_params,
+                             sp_params=sp_params,
+                             db_file=self.db_file)
 
             fws.append(fw)
 
@@ -328,18 +333,23 @@ class MolTherm:
             infile = join(self.base_dir, self.product_pre + str(i) + ".in")
             outfile = join(self.base_dir, self.product_pre + str(i) + ".out")
 
-            fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                               name=("opt+freq: " + pro),
-                                               qchem_cmd="qchem -slurm",
-                                               input_file=infile,
-                                               output_file=outfile,
-                                               db_file=self.db_file)
+            fw = OptFreqSPFW(molecule=mol,
+                             name=("opt_freq_sp_: " + rct),
+                             qchem_cmd="qchem -slurm",
+                             input_file=infile,
+                             output_file=outfile,
+                             max_cores=max_cores,
+                             qchem_input_params=qchem_input_params,
+                             sp_params=sp_params,
+                             db_file=self.db_file)
 
             fws.append(fw)
 
         return Workflow(fws)
 
-    def get_reaction_set_workflow(self):
+    def get_reaction_set_workflow(self, max_cores=64,
+                                  qchem_input_params=None,
+                                  sp_params=None):
         """Generates a Fireworks Workflow to find the structures and energies of
         the reactants and products of a single reaction.
 
@@ -347,6 +357,13 @@ class MolTherm:
         True; that is, only if each reaction is in a separate subdirectory.
         Later additions could allow for some other means of specifying the
         separate reactions within a single directory.
+
+        :param max_cores: int specifying number of processes/threads that can
+        be used for this workflow.
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
 
         :return: Workflow
         """
@@ -373,12 +390,15 @@ class MolTherm:
                 outfile = join(self.base_dir,
                                self.reactant_pre + str(i) + ".out")
 
-                fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                                   name=("opt+freq: " + infile),
-                                                   qchem_cmd="qchem -slurm",
-                                                   input_file=infile,
-                                                   output_file=outfile,
-                                                   db_file=self.db_file)
+                fw = OptFreqSPFW(molecule=mol,
+                                 name=("opt_freq_sp_: " + rct),
+                                 qchem_cmd="qchem -slurm",
+                                 input_file=infile,
+                                 output_file=outfile,
+                                 max_cores=max_cores,
+                                 qchem_input_params=qchem_input_params,
+                                 sp_params=sp_params,
+                                 db_file=self.db_file)
 
                 fws.append(fw)
 
@@ -389,12 +409,15 @@ class MolTherm:
                 outfile = join(self.base_dir,
                                self.product_pre + str(i) + ".out")
 
-                fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                                   name=("opt+freq: " + infile),
-                                                   qchem_cmd="qchem -slurm",
-                                                   input_file=infile,
-                                                   output_file=outfile,
-                                                   db_file=self.db_file)
+                fw = OptFreqSPFW(molecule=mol,
+                                 name=("opt_freq_sp_: " + rct),
+                                 qchem_cmd="qchem -slurm",
+                                 input_file=infile,
+                                 output_file=outfile,
+                                 max_cores=max_cores,
+                                 qchem_input_params=qchem_input_params,
+                                 sp_params=sp_params,
+                                 db_file=self.db_file)
 
                 fws.append(fw)
 
