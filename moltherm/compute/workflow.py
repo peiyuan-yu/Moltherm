@@ -4,15 +4,16 @@ import operator
 
 from bs4 import BeautifulSoup
 
-from pymatgen.io.qchem_io.outputs import QCOutput
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
 
 from fireworks import Workflow, LaunchPad
 
 from atomate.qchem.database import QChemCalcDb
-from atomate.qchem.drones import QChemDrone
 from atomate.qchem.fireworks.core import FrequencyFlatteningOptimizeFW
+
+from moltherm.compute.drones import MolThermDrone
+from moltherm.compute.outputs import QCOutput
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"

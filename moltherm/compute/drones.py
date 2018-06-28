@@ -129,7 +129,7 @@ class MolThermDrone(AbstractDrone):
             d = jsanitize(self.additional_fields, strict=True)
             d["schema"] = {
                 "code": "atomate",
-                "version": QChemDrone.__version__
+                "version": MolThermDrone.__version__
             }
             d["dir_name"] = fullpath
             if multirun:
@@ -182,8 +182,9 @@ class MolThermDrone(AbstractDrone):
                     d["output"]["enthalpy"] = d["output"].get("enthalpy", enthalpy)
                     d["output"]["entropy"] = d["output"].get("entropy", entropy)
 
-                elif d["output"]["job_type"] == "sp" or d["output"]["job_type"] == "single_point":
-                    # What do single-point calculations look like?
+                elif c["input"]["rem"]["job_type"] == "sp" or c["input"]["rem"]["job_type"] == "single_point":
+                    energy = c["final_energy_sp"]
+                    d["output"]["final_energy_sp"] = d["output"].get("final_energy_sp", energy)
 
             if "special_run_type" in d:
                 if d["special_run_type"] == "frequency_flattener":
