@@ -295,10 +295,15 @@ class MolTherm:
 
         fws = []
 
-        if path is not None and self.subdirs:
-            base_path = join(self.base_dir, path)
+        if path is not None:
+            fw_pre = path
+
+            if self.subdirs:
+                base_path = join(self.base_dir, path)
+            else:
+                base_path = self.base_dir
         else:
-            base_path = self.base_dir
+            fw_pre = "opt_freq_sp_"
 
         if filenames:
             rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
@@ -319,7 +324,7 @@ class MolTherm:
             outfile = join(self.base_dir, self.reactant_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
-                             name=("opt_freq_sp_: " + rct),
+                             name=(fw_pre + " : " + rct),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
@@ -337,7 +342,7 @@ class MolTherm:
             outfile = join(self.base_dir, self.product_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
-                             name=("opt_freq_sp_: " + pro),
+                             name=(fw_pre + " : " + pro),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
