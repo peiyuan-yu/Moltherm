@@ -23,19 +23,19 @@ logger = get_logger(__name__)
 
 
 class OptFreqSPFW(Firework):
-    def __init(self, molecule=None,
-               name="opt_freq_sp",
-               qchem_cmd="qchem",
-               multimode="openmp",
-               input_file="mol.qin",
-               output_file="mol.qout",
-               max_cores=64,
-               qchem_input_params=None,
-               sp_params=None,
-               reversed_direction=False,
-               db_file=None,
-               parents=None,
-               **kwargs):
+    def __init__(self, molecule=None,
+                 name="opt_freq_sp",
+                 qchem_cmd="qchem",
+                 multimode="openmp",
+                 input_file="mol.qin",
+                 output_file="mol.qout",
+                 max_cores=64,
+                 qchem_input_params=None,
+                 sp_params=None,
+                 reversed_direction=False,
+                 db_file=None,
+                 parents=None,
+                 **kwargs):
         """
         Performs a QChem workflow with three steps: structure optimization,
         frequency calculation, and single-point calculation.
