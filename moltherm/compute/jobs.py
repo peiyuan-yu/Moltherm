@@ -295,7 +295,8 @@ class QCJob(Job):
             rem=orig_freq_rem,
             opt=orig_opt_input.opt,
             pcm=orig_opt_input.pcm,
-            solvent=orig_opt_input.solvent)
+            solvent=orig_opt_input.solvent,
+            smx=orig_opt_input.smx)
         freq_input.write_file(input_file)
         yield (QCJob(
             qchem_command=qchem_command,
@@ -317,7 +318,8 @@ class QCJob(Job):
                                           "basis": "311+g(d,p)"}),
                 opt=sp_params.get("opt", None),
                 pcm=sp_params.get("pcm", None),
-                solvent=sp_params.get("solvent", None))
+                solvent=sp_params.get("solvent", None),
+                smx=sp_params.get("smx", None))
         else:
             orig_sp_rem = copy.deepcopy(orig_opt_input.rem)
             orig_sp_rem["job_type"] = "sp"
@@ -326,7 +328,8 @@ class QCJob(Job):
                 rem=orig_sp_rem,
                 opt=orig_opt_input.opt,
                 pcm=orig_opt_input.pcm,
-                solvent=orig_opt_input.solvent)
+                solvent=orig_opt_input.solvent,
+                smx=orig_opt_input.smx)
 
         sp_input.write_file(input_file)
         yield (QCJob(qchem_command=qchem_command,

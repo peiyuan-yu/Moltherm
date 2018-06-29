@@ -1,10 +1,11 @@
+from __future__ import division, print_function, unicode_literals, absolute_import
+
 import os
 import json
 
-from atomate.qchem.firetasks.write_inputs import WriteInputFromIOSet
 from atomate.qchem.firetasks.parse_outputs import QChemToDb
 
-from atomate.utils.utils import env_chk, get_logger
+from atomate.utils.utils import env_chk, get_logger, load_class
 from atomate.common.firetasks.glue_tasks import get_calc_loc
 from atomate.qchem.database import QChemCalcDb
 
@@ -16,6 +17,7 @@ from custodian import Custodian
 from custodian.qchem.new_handlers import QChemErrorHandler
 
 from moltherm.compute.drones import MolThermDrone
+from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 from moltherm.compute.jobs import QCJob
 
@@ -68,9 +70,12 @@ class OptFreqSPFW(Firework):
         qchem_input_params = qchem_input_params or {}
         t = []
         t.append(
-            WriteInputFromIOSet(
+            WriteCustomInput(qchem_input_params["rem"],
                 molecule=molecule,
-                qchem_input_set="OptSet",
+                opt=qchem_input_params.get("opt", None),
+                pcm=qchem_input_params.get("pcm", None),
+                solvent=qchem_input_params.get("solvent", None),
+                smx=qchem_input_params.get("smx", None),
                 input_file=input_file,
                 qchem_input_params=qchem_input_params))
         t.append(
@@ -339,3 +344,151 @@ class QChemToDb(FiretaskBase):
             stored_data={"task_id": task_doc.get("task_id", None)},
             defuse_children=defuse_children,
             update_spec=update_spec)
+
+
+@explicit_serialize
+class WriteInputFromIOSet(FiretaskBase):
+    """
+    Writes QChem Input files from input sets. A dictionary is passed to WriteInputFromIOSet where
+    parameters are given as keys in the dictionary.
+
+    required_params:
+        qc_input_set (QChemDictSet or str): Either a QChemDictSet object or a string
+        name for the QChem input set (e.g., "OptSet"). *** Note that if the molecule is to be inherited through
+        fw_spec qc_input_set must be a string name for the QChem input set. ***
+
+    optional_params:
+        qchem_input_params (dict): When using a string name for QChem input set, use this as a dict
+        to specify kwargs for instantiating the input set parameters. For example, if you want
+        to change the DFT_rung, you should provide: {"DFT_rung": ...}.
+        This setting is ignored if you provide the full object representation of a QChemDictSet
+        rather than a String.
+        molecule (Molecule):
+        input_file (str): Name of the QChem input file. Defaults to mol.qin
+        write_to_dir (str): Path of the directory where the QChem input file will be written,
+        the default is to write to the current working directory
+    """
+
+    required_params = ["qchem_input_set"]
+    optional_params = [
+        "molecule", "qchem_input_params", "input_file", "write_to_dir"
+    ]
+
+    def run_task(self, fw_spec):
+        input_file = "mol.qin"
+        if "input_file" in self:
+            input_file = self["input_file"]
+        # this adds the full path to the input_file
+        if "write_to_dir" in self:
+            input_file = os.path.join(self["write_to_dir"], input_file)
+        # these if statements might need to be reordered at some point
+        # if a full QChemDictSet object was provided
+        if hasattr(self["qchem_input_set"], "write_file"):
+            qcin = self["qchem_input_set"]
+            qcin.write_file(input_file)
+        # if a molecule is being passed through fw_spec
+        elif fw_spec.get("prev_calc_molecule"):
+            mol = fw_spec.get("prev_calc_molecule")
+            qcin_cls = load_class("pymatgen.io.qchem_io.sets",
+                                  self["qchem_input_set"])
+            qcin = qcin_cls(mol, **self.get("qchem_input_params", {}))
+            qcin.write_file(input_file)
+        # if a molecule is included as an optional parameter
+        elif self.get("molecule"):
+            qcin_cls = load_class("pymatgen.io.qchem_io.sets",
+                                  self["qchem_input_set"])
+            qcin = qcin_cls(
+                self.get("molecule"), **self.get("qchem_input_params", {}))
+            qcin.write_file(input_file)
+        # if no molecule is present raise an error
+        else:
+            raise KeyError(
+                "No molecule present, add as an optional param or check fw_spec"
+            )
+
+
+@explicit_serialize
+class WriteCustomInput(FiretaskBase):
+    """
+        Writes QChem Input files from custom input sets. This firetask gives the maximum flexibility when trying
+        to define custom input parameters.
+
+        required_params:
+            qchem_input_custom (dict): Define custom input parameters to generate a qchem input file.
+            This should be a dictionary of dictionaries (i.e. {{"rem": {"method": "b3lyp", basis": "6-31*G++", ...}
+            Each QChem section should be a key with its own dictionary as the value. For more details on how
+            the input should be structured look at pymatgen.io.qchem_io.inputs
+            ***  ***
+
+        optional_params:
+            molecule (Molecule):
+            input_file (str): Name of the QChem input file. Defaults to mol.qin
+            write_to_dir (str): Path of the directory where the QChem input file will be written,
+            the default is to write to the current working directory
+        """
+
+    required_params = ["rem"]
+    # optional_params will need to be modified if more QChem sections are added QCInput
+    optional_params = [
+        "molecule", "opt", "pcm", "solvent", "smx", "input_file", "write_to_dir"
+    ]
+
+    def run_task(self, fw_spec):
+        input_file = self.get("input_file", "mol.qin")
+        # this adds the full path to the input_file
+        if "write_to_dir" in self:
+            input_file = os.path.join(self["write_to_dir"], input_file)
+        # these if statements might need to be reordered at some point
+        if "molecule" in self:
+            molecule = self["molecule"]
+        elif fw_spec.get("prev_calc_molecule"):
+            molecule = fw_spec.get("prev_calc_molecule")
+        else:
+            raise KeyError(
+                "No molecule present, add as an optional param or check fw_spec"
+            )
+        # in the current structure there needs to be a statement for every optional QChem section
+        # the code below defaults the section to None if the variable is not passed
+        opt = self.get("opt", None)
+        pcm = self.get("pcm", None)
+        solvent = self.get("solvent", None)
+        smx = self.get("smx", None)
+
+        qcin = QCInput(
+            molecule=molecule,
+            rem=self["rem"],
+            opt=opt,
+            pcm=pcm,
+            solvent=solvent,
+            smx=smx)
+        qcin.write_file(input_file)
+
+
+@explicit_serialize
+class WriteInput(FiretaskBase):
+    """
+    Writes QChem input file from QCInput object.
+
+    required_params:
+        qc_input (QCInput): QCInput object
+
+    optional_params:
+        input_file (str): Name of the QChem input file. Defaults to mol.qin
+        write_to_dir (str): Path of the directory where the QChem input file will be written,
+        the default is to write to the current working directory
+
+    """
+    required_params = ["qc_input"]
+    optional_params = ["input_file", "write_to_dir"]
+
+    def run_task(self, fw_spec):
+        # if a QCInput object is provided
+        input_file = "mol.qin"
+        if "input_file" in self:
+            input_file = self["input_file"]
+        # this adds the full path to the input_file
+        if "write_to_dir" in self:
+            input_file = os.path.join(self["write_to_dir"], input_file)
+
+        qcin = self["qc_input"]
+        qcin.write_file(input_file)
