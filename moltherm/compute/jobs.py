@@ -280,7 +280,7 @@ class QCJob(Job):
         yield (QCJob(qchem_command=qchem_command,
                      multimode=multimode,
                      input_file=input_file,
-                     output_file=(output_file + ".opt"),
+                     output_file=output_file,
                      max_cores=max_cores,
                      qclog_file=qclog_file,
                      suffix=".opt",
@@ -300,8 +300,8 @@ class QCJob(Job):
         yield (QCJob(
             qchem_command=qchem_command,
             multimode=multimode,
-            input_file=(input_file + ".freq"),
-            output_file=(output_file + ".freq"),
+            input_file=input_file,
+            output_file=output_file,
             max_cores=max_cores,
             qclog_file=qclog_file,
             suffix=".freq",
@@ -331,8 +331,8 @@ class QCJob(Job):
         sp_input.write_file(input_file + ".sp")
         yield (QCJob(qchem_command=qchem_command,
                      multimode=multimode,
-                     input_file=(input_file + ".sp"),
-                     output_file=(output_file + ".sp"),
+                     input_file=input_file,
+                     output_file=output_file,
                      qclog_file=qclog_file,
                      suffix=".sp",
                      **QCJob_kwargs))

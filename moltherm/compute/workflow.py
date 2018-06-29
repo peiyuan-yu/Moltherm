@@ -304,6 +304,7 @@ class MolTherm:
                 base_path = self.base_dir
         else:
             fw_pre = "opt_freq_sp_"
+            path = ""
 
         if filenames:
             rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
@@ -320,8 +321,8 @@ class MolTherm:
         for i, rct in enumerate(rcts):
             mol = get_molecule(join(base_path, rct))
 
-            infile = join(self.base_dir, self.reactant_pre + str(i) + ".in")
-            outfile = join(self.base_dir, self.reactant_pre + str(i) + ".out")
+            infile = join(self.base_dir, path, self.reactant_pre + str(i) + ".in")
+            outfile = join(self.base_dir, path, self.reactant_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
                              name=(fw_pre + " : " + rct),
@@ -338,8 +339,8 @@ class MolTherm:
         for i, pro in enumerate(pros):
             mol = get_molecule(join(base_path, pro))
 
-            infile = join(self.base_dir, self.product_pre + str(i) + ".in")
-            outfile = join(self.base_dir, self.product_pre + str(i) + ".out")
+            infile = join(self.base_dir, path, self.product_pre + str(i) + ".in")
+            outfile = join(self.base_dir, path, self.product_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
                              name=(fw_pre + " : " + pro),
