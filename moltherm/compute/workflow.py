@@ -52,7 +52,10 @@ def get_molecule(molfile):
     obmol = BabelMolAdaptor.from_file(molfile, file_format="mol")
     # OBMolecule does not contain pymatgen Molecule information
     # So, we need to wrap the obmol in a BabelMolAdapter and extract
-    obmol.confm_search(make_3d=True, add_hydrogens=True)
+    obmol.add_hydrogen()
+    obmol.make3d()
+    obmol.localopt()
+
     return obmol.pymatgen_mol
 
 
