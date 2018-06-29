@@ -297,14 +297,14 @@ class MolTherm:
 
         if path is not None:
             fw_pre = path
-
-            if self.subdirs:
-                base_path = join(self.base_dir, path)
-            else:
-                base_path = self.base_dir
         else:
             fw_pre = "opt_freq_sp_"
             path = ""
+
+        if self.subdirs:
+            base_path = join(self.base_dir, path)
+        else:
+            base_path = self.base_dir
 
         if filenames:
             rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
@@ -329,6 +329,7 @@ class MolTherm:
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
+                             qclog_file=join(self.base_dir, path, "mol.qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
@@ -347,6 +348,7 @@ class MolTherm:
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
+                             qclog_file=join(self.base_dir, path, "mol.qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
