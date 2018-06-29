@@ -8,7 +8,7 @@ import logging
 from monty.json import MSONable
 from monty.io import zopen
 from pymatgen.core import Molecule
-from .utils import read_table_pattern, read_pattern, lower_and_check_unique
+from pymatgen.io.qchem_io.utils import read_table_pattern, read_pattern, lower_and_check_unique
 """
 Classes for reading/manipulating/writing QChem ouput files.
 """
