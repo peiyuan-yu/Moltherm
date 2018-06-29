@@ -29,6 +29,7 @@ class OptFreqSPFW(Firework):
                  multimode="openmp",
                  input_file="mol.qin",
                  output_file="mol.qout",
+                 qclog_file="mol.qclog",
                  max_cores=64,
                  qchem_input_params=None,
                  sp_params=None,
@@ -47,6 +48,7 @@ class OptFreqSPFW(Firework):
             multimode (str): Parallelization scheme, either openmp or mpi.
             input_file (str): Name of the QChem input file. Defaults to mol.qin.
             output_file (str): Name of the QChem output file. Defaults to mol.qout.
+            qclog_file (str): Name of the QChem log file. Defaults to mol.qclog.
             max_cores (int): Maximum number of cores to parallelize over. Defaults to 32.
             qchem_input_params (dict): Specify kwargs for instantiating the input set parameters.
                                        For example, if you want to change the DFT_rung, you should
@@ -77,6 +79,7 @@ class OptFreqSPFW(Firework):
                 multimode=multimode,
                 input_file=input_file,
                 output_file=output_file,
+                qclog_file=qclog_file,
                 max_cores=max_cores,
                 sp_params=sp_params,
                 job_type="opt_freq_sp",
