@@ -296,7 +296,7 @@ class QCJob(Job):
             opt=orig_opt_input.opt,
             pcm=orig_opt_input.pcm,
             solvent=orig_opt_input.solvent)
-        freq_input.write_file(input_file + ".freq")
+        freq_input.write_file(input_file)
         yield (QCJob(
             qchem_command=qchem_command,
             multimode=multimode,
@@ -328,7 +328,7 @@ class QCJob(Job):
                 pcm=orig_opt_input.pcm,
                 solvent=orig_opt_input.solvent)
 
-        sp_input.write_file(input_file + ".sp")
+        sp_input.write_file(input_file)
         yield (QCJob(qchem_command=qchem_command,
                      multimode=multimode,
                      input_file=input_file,
