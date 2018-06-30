@@ -31,7 +31,7 @@ For now, we want to:
     - Calculate heat capacity as function of temperature
     - Determine working temperature range using QSPR (or database, if available?)
     - Perform some analysis to rank candidate reactions
-    
+
 TODO list:
     - Learn how to use Drones and Queens to parallelize for large sets of data
     - Figure out how to query with pymatgen-db and pymongo
@@ -329,7 +329,7 @@ class MolTherm:
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
-                             qclog_file=join(self.base_dir, path, "mol.qclog"),
+                             qclog_file=join(self.base_dir, path, self.reactant_pre + str(i) + ".qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
@@ -348,7 +348,7 @@ class MolTherm:
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
-                             qclog_file=join(self.base_dir, path, "mol.qclog"),
+                             qclog_file=join(self.base_dir, path, self.reactant_pre + str(i) + ".qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,

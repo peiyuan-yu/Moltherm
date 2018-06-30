@@ -139,13 +139,16 @@ class QCInput(MSONable):
         opt = None
         pcm = None
         solvent = None
+        smx = None
         if "opt" in sections:
             opt = cls.read_opt(string)
         if "pcm" in sections:
             pcm = cls.read_pcm(string)
         if "solvent" in sections:
             solvent = cls.read_solvent(string)
-        return cls(molecule, rem, opt=opt, pcm=pcm, solvent=solvent)
+        if "smx" in sections:
+            smx = cls.read_smx(string)
+        return cls(molecule, rem, opt=opt, pcm=pcm, solvent=solvent, smx=smx)
 
     def write_file(self, filename):
         with zopen(filename, 'wt') as f:
