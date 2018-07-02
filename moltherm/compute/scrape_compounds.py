@@ -4,9 +4,11 @@ import os
 import time
 from io import StringIO
 import urllib.request
+import requests
 
 import pubchempy as pcp
 from chemspipy import ChemSpider
+from chemspipy.errors import *
 
 from bs4 import BeautifulSoup
 
@@ -821,14 +823,134 @@ class ChemSpiderScraper:
 
         self.chemspi = ChemSpider(self.token)
 
-    def get_chemspider_ids(self, molecules):
+        # For cases where we cannot use ChemSpiPy, we need to be able to set
+        # up requests
+        self.base_url = "https://api.rsc.org/compounds/v1/"
+        self.headers = {"apikey": self.token, "Content-Type": "application/json"}
+
+    def get_chemspider_ids(self, molecules, max_attempts=100):
         """
         From list of :class: pymatgen.core.structure.Molecule, extract
         ChemSpider IDs for use in subsequent searches.
 
         :param molecules: List of Molecules.
-        :return: List of ints representing IDs.
+        :param max_attempts: How many times should a query be checked before
+            it should be given up?
+        :return: dict {molecule: ids}, where ids is an list of ints.
         """
+
+        results = {}
 
         for molecule in molecules:
             adaptor = BabelMolAdaptor(molecule)
+            # Use Canonical SMILES to ensure uniqueness
+            smiles = adaptor.pybel_mol.write("can").strip()
+
+            try:
+                # Attempt to use the ChemSpiPy package
+                # This significantly simplifies the work to be done
+                results[smiles] = self.chemspi.simple_search(smiles)
+            except ChemSpiPyServerError:
+                init_url = self.base_url + "filter/smiles"
+                data = {"smiles": str(smiles)}
+                init_req = requests.post(init_url, json=data, headers=self.headers)
+                try:
+                    query_id = init_req.json()['queryId']
+                except KeyError:
+                    raise RuntimeError("Response did not include queryId key!")
+
+                status_url = self.base_url + "filter/{}/status".format(query_id)
+                for i in range(max_attempts):
+                    status_request = requests.get(status_url, headers=self.headers)
+
+                    if status_request.json()['status'].lower() == 'complete':
+                        results_url = self.base_url + \
+                                      "filter/{}/results".format(query_id)
+
+                        results_request = requests.get(results_url,
+                                                       headers=self.headers)
+
+                        results[smiles] = results_request.json().get("results", [])
+                        break
+
+        return results
+
+    def extract_boiling_point(self, csids):
+        """
+        Scrape experimental and/or predicted boiling point information from
+        ChemSpider.
+
+        :param csids: list of ChemSpider id.
+        :return: dict containing all listed boiling points
+        """
+
+        results = {}
+
+        for csid in csids:
+            results[csid] = {}
+
+            url = """http://parts.chemspider.com/JSON.ashx?op=GetRecordsAsCompounds&csids[0]={}&serfilter=Compound[PredictedProperties|ExperimentalProperties]""".format(str(csid))
+            request = requests.get(url)
+
+            parsed = BeautifulSoup(request.text, "lxml")
+
+            # Turn text into dict of lists of dicts
+            data = eval(parsed.body.p.text)[0]
+
+            results[csid]["pred"] = []
+            for pred in data["PredictedProperties"]:
+                if pred["Name"] == "Boiling Point":
+                    results[csid]["pred"].append({
+                        "units": pred["Units"],
+                        "value": pred["Value"]})
+
+            results[csid]["exp"] = []
+            for exp in data["ExperimentalProperties"]:
+                if exp["Name"] == "Experimental Boiling Point":
+                    results[csid]["exp"].append({
+                        "units": exp["Units"],
+                        "value": exp["Value"],
+                        "source": exp["DataSourceName"]})
+
+        return results
+
+
+    def extract_melting_point(self, csids):
+        """
+        Scrape experimental and/or predicted boiling point information from
+        ChemSpider.
+
+        :param csids: list of ChemSpider ids.
+        :return: dict containing all listed boiling points
+        """
+
+        results = {}
+
+        for csid in csids:
+            results[csid] = {}
+
+            url = """http://parts.chemspider.com/JSON.ashx?op=GetRecordsAsCompounds&csids[0]={}&serfilter=Compound[PredictedProperties|ExperimentalProperties]""".format(str(csid))
+            request = requests.get(url)
+
+            parsed = BeautifulSoup(request.text, "lxml")
+
+            # Turn text into dict of lists of dicts
+            data = eval(parsed.body.p.text)[0]
+
+            results[csid]["pred"] = []
+            for pred in data["PredictedProperties"]:
+                if pred["Name"] == "Boiling Point":
+                    results[csid]["pred"].append({
+                        "units": pred["Units"],
+                        "value": pred["Value"]})
+
+            results[csid]["exp"] = []
+            for exp in data["ExperimentalProperties"]:
+                if exp["Name"] == "Experimental Melting Point":
+                    results[csid]["exp"].append({
+                        "units": exp["Units"],
+                        "value": exp["Value"],
+                        "source": exp["DataSourceName"]})
+
+        return results
+
