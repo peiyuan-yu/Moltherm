@@ -901,16 +901,16 @@ class ChemSpiderScraper:
             for pred in data["PredictedProperties"]:
                 if pred["Name"] == "Boiling Point":
                     results[csid]["pred"].append({
-                        "units": pred["Units"],
-                        "value": pred["Value"]})
+                        "units": pred.get("Units", None),
+                        "value": pred.get("Value", None)})
 
             results[csid]["exp"] = []
             for exp in data["ExperimentalProperties"]:
                 if exp["Name"] == "Experimental Boiling Point":
                     results[csid]["exp"].append({
-                        "units": exp["Units"],
-                        "value": exp["Value"],
-                        "source": exp["DataSourceName"]})
+                        "units": exp.get("Units", None),
+                        "value": exp.get("Value", None),
+                        "source": exp.get("DataSourceName", None)})
 
         return results
 
@@ -941,16 +941,16 @@ class ChemSpiderScraper:
             for pred in data["PredictedProperties"]:
                 if pred["Name"] == "Boiling Point":
                     results[csid]["pred"].append({
-                        "units": pred["Units"],
-                        "value": pred["Value"]})
+                        "units": pred.get("Units"),
+                        "value": pred.get("Value")})
 
             results[csid]["exp"] = []
             for exp in data["ExperimentalProperties"]:
                 if exp["Name"] == "Experimental Melting Point":
                     results[csid]["exp"].append({
-                        "units": exp["Units"],
-                        "value": exp["Value"],
-                        "source": exp["DataSourceName"]})
+                        "units": exp.get("Units"),
+                        "value": exp.get("Value"),
+                        "source": exp.get("DataSourceName")})
 
         return results
 
