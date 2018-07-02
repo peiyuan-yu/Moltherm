@@ -88,7 +88,9 @@ class OptFreqSPFW(Firework):
                 max_iterations=1,
                 sp_params=sp_params,
                 job_type="opt_with_frequency_flattener",
-                reversed_direction=reversed_direction,
+                gzipped_output=False,
+                handler_group="no_handler",
+                reversed_direction=reversed_direction
             ))
         t.append(
             QChemToDb(
@@ -344,67 +346,6 @@ class QChemToDb(FiretaskBase):
             stored_data={"task_id": task_doc.get("task_id", None)},
             defuse_children=defuse_children,
             update_spec=update_spec)
-
-
-@explicit_serialize
-class WriteInputFromIOSet(FiretaskBase):
-    """
-    Writes QChem Input files from input sets. A dictionary is passed to WriteInputFromIOSet where
-    parameters are given as keys in the dictionary.
-
-    required_params:
-        qc_input_set (QChemDictSet or str): Either a QChemDictSet object or a string
-        name for the QChem input set (e.g., "OptSet"). *** Note that if the molecule is to be inherited through
-        fw_spec qc_input_set must be a string name for the QChem input set. ***
-
-    optional_params:
-        qchem_input_params (dict): When using a string name for QChem input set, use this as a dict
-        to specify kwargs for instantiating the input set parameters. For example, if you want
-        to change the DFT_rung, you should provide: {"DFT_rung": ...}.
-        This setting is ignored if you provide the full object representation of a QChemDictSet
-        rather than a String.
-        molecule (Molecule):
-        input_file (str): Name of the QChem input file. Defaults to mol.qin
-        write_to_dir (str): Path of the directory where the QChem input file will be written,
-        the default is to write to the current working directory
-    """
-
-    required_params = ["qchem_input_set"]
-    optional_params = [
-        "molecule", "qchem_input_params", "input_file", "write_to_dir"
-    ]
-
-    def run_task(self, fw_spec):
-        input_file = "mol.qin"
-        if "input_file" in self:
-            input_file = self["input_file"]
-        # this adds the full path to the input_file
-        if "write_to_dir" in self:
-            input_file = os.path.join(self["write_to_dir"], input_file)
-        # these if statements might need to be reordered at some point
-        # if a full QChemDictSet object was provided
-        if hasattr(self["qchem_input_set"], "write_file"):
-            qcin = self["qchem_input_set"]
-            qcin.write_file(input_file)
-        # if a molecule is being passed through fw_spec
-        elif fw_spec.get("prev_calc_molecule"):
-            mol = fw_spec.get("prev_calc_molecule")
-            qcin_cls = load_class("pymatgen.io.qchem_io.sets",
-                                  self["qchem_input_set"])
-            qcin = qcin_cls(mol, **self.get("qchem_input_params", {}))
-            qcin.write_file(input_file)
-        # if a molecule is included as an optional parameter
-        elif self.get("molecule"):
-            qcin_cls = load_class("pymatgen.io.qchem_io.sets",
-                                  self["qchem_input_set"])
-            qcin = qcin_cls(
-                self.get("molecule"), **self.get("qchem_input_params", {}))
-            qcin.write_file(input_file)
-        # if no molecule is present raise an error
-        else:
-            raise KeyError(
-                "No molecule present, add as an optional param or check fw_spec"
-            )
 
 
 @explicit_serialize
