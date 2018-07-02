@@ -6,6 +6,7 @@ from io import StringIO
 import urllib.request
 
 import pubchempy as pcp
+from chemspipy import ChemSpider
 
 from bs4 import BeautifulSoup
 
@@ -13,6 +14,7 @@ from monty.json import jsanitize
 from pymongo import MongoClient
 
 from matgendb.dbconfig import DBConfig
+from pymatgen.io.babel import BabelMolAdaptor
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -794,3 +796,39 @@ class ReaxysScraper:
                 continue
 
         return just_added
+
+
+class ChemSpiderScraper:
+    """
+    Uses ChemSpiPy as well as BeautifulSoup to extract boiling and melting
+    points for chemicals of interest.
+    """
+
+    def __init__(self, token, base_dir, subdirs=False):
+        """
+        Initialize ChemSpider Scraper.
+
+        :param token: ChemSpider API token (str). This should be obtained from
+        ChemSpider ()
+        :param base_dir: Directory where information should be stored.
+        :param subdirs: Should subdirectories be used? By default, this is False,
+        meaning that all files will be stored in the base_dir
+        """
+
+        self.token = token
+        self.base_dir = base_dir
+        self.subdirs = subdirs
+
+        self.chemspi = ChemSpider(self.token)
+
+    def get_chemspider_ids(self, molecules):
+        """
+        From list of :class: pymatgen.core.structure.Molecule, extract
+        ChemSpider IDs for use in subsequent searches.
+
+        :param molecules: List of Molecules.
+        :return: List of ints representing IDs.
+        """
+
+        for molecule in molecules:
+            adaptor = BabelMolAdaptor(molecule)
