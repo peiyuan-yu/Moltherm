@@ -85,8 +85,9 @@ class OptFreqSPFW(Firework):
                 output_file=output_file,
                 qclog_file=qclog_file,
                 max_cores=max_cores,
+                max_iterations=1,
                 sp_params=sp_params,
-                job_type="opt_freq_sp",
+                job_type="opt_with_frequency_flattener",
                 reversed_direction=reversed_direction,
             ))
         t.append(
