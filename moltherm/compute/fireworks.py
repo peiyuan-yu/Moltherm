@@ -71,12 +71,12 @@ class OptFreqSPFW(Firework):
         t = []
         t.append(
             WriteCustomInput(rem=qchem_input_params["rem"],
-                molecule=molecule,
-                opt=qchem_input_params.get("opt", None),
-                pcm=qchem_input_params.get("pcm", None),
-                solvent=qchem_input_params.get("solvent", None),
-                smx=qchem_input_params.get("smx", None),
-                input_file=input_file))
+                             molecule=molecule,
+                             opt=qchem_input_params.get("opt", None),
+                             pcm=qchem_input_params.get("pcm", None),
+                             solvent=qchem_input_params.get("solvent", None),
+                             smx=qchem_input_params.get("smx", None),
+                             input_file=input_file))
         t.append(
             RunQChemCustodian(
                 qchem_cmd=qchem_cmd,

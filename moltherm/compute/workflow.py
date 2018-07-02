@@ -311,6 +311,8 @@ class MolTherm:
                     f.endswith(".mol")]
             pros = [f for f in filenames if f.startswith(self.product_pre) and
                     f.endswith(".mol")]
+            print(rcts)
+            print(pros)
         else:
             # Assume that every file in the directory is part of the reaction
             files = [f for f in listdir(base_path) if isfile(join(base_path, f))

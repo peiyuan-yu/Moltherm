@@ -186,7 +186,8 @@ class QCJob(Job):
                 rem=orig_freq_rem,
                 opt=orig_opt_input.opt,
                 pcm=orig_opt_input.pcm,
-                solvent=orig_opt_input.solvent)
+                solvent=orig_opt_input.solvent,
+                smx=orig_opt_input.smx)
             freq_QCInput.write_file(input_file)
             yield (QCJob(
                 qchem_command=qchem_command,
@@ -277,6 +278,7 @@ class QCJob(Job):
         orig_opt_input = QCInput.from_file(input_file)
         orig_freq_rem = copy.deepcopy(orig_opt_input.rem)
         orig_freq_rem["job_type"] = "freq"
+
         yield (QCJob(qchem_command=qchem_command,
                      multimode=multimode,
                      input_file=input_file,
@@ -284,9 +286,6 @@ class QCJob(Job):
                      max_cores=max_cores,
                      qclog_file=qclog_file,
                      suffix=".opt",
-                     scratch_dir=scratch_dir,
-                     save_scratch=save_scratch,
-                     save_name=save_name,
                      **QCJob_kwargs))
         opt_outdata = QCOutput(output_file + ".opt").data
 
@@ -298,6 +297,7 @@ class QCJob(Job):
             solvent=orig_opt_input.solvent,
             smx=orig_opt_input.smx)
         freq_input.write_file(input_file)
+
         yield (QCJob(
             qchem_command=qchem_command,
             multimode=multimode,
@@ -306,10 +306,13 @@ class QCJob(Job):
             max_cores=max_cores,
             qclog_file=qclog_file,
             suffix=".freq",
-            scratch_dir=scratch_dir,
-            save_scratch=save_scratch,
-            save_name=save_name,
             **QCJob_kwargs))
+
+        outdata = QCOutput(output_file + ".freq").data
+        errors = outdata.get("errors")
+        if len(errors) != 0:
+            raise AssertionError(
+                'No errors should be encountered while flattening frequencies!')
 
         if sp_params is not None:
             sp_input = QCInput(
