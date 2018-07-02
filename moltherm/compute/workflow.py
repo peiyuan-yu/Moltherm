@@ -323,15 +323,15 @@ class MolTherm:
         for i, rct in enumerate(rcts):
             mol = get_molecule(join(base_path, rct))
 
-            infile = join(self.base_dir, path, self.reactant_pre + str(i) + ".in")
-            outfile = join(self.base_dir, path, self.reactant_pre + str(i) + ".out")
+            infile = join(base_path, self.reactant_pre + str(i) + ".in")
+            outfile = join(base_path, self.reactant_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
                              name=(fw_pre + " : " + rct),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
-                             qclog_file=join(self.base_dir, path, self.reactant_pre + str(i) + ".qclog"),
+                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
@@ -342,15 +342,15 @@ class MolTherm:
         for i, pro in enumerate(pros):
             mol = get_molecule(join(base_path, pro))
 
-            infile = join(self.base_dir, path, self.product_pre + str(i) + ".in")
-            outfile = join(self.base_dir, path, self.product_pre + str(i) + ".out")
+            infile = join(base_path, self.product_pre + str(i) + ".in")
+            outfile = join(base_path, self.product_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
                              name=(fw_pre + " : " + pro),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
-                             qclog_file=join(self.base_dir, path, self.reactant_pre + str(i) + ".qclog"),
+                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
@@ -399,15 +399,15 @@ class MolTherm:
             for i, rct in enumerate(rcts):
                 mol = get_molecule(join(self.base_dir, d, rct))
 
-                infile = join(self.base_dir, self.reactant_pre + str(i) + ".in")
-                outfile = join(self.base_dir,
-                               self.reactant_pre + str(i) + ".out")
+                infile = join(path, self.reactant_pre + str(i) + ".in")
+                outfile = join(path, self.reactant_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
                                  name=("opt_freq_sp_: " + rct),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
+                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
                                  max_cores=max_cores,
                                  qchem_input_params=qchem_input_params,
                                  sp_params=sp_params,
@@ -418,15 +418,15 @@ class MolTherm:
             for i, pro in enumerate(pros):
                 mol = get_molecule(join(self.base_dir, d, pro))
 
-                infile = join(self.base_dir, self.product_pre + str(i) + ".in")
-                outfile = join(self.base_dir,
-                               self.product_pre + str(i) + ".out")
+                infile = join(path, self.product_pre + str(i) + ".in")
+                outfile = join(path, self.product_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
                                  name=("opt_freq_sp_: " + rct),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
+                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
                                  max_cores=max_cores,
                                  qchem_input_params=qchem_input_params,
                                  sp_params=sp_params,

@@ -182,7 +182,7 @@ class MolThermDrone(AbstractDrone):
                     d["output"]["enthalpy"] = d["output"].get("enthalpy", enthalpy)
                     d["output"]["entropy"] = d["output"].get("entropy", entropy)
 
-                elif c["input"]["rem"]["job_type"] == "sp" or c["input"]["rem"]["job_type"] == "single_point":
+                elif c["input"]["rem"]["job_type"] == "sp":
                     energy = c["final_energy_sp"]
                     d["output"]["final_energy_sp"] = d["output"].get("final_energy_sp", energy)
 
@@ -247,6 +247,7 @@ class MolThermDrone(AbstractDrone):
         d["input"]["opt"] = temp_input.opt
         d["input"]["pcm"] = temp_input.pcm
         d["input"]["solvent"] = temp_input.solvent
+        d["input"]["smx"] = temp_input.smx
         d["task"] = {"type": taskname, "name": taskname}
         return d
 
@@ -276,6 +277,7 @@ class MolThermDrone(AbstractDrone):
                     d["input"]["opt"] = multi_in[ii].opt
                     d["input"]["pcm"] = multi_in[ii].pcm
                     d["input"]["solvent"] = multi_in[ii].solvent
+                    d["input"]["smx"] = multi_in[ii].smx
                     d["task"] = {"type": key, "name": "calc" + str(ii)}
                     to_return.append(d)
             return to_return

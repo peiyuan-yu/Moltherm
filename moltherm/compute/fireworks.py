@@ -92,11 +92,16 @@ class OptFreqSPFW(Firework):
                 handler_group="no_handler",
                 reversed_direction=reversed_direction
             ))
+
+        calc_dir, input_file = os.path.split(input_file)
+        output_file = os.path.basename(output_file)
+
         t.append(
             QChemToDb(
                 db_file=db_file,
                 input_file=input_file,
                 output_file=output_file,
+                calc_dir=calc_dir,
                 additional_fields={
                     "task_label": name,
                     "special_run_type": "opt_freq_sp"
@@ -274,6 +279,7 @@ class QChemToDb(FiretaskBase):
 
     def run_task(self, fw_spec):
         # get the directory that contains the QChem dir to parse
+        print("Starting to put in DB.")
         calc_dir = os.getcwd()
         if "calc_dir" in self:
             calc_dir = self["calc_dir"]
@@ -402,34 +408,4 @@ class WriteCustomInput(FiretaskBase):
             pcm=pcm,
             solvent=solvent,
             smx=smx)
-        qcin.write_file(input_file)
-
-
-@explicit_serialize
-class WriteInput(FiretaskBase):
-    """
-    Writes QChem input file from QCInput object.
-
-    required_params:
-        qc_input (QCInput): QCInput object
-
-    optional_params:
-        input_file (str): Name of the QChem input file. Defaults to mol.qin
-        write_to_dir (str): Path of the directory where the QChem input file will be written,
-        the default is to write to the current working directory
-
-    """
-    required_params = ["qc_input"]
-    optional_params = ["input_file", "write_to_dir"]
-
-    def run_task(self, fw_spec):
-        # if a QCInput object is provided
-        input_file = "mol.qin"
-        if "input_file" in self:
-            input_file = self["input_file"]
-        # this adds the full path to the input_file
-        if "write_to_dir" in self:
-            input_file = os.path.join(self["write_to_dir"], input_file)
-
-        qcin = self["qc_input"]
         qcin.write_file(input_file)
