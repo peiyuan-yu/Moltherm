@@ -12,7 +12,7 @@ import copy
 import subprocess
 import numpy as np
 from pymatgen.core import Molecule
-from pymatgen.io.qchem_io.inputs import QCInput
+from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 from custodian.custodian import Job
 from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
