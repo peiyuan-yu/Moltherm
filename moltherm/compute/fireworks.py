@@ -96,6 +96,8 @@ class OptFreqSPFW(Firework):
         calc_dir, input_file = os.path.split(input_file)
         output_file = os.path.basename(output_file)
 
+        logger.info("Gonna do the thing with databases: {}".format(calc_dir))
+
         t.append(
             QChemToDb(
                 db_file=db_file,
@@ -250,6 +252,8 @@ class RunQChemCustodian(FiretaskBase):
 
         c.run()
 
+        logger.info("Finished with QChem: {}".format(calc_dir))
+
 
 @explicit_serialize
 class QChemToDb(FiretaskBase):
@@ -308,6 +312,8 @@ class QChemToDb(FiretaskBase):
             input_file=input_file,
             output_file=output_file,
             multirun=multirun)
+
+        logger.info("Finished assimilation.")
 
         # Check for additional keys to set based on the fw_spec
         if self.get("fw_spec_field"):
@@ -409,3 +415,4 @@ class WriteCustomInput(FiretaskBase):
             solvent=solvent,
             smx=smx)
         qcin.write_file(input_file)
+
