@@ -7,8 +7,6 @@ import urllib.request
 import requests
 
 import pubchempy as pcp
-from chemspipy import ChemSpider
-from chemspipy.errors import *
 
 from bs4 import BeautifulSoup
 
@@ -802,7 +800,7 @@ class ReaxysScraper:
 
 class ChemSpiderScraper:
     """
-    Uses ChemSpiPy as well as BeautifulSoup to extract boiling and melting
+    Uses BeautifulSoup on ChemSpider API to extract boiling and melting
     points for chemicals of interest.
     """
 
@@ -821,10 +819,6 @@ class ChemSpiderScraper:
         self.base_dir = base_dir
         self.subdirs = subdirs
 
-        self.chemspi = ChemSpider(self.token)
-
-        # For cases where we cannot use ChemSpiPy, we need to be able to set
-        # up requests
         self.base_url = "https://api.rsc.org/compounds/v1/"
         self.headers = {"apikey": self.token, "Content-Type": "application/json"}
 
@@ -846,32 +840,27 @@ class ChemSpiderScraper:
             # Use Canonical SMILES to ensure uniqueness
             smiles = adaptor.pybel_mol.write("can").strip()
 
+            init_url = self.base_url + "filter/smiles"
+            data = {"smiles": str(smiles)}
+            init_req = requests.post(init_url, json=data, headers=self.headers)
             try:
-                # Attempt to use the ChemSpiPy package
-                # This significantly simplifies the work to be done
-                results[smiles] = self.chemspi.simple_search(smiles)
-            except ChemSpiPyServerError:
-                init_url = self.base_url + "filter/smiles"
-                data = {"smiles": str(smiles)}
-                init_req = requests.post(init_url, json=data, headers=self.headers)
-                try:
-                    query_id = init_req.json()['queryId']
-                except KeyError:
-                    raise RuntimeError("Response did not include queryId key!")
+                query_id = init_req.json()['queryId']
+            except KeyError:
+                raise RuntimeError("Response did not include queryId key!")
 
-                status_url = self.base_url + "filter/{}/status".format(query_id)
-                for i in range(max_attempts):
-                    status_request = requests.get(status_url, headers=self.headers)
+            status_url = self.base_url + "filter/{}/status".format(query_id)
+            for i in range(max_attempts):
+                status_request = requests.get(status_url, headers=self.headers)
 
-                    if status_request.json()['status'].lower() == 'complete':
-                        results_url = self.base_url + \
-                                      "filter/{}/results".format(query_id)
+                if status_request.json()['status'].lower() == 'complete':
+                    results_url = self.base_url + \
+                                  "filter/{}/results".format(query_id)
 
-                        results_request = requests.get(results_url,
-                                                       headers=self.headers)
+                    results_request = requests.get(results_url,
+                                                   headers=self.headers)
 
-                        results[smiles] = results_request.json().get("results", [])
-                        break
+                    results[smiles] = results_request.json().get("results", [])
+                    break
 
         return results
 
