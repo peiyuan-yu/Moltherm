@@ -330,9 +330,10 @@ class MolTherm:
 
         return thermo_data
 
-    def record_data_db(self, directory, opt=None, freq=None, sp=None):
+    def extract_reaction_data(self, directory, opt=None, freq=None, sp=None):
         """
-        Record thermo data in "thermo" collection.
+        Gathers all relevant reaction parameters, including references to
+        each job performed.
 
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
@@ -347,7 +348,7 @@ class MolTherm:
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
 
-        :return:
+        :return: dict
         """
 
         if self.db is None:
@@ -365,7 +366,8 @@ class MolTherm:
                     break
             return {"enthalpy": enthalpy, "entropy": entropy}
 
-        collection = self.db.db["thermo"]
+        if abspath(directory) != directory:
+            directory = join(self.base_dir, directory)
 
         records = self.db.collection.find({"dir_name": directory})
 
@@ -469,16 +471,82 @@ class MolTherm:
                        sum(r["entropy"] for r in rct_thermo)
         }
 
-        collection.insert_one({"dir_name": directory,
-                               "opt": opt,
-                               "freq": freq,
-                               "sp": sp,
-                               "reactant_ids": reactant_ids,
-                               "product_ids": product_ids,
-                               "thermo": thermo})
+        result = {"dir_name": directory,
+                  "opt": opt,
+                  "freq": freq,
+                  "sp": sp,
+                  "reactant_ids": reactant_ids,
+                  "product_ids": product_ids,
+                  "thermo": thermo}
 
-    def record_data_file(self):
-        pass
+        return result
+
+    def record_data_db(self, directory, opt=None, freq=None, sp=None):
+        """
+        Record thermo data in thermo collection.
+
+        :param directory: Directory name where the reaction is stored. Right
+            now, this is the easiest way to identify the reaction. In the
+            future, more sophisticated searching should be used.
+        :param opt: dict containing information about the optimization jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param freq: dict containing information about the frequency jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param sp: dict containing information about the single-point jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+
+        :return:
+        """
+
+        if self.db is None:
+            raise RuntimeError("Could not connect to database. Check db_file"
+                               "and try again later.")
+
+        collection = self.db.db["thermo"]
+
+        collection.insert_one(self.extract_reaction_data(directory, opt=opt,
+                                                         freq=freq, sp=sp))
+
+
+    def record_data_file(self, directory, opt=None, freq=None, sp=None):
+        """
+        Record thermo data in thermo.txt file.
+
+        Note: This function does NOT store the reactant and product IDs
+
+        :param directory: Directory name where the reaction is stored. Right
+            now, this is the easiest way to identify the reaction. In the
+            future, more sophisticated searching should be used.
+        :param opt: dict containing information about the optimization jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param freq: dict containing information about the frequency jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param sp: dict containing information about the single-point jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+
+        :return:
+        """
+
+        if abspath(directory) != directory:
+            directory = join(self.base_dir, directory)
+
+        with open(join(directory, "thermo.txt"), "w") as file:
+            data = self.extract_reaction_data(directory, opt=opt, freq=freq,
+                                              sp=sp)
+
+            file.write("Directory: {}\n".format(data["dir_name"]))
+            file.write("Optimization Input: {}\n".format(data["opt"]))
+            file.write("Frequency Input: {}\n".format(data["freq"]))
+            file.write("Single-Point Input: {}\n".format(data["sp"]))
+            file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
+            file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
+
 
     def get_single_reaction_workflow(self, path=None, filenames=None,
                                      max_cores=64,
