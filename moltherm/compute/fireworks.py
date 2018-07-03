@@ -252,8 +252,6 @@ class RunQChemCustodian(FiretaskBase):
 
         c.run()
 
-        logger.info("Finished with QChem: {}".format(calc_dir))
-
 
 @explicit_serialize
 class QChemToDb(FiretaskBase):
