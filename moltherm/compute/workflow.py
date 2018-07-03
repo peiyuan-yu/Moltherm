@@ -511,7 +511,7 @@ class MolTherm:
                                                          freq=freq, sp=sp))
 
 
-    def record_data_file(self, directory, opt=None, freq=None, sp=None):
+    def record_data_file(self, directory, filename="thermo.txt", opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo.txt file.
 
@@ -520,6 +520,8 @@ class MolTherm:
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
             future, more sophisticated searching should be used.
+        :param filename: File (within directory) where data should be stored.
+            By default, it will be stored in thermo.txt.
         :param opt: dict containing information about the optimization jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
@@ -536,7 +538,7 @@ class MolTherm:
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
 
-        with open(join(directory, "thermo.txt"), "w") as file:
+        with open(join(directory, filename), "w+") as file:
             data = self.extract_reaction_data(directory, opt=opt, freq=freq,
                                               sp=sp)
 
@@ -546,7 +548,6 @@ class MolTherm:
             file.write("Single-Point Input: {}\n".format(data["sp"]))
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
-
 
     def get_single_reaction_workflow(self, path=None, filenames=None,
                                      max_cores=64,

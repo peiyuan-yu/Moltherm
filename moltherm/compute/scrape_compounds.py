@@ -804,10 +804,11 @@ class ChemSpiderScraper:
     points for chemicals of interest.
     """
 
-    def __init__(self, token, host, port, db_name, collection_name, user, password):
+    def __init__(self, base_dir, token, host, port, db_name, collection_name, user, password):
         """
         Initialize ChemSpider Scraper.
 
+        :param base_dir: Directory path where files should be stored.
         :param token: ChemSpider API token (str). This should be obtained from
             ChemSpider prior to use.
         :param host: For instance, "localhost" if the database is hosted on the
@@ -821,6 +822,8 @@ class ChemSpiderScraper:
 
         :return:
         """
+
+        self.base_dir = base_dir
 
         self.base_url = "https://api.rsc.org/compounds/v1/"
         self.headers = {"apikey": token, "Content-Type": "application/json"}
@@ -966,3 +969,64 @@ class ChemSpiderScraper:
 
         return results
 
+    def store_data_file(self, molecules, filename="phase_properties.txt"):
+        """
+        Extracts melting and boiling point information, then stores it in a
+        text file.
+
+        :param molecules: List of pymatgen.core.structure.Molecule objects.
+
+        :return:
+        """
+        filepath = os.path.join(self.base_dir, filename)
+
+        for molecule in molecules:
+            adaptor = BabelMolAdaptor(molecule)
+            # Use Canonical SMILES to ensure uniqueness
+            smiles = adaptor.pybel_mol.write("can").strip()
+
+            csids = self.get_chemspider_ids([molecule])[smiles]
+
+            boiling_points = self.extract_boiling_point(csids)
+            melting_points = self.extract_melting_point(csids)
+
+            with open(filepath, "a+") as file:
+                file.write("Molecule: {}\n".format(smiles))
+
+                for csid in csids:
+                    file.write("\tChemSpider ID: {}\n".format(str(csid)))
+
+                    file.write("\t\tBoiling Point Information:\n")
+                    file.write("\t\t\tExperimental:\n")
+                    for i, val in enumerate(boiling_points[csid]["exp"]):
+                        file.write("\t\t\t\tEntry {}: Units {} Value {} Source {}\n".
+                                   format(i, val["units"],
+                                          val["value"], val["source"]))
+                    file.write("\t\t\tPredicted:\n")
+                    for i, val in enumerate(boiling_points[csid]["pred"]):
+                        file.write("\t\t\t\tEntry {}: Units {} Value {}\n".
+                                   format(i, val["units"], val["value"]))
+
+                    file.write("\t\tMelting Point Information:\n")
+                    file.write("\t\t\tExperimental:\n")
+                    for i, val in enumerate(melting_points[csid]["exp"]):
+                        file.write("\t\t\t\tEntry {}: Units {} Value {} Source {}\n".
+                                   format(i, val["units"],
+                                          val["value"], val["source"]))
+                    file.write("\t\t\tPredicted:\n")
+                    for i, val in enumerate(melting_points[csid]["pred"]):
+                        file.write("\t\t\t\tEntry {}: Units {} Value {}\n".
+                                   format(i, val["units"], val["value"]))
+
+                file.write("\n")
+
+    def store_data_db(self, molecules):
+        """
+        Extracts melting and boiling point information, then stores it in
+        database phase_properties collection.
+
+        :param molecules: List of pymatgen.core.structure.Molecule objects.
+
+        :return:
+        """
+        pass
