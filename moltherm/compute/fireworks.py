@@ -217,6 +217,7 @@ class RunQChemCustodian(FiretaskBase):
                 input_file=input_file,
                 output_file=output_file,
                 qclog_file=qclog_file,
+                sp_params=sp_params,
                 max_iterations=max_iterations,
                 max_molecule_perturb_scale=max_molecule_perturb_scale,
                 scratch_dir=scratch_dir,

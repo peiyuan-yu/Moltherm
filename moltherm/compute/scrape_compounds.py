@@ -804,23 +804,40 @@ class ChemSpiderScraper:
     points for chemicals of interest.
     """
 
-    def __init__(self, token, base_dir, subdirs=False):
+    def __init__(self, token, host, port, db_name, collection_name, user, password):
         """
         Initialize ChemSpider Scraper.
 
         :param token: ChemSpider API token (str). This should be obtained from
-        ChemSpider ()
-        :param base_dir: Directory where information should be stored.
-        :param subdirs: Should subdirectories be used? By default, this is False,
-        meaning that all files will be stored in the base_dir
+            ChemSpider prior to use.
+        :param host: For instance, "localhost" if the database is hosted on the
+            home server.
+        :param port: Typically, for MongoDB, this will be 27017.
+        :param db_name: Name of the database to enter into.
+        :param collection_name: Name of the collection to store ChemSpider into.
+        :param user: Database username.
+        :param password: Database password. If no password is used, an empty
+            string should be passed.
+
+        :return:
         """
 
-        self.token = token
-        self.base_dir = base_dir
-        self.subdirs = subdirs
-
         self.base_url = "https://api.rsc.org/compounds/v1/"
-        self.headers = {"apikey": self.token, "Content-Type": "application/json"}
+        self.headers = {"apikey": token, "Content-Type": "application/json"}
+
+        self.host = host
+        self.port = port
+        self.db_name = db_name
+        self.collection_name = collection_name
+        self.user = user if user is not None else ""
+        self.password = password if password is not None else ""
+
+        try:
+            self.connection = MongoClient(self.host, self.port)
+            self.db = self.connection[self.db_name]
+        except:
+            raise Exception
+
 
     def get_chemspider_ids(self, molecules, max_attempts=100):
         """

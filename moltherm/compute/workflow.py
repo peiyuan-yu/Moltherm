@@ -422,7 +422,7 @@ class MolTherm:
                 outfile = join(path, self.product_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
-                                 name=("opt_freq_sp_: " + rct),
+                                 name=("opt_freq_sp_: " + pro),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
