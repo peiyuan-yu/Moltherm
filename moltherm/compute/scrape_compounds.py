@@ -836,8 +836,13 @@ class ChemSpiderScraper:
             self.connection = MongoClient(self.host, self.port)
             self.db = self.connection[self.db_name]
         except:
-            raise Exception
-
+            raise Exception("Could not connect to database.")
+        try:
+            if self.user:
+                self.db.authenticate(self.user, self.password)
+        except:
+            raise ValueError("MongoDB authentication error.")
+        self.collection = self.db[collection_name]
 
     def get_chemspider_ids(self, molecules, max_attempts=100):
         """
@@ -881,7 +886,8 @@ class ChemSpiderScraper:
 
         return results
 
-    def extract_boiling_point(self, csids):
+    @staticmethod
+    def extract_boiling_point(csids):
         """
         Scrape experimental and/or predicted boiling point information from
         ChemSpider.
@@ -920,8 +926,8 @@ class ChemSpiderScraper:
 
         return results
 
-
-    def extract_melting_point(self, csids):
+    @staticmethod
+    def extract_melting_point(csids):
         """
         Scrape experimental and/or predicted boiling point information from
         ChemSpider.

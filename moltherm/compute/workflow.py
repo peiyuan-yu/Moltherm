@@ -1,5 +1,5 @@
 from os import listdir
-from os.path import join, isfile, isdir
+from os.path import join, isfile, isdir, abspath
 import operator
 import shutil
 
@@ -9,6 +9,8 @@ from pymatgen.io.qchem_io.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
 
 from fireworks import Workflow, LaunchPad
+
+from atomate.qchem.database import QChemCalcDB
 
 from moltherm.compute.fireworks import OptFreqSPFW
 from moltherm.compute.outputs import QCOutput
@@ -225,6 +227,11 @@ class MolTherm:
         self.product_pre = product_pre
         self.db_file = db_file
 
+        try:
+            self.db = QChemCalcDB.from_db_file(self.db_file)
+        except:
+            self.db = None
+
     def get_reaction_thermo_files(self, path=None):
         """
         Naively scrape thermo data from QChem output files.
@@ -265,10 +272,212 @@ class MolTherm:
 
         return thermo_data
 
-    def get_reaction_thermo_db(self, db_file):
-        pass
+    def get_reaction_thermo_db(self, directory):
+        """
+        Access the MongoDB database associated with this MolTherm object, and
+        grab the reaction thermodynamics from the associated entries.
+        :param directory: Directory name where the reaction is stored. Right now,
+        this is the easiest way to identify the reaction. In the future, more
+        sophisticated searching should be used.
 
-    def record_data(self):
+        Note: At present, this does not account for the single-point energy
+        correction.
+
+        :return: dict {prop: value}, where properties are enthalpy, entropy.
+        """
+
+        if self.db is None:
+            raise RuntimeError("Could not connect to database. Check db_file"
+                               "and try again later.")
+
+        thermo_data = {}
+
+        rct_thermo = {"enthalpy": 0, "entropy": 0}
+        pro_thermo = {"enthalpy": 0, "entropy": 0}
+
+        if abspath(directory) != directory:
+            directory = join(self.base_dir, directory)
+
+        # Get all database entries in the directory (reaction) of interest
+        records = self.db.collection.find({"dir_name": directory})
+
+        for record in records:
+            filename = record["task_label"].split(" : ")[-1]
+
+            enthalpy = 0
+            entropy = 0
+
+            for calc in record["calcs_reversed"]:
+                if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
+                    enthalpy = calc["enthalpy"]
+                    entropy = calc["entropy"]
+                    break
+
+            if filename.startswith(self.reactant_pre):
+                rct_thermo["enthalpy"] += enthalpy
+                rct_thermo["entropy"] += entropy
+            elif filename.startswith(self.product_pre):
+                pro_thermo["enthalpy"] += enthalpy
+                pro_thermo["entropy"] += entropy
+            else:
+                print("Skipping {} because it cannot be determined if it is"
+                      "reactant or product.".format(filename))
+                continue
+
+        # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
+        thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
+        thermo_data["entropy"] = pro_thermo["entropy"] - pro_thermo["entropy"]
+
+        return thermo_data
+
+    def record_data_db(self, directory, opt=None, freq=None, sp=None):
+        """
+        Record thermo data in "thermo" collection.
+
+        :param directory: Directory name where the reaction is stored. Right
+            now, this is the easiest way to identify the reaction. In the
+            future, more sophisticated searching should be used.
+        :param opt: dict containing information about the optimization jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param freq: dict containing information about the frequency jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param sp: dict containing information about the single-point jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+
+        :return:
+        """
+
+        if self.db is None:
+            raise RuntimeError("Could not connect to database. Check db_file"
+                               "and try again later.")
+
+        # To extract enthalpy and entropy from calculation results
+        def get_thermo(record):
+            enthalpy = 0
+            entropy = 0
+            for calc in record["calcs_reversed"]:
+                if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
+                    enthalpy = calc["enthalpy"]
+                    entropy = calc["entropy"]
+                    break
+            return {"enthalpy": enthalpy, "entropy": entropy}
+
+        collection = self.db.db["thermo"]
+
+        records = self.db.collection.find({"dir_name": directory})
+
+        # Sort files for if they are reactants or products
+        reactants = []
+        products = []
+        for record in records:
+            filename = record["task_label"].split(" : ")[-1]
+
+            if opt is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "opt" or \
+                            calc["task"]["type"] == "optimization":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method  = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd" or solvent_method == "sm12":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        opt = {"method": method,
+                               "basis": basis,
+                               "solvent_method": solvent_method,
+                               "solvent": solvent}
+                        break
+            if freq is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "freq" or \
+                            calc["task"]["type"] == "frequency":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method  = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd" or solvent_method == "sm12":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        freq = {"method": method,
+                               "basis": basis,
+                               "solvent_method": solvent_method,
+                               "solvent": solvent}
+                        break
+            if sp is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "sp":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method  = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd" or solvent_method == "sm12":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        sp = {"method": method,
+                               "basis": basis,
+                               "solvent_method": solvent_method,
+                               "solvent": solvent}
+                        break
+
+            if filename.startswith(self.reactant_pre):
+                reactants.append(record)
+            elif filename.startswith(self.product_pre):
+                products.append(record)
+            else:
+                print("Skipping {} because it cannot be determined if it is"
+                      "reactant or product.".format(filename))
+                continue
+
+        # Get ids
+        reactant_ids = [r["_id"] for r in reactants]
+        product_ids = [p["_id"] for p in products]
+
+        # Get thermo data
+        rct_thermo = [get_thermo(r) for r in reactants]
+        pro_thermo = [get_thermo(p) for p in products]
+
+        # Compile reaction thermo from reactant and product thermos
+        thermo = {
+            "enthalpy": sum(p["enthalpy"] for p in pro_thermo) -
+                        sum(r["enthalpy"] for r in rct_thermo),
+            "entropy": sum(p["entropy"] for p in pro_thermo) -
+                       sum(r["entropy"] for r in rct_thermo)
+        }
+
+        collection.insert_one({"dir_name": directory,
+                               "opt": opt,
+                               "freq": freq,
+                               "sp": sp,
+                               "reactant_ids": reactant_ids,
+                               "product_ids": product_ids,
+                               "thermo": thermo})
+
+    def record_data_file(self):
         pass
 
     def get_single_reaction_workflow(self, path=None, filenames=None,
@@ -390,7 +599,11 @@ class MolTherm:
 
         dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d))]
 
-        for d in dirs:
+        # Only set up a workflow if it is worthwhile (the reaction actually
+        # proceeds as written, and all atoms add up)
+        appropriate_dirs = self.quick_check(dirs)
+
+        for d in appropriate_dirs:
             path = join(self.base_dir, d)
             files = [f for f in listdir(path) if isfile(join(path, f))]
             rcts = [f for f in files if f.startswith(self.reactant_pre)]
@@ -448,3 +661,33 @@ class MolTherm:
 
         launchpad = LaunchPad.auto_load()
         launchpad.add_wf(workflow)
+
+    def quick_check(self, dirs):
+        """
+        Returns only those reactions which have appropriate products and
+        reactants (products, reactants have same number of atoms).
+
+        This is not a sophisticated checking mechanism, and could probably be
+        easily improved upon.
+
+        :return:
+        """
+
+        add_up = []
+
+        for d in dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
+            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
+
+            total_pro_length = sum([len(p) for p in pro_mols])
+            total_rct_length = sum([len(r) for r in rct_mols])
+
+            if total_pro_length == total_rct_length:
+                add_up.append(d)
+
+        return add_up
