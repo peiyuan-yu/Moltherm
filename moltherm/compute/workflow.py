@@ -712,8 +712,7 @@ class MolTherm:
             pros = [f for f in files if f.startswith(self.product_pre)]
 
             for i, rct in enumerate(rcts):
-                mol_id = rct.rstrip(".mol").lstrip(self.reactant_pre).lstrip(
-                    "1234567890_")
+                mol_id = rct.rstrip(".mol").split("_")[-1]
 
                 if mol_id in molecules_registered:
                     continue
@@ -739,8 +738,7 @@ class MolTherm:
                 fws.append(fw)
 
             for i, pro in enumerate(pros):
-                mol_id = rct.rstrip(".mol").lstrip(self.reactant_pre).lstrip(
-                    "1234567890_")
+                mol_id = pro.rstrip(".mol").split("_")[-1]
 
                 if mol_id in molecules_registered:
                     continue
