@@ -397,7 +397,7 @@ class MolThermWorkflow:
 
         for d in appropriate_dirs:
             path = join(self.base_dir, d)
-            files = [f for f in listdir(path) if isfile(join(path, f))]
+            files = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith(".mol")]
             rcts = [f for f in files if f.startswith(self.reactant_pre)]
             pros = [f for f in files if f.startswith(self.product_pre)]
 
