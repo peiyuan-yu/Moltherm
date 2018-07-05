@@ -445,7 +445,7 @@ class MolThermWorkflow:
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
-                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
+                                 qclog_file=join(path, self.product_pre + str(i) + ".qclog"),
                                  max_cores=max_cores,
                                  qchem_input_params=qchem_input_params,
                                  sp_params=sp_params,
