@@ -204,9 +204,9 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
     print("{} reactions with solvent {}".format(str(num_copied), solvent))
 
 
-class MolTherm:
+class MolThermWorkflow:
     """
-    This workflow contains all functionality needed to perform Atomate
+    This class contains all functionality needed to perform Atomate
     workflows on molecular data.
     """
 
@@ -232,6 +232,269 @@ class MolTherm:
         except:
             self.db = None
 
+    def quick_check(self, dirs):
+        """
+        Returns only those reactions which have appropriate products and
+        reactants (products, reactants have same number of atoms).
+
+        This is not a sophisticated checking mechanism, and could probably be
+        easily improved upon.
+
+        :return:
+        """
+
+        add_up = []
+
+        for d in dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
+            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
+
+            total_pro_length = sum([len(p) for p in pro_mols])
+            total_rct_length = sum([len(r) for r in rct_mols])
+
+            if total_pro_length == total_rct_length:
+                add_up.append(d)
+
+        return add_up
+
+    def get_single_reaction_workflow(self, name_pre="opt_freq_sp", path=None,
+                                     filenames=None, max_cores=64,
+                                     qchem_input_params=None,
+                                     sp_params=None):
+        """
+        Generates a Fireworks Workflow to find the structures and energies of
+        the reactants and products of a single reaction.
+
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param path: Specified (sub)path in which to run the reaction. By
+        default, this is None, and the Fireworks will run in self.base_dir
+        :param filenames: Specified files within the path (if self.base_dir or
+        a subdirectory) that should be considered a part of this reaction. If
+        None, assume all files in the directory are to be involved.
+        :param max_cores: int specifying number of processes/threads that can
+        be used for this workflow.
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
+        :return: Workflow
+        """
+
+        fws = []
+
+        if self.subdirs:
+            base_path = join(self.base_dir, path)
+        else:
+            base_path = self.base_dir
+
+        if filenames:
+            rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
+                    f.endswith(".mol")]
+            pros = [f for f in filenames if f.startswith(self.product_pre) and
+                    f.endswith(".mol")]
+            print(rcts)
+            print(pros)
+        else:
+            # Assume that every file in the directory is part of the reaction
+            files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                     and f.endswith(".mol")]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+        for i, rct in enumerate(rcts):
+            mol = get_molecule(join(base_path, rct))
+
+            infile = join(base_path, self.reactant_pre + str(i) + ".in")
+            outfile = join(base_path, self.reactant_pre + str(i) + ".out")
+
+            fw = OptFreqSPFW(molecule=mol,
+                             name="{}: {}/{}".format(name_pre, path, rct),
+                             qchem_cmd="qchem -slurm",
+                             input_file=infile,
+                             output_file=outfile,
+                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
+                             max_cores=max_cores,
+                             qchem_input_params=qchem_input_params,
+                             sp_params=sp_params,
+                             db_file=self.db_file)
+
+            fws.append(fw)
+
+        for i, pro in enumerate(pros):
+            mol = get_molecule(join(base_path, pro))
+
+            infile = join(base_path, self.product_pre + str(i) + ".in")
+            outfile = join(base_path, self.product_pre + str(i) + ".out")
+
+            fw = OptFreqSPFW(molecule=mol,
+                             name="{}: {}/{}".format(name_pre, path, pro),
+                             qchem_cmd="qchem -slurm",
+                             input_file=infile,
+                             output_file=outfile,
+                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
+                             max_cores=max_cores,
+                             qchem_input_params=qchem_input_params,
+                             sp_params=sp_params,
+                             db_file=self.db_file)
+
+            fws.append(fw)
+
+        return Workflow(fws)
+
+    def get_reaction_set_workflow(self, name_pre="opt_freq_sp", max_cores=64,
+                                  qchem_input_params=None,
+                                  sp_params=None):
+        """Generates a Fireworks Workflow to find the structures and energies of
+        the reactants and products of a single reaction.
+
+        Note: as written now, this function will only work if self.subdirs is
+        True; that is, only if each reaction is in a separate subdirectory.
+        Later additions could allow for some other means of specifying the
+        separate reactions within a single directory.
+
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param max_cores: int specifying number of processes/threads that can
+        be used for this workflow.
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
+
+        :return: Workflow
+        """
+
+        if not self.subdirs:
+            raise RuntimeError("Cannot run get_reaction_set_workflow();"
+                               "Need reactions components to be isolated in"
+                               "different subdirectories.")
+
+        def extract_id(string):
+            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
+        fws = []
+
+        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d))]
+
+        # Only set up a workflow if it is worthwhile (the reaction actually
+        # proceeds as written, and all atoms add up)
+        appropriate_dirs = self.quick_check(dirs)
+
+        if self.db is not None:
+            all_fws = self.db["tasks"].find()
+
+            # Keep track of which molecules have already been run as jobs before
+            molecules_registered = [extract_id(fw["task_label"])
+                                    for fw in all_fws]
+        else:
+            molecules_registered = []
+
+        for d in appropriate_dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+            for i, rct in enumerate(rcts):
+                mol_id = rct.rstrip(".mol").split("_")[-1]
+
+                if mol_id in molecules_registered:
+                    continue
+                else:
+                    molecules_registered.append(mol_id)
+
+                mol = get_molecule(join(self.base_dir, d, rct))
+
+                infile = join(path, self.reactant_pre + str(i) + ".in")
+                outfile = join(path, self.reactant_pre + str(i) + ".out")
+
+                fw = OptFreqSPFW(molecule=mol,
+                                 name="{}: {}/{}".format(name_pre, d, rct),
+                                 qchem_cmd="qchem -slurm",
+                                 input_file=infile,
+                                 output_file=outfile,
+                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
+                                 max_cores=max_cores,
+                                 qchem_input_params=qchem_input_params,
+                                 sp_params=sp_params,
+                                 db_file=self.db_file)
+
+                fws.append(fw)
+
+            for i, pro in enumerate(pros):
+                mol_id = pro.rstrip(".mol").split("_")[-1]
+
+                if mol_id in molecules_registered:
+                    continue
+                else:
+                    molecules_registered.append(mol_id)
+
+                mol = get_molecule(join(self.base_dir, d, pro))
+
+                infile = join(path, self.product_pre + str(i) + ".in")
+                outfile = join(path, self.product_pre + str(i) + ".out")
+
+                fw = OptFreqSPFW(molecule=mol,
+                                 name="{}: {}/{}".format(name_pre, d, pro),
+                                 qchem_cmd="qchem -slurm",
+                                 input_file=infile,
+                                 output_file=outfile,
+                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
+                                 max_cores=max_cores,
+                                 qchem_input_params=qchem_input_params,
+                                 sp_params=sp_params,
+                                 db_file=self.db_file)
+
+                fws.append(fw)
+
+        return Workflow(fws)
+
+    @staticmethod
+    def add_workflow(workflow):
+        """
+        Use Fireworks to add a generated workflow.
+
+        :param workflow: a Workflow object (should have been generated by one
+        of the workflow-generating functions about).
+        :return:
+        """
+
+        launchpad = LaunchPad.auto_load()
+        launchpad.add_wf(workflow)
+
+
+class MolThermAnalysis:
+    """
+    This class can be used to analyze data from MolThermWorkflow workflows,
+    including extracting thermo data from calculations and generating predicted
+    boiling and melting points.
+    """
+
+    def __init__(self, base_dir, reactant_pre="rct_", product_pre="pro_",
+                 db_file="db.json"):
+        """
+        :param base_dir: Directory where input and output data should be stored.
+        :param reactant_pre: Prefix for reactant files.
+        :param product_pre: Prefix for product files.
+        :param db_file: Path to database config file.
+        """
+
+        self.base_dir = base_dir
+        self.reactant_pre = reactant_pre
+        self.product_pre = product_pre
+        self.db_file = db_file
+
+        try:
+            self.db = QChemCalcDb.from_db_file(self.db_file)
+        except:
+            self.db = None
+
     def get_reaction_thermo_files(self, path=None):
         """
         Naively scrape thermo data from QChem output files.
@@ -246,7 +509,7 @@ class MolTherm:
         rct_thermo = {"enthalpy": 0, "entropy": 0}
         pro_thermo = {"enthalpy": 0, "entropy": 0}
 
-        if self.subdirs and path is not None:
+        if path is not None:
             base_path = join(self.base_dir, path)
         else:
             base_path = self.base_dir
@@ -265,64 +528,6 @@ class MolTherm:
             qcout = QCOutput(join(base_path, pro))
             pro_thermo["enthalpy"] += qcout.data["enthalpy"]
             pro_thermo["entropy"] += qcout.data["entropy"]
-
-        # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
-        thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
-        thermo_data["entropy"] = pro_thermo["entropy"] - pro_thermo["entropy"]
-
-        return thermo_data
-
-    def get_reaction_thermo_db(self, directory):
-        """
-        Access the MongoDB database associated with this MolTherm object, and
-        grab the reaction thermodynamics from the associated entries.
-        :param directory: Directory name where the reaction is stored. Right now,
-        this is the easiest way to identify the reaction. In the future, more
-        sophisticated searching should be used.
-
-        Note: At present, this does not account for the single-point energy
-        correction.
-
-        :return: dict {prop: value}, where properties are enthalpy, entropy.
-        """
-
-        if self.db is None:
-            raise RuntimeError("Could not connect to database. Check db_file"
-                               "and try again later.")
-
-        thermo_data = {}
-
-        rct_thermo = {"enthalpy": 0, "entropy": 0}
-        pro_thermo = {"enthalpy": 0, "entropy": 0}
-
-        if abspath(directory) != directory:
-            directory = join(self.base_dir, directory)
-
-        # Get all database entries in the directory (reaction) of interest
-        records = self.db.collection.find({"dir_name": directory})
-
-        for record in records:
-            filename = record["task_label"].split(" : ")[-1]
-
-            enthalpy = 0
-            entropy = 0
-
-            for calc in record["calcs_reversed"]:
-                if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
-                    enthalpy = calc["enthalpy"]
-                    entropy = calc["entropy"]
-                    break
-
-            if filename.startswith(self.reactant_pre):
-                rct_thermo["enthalpy"] += enthalpy
-                rct_thermo["entropy"] += entropy
-            elif filename.startswith(self.product_pre):
-                pro_thermo["enthalpy"] += enthalpy
-                pro_thermo["entropy"] += entropy
-            else:
-                print("Skipping {} because it cannot be determined if it is"
-                      "reactant or product.".format(filename))
-                continue
 
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
         thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
@@ -359,10 +564,10 @@ class MolTherm:
             return string.split("/")[-1].rstrip(".mol").split("_")[-1]
 
         # To extract enthalpy and entropy from calculation results
-        def get_thermo(record):
+        def get_thermo(job):
             enthalpy = 0
             entropy = 0
-            for calc in record["calcs_reversed"]:
+            for calc in job["calcs_reversed"]:
                 if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
                     enthalpy = calc["enthalpy"]
                     entropy = calc["entropy"]
@@ -561,239 +766,3 @@ class MolTherm:
             file.write("Single-Point Input: {}\n".format(data["sp"]))
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
-
-    def quick_check(self, dirs):
-        """
-        Returns only those reactions which have appropriate products and
-        reactants (products, reactants have same number of atoms).
-
-        This is not a sophisticated checking mechanism, and could probably be
-        easily improved upon.
-
-        :return:
-        """
-
-        add_up = []
-
-        for d in dirs:
-            path = join(self.base_dir, d)
-            files = [f for f in listdir(path) if isfile(join(path, f))]
-            rcts = [f for f in files if f.startswith(self.reactant_pre)]
-            pros = [f for f in files if f.startswith(self.product_pre)]
-
-            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
-            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
-
-            total_pro_length = sum([len(p) for p in pro_mols])
-            total_rct_length = sum([len(r) for r in rct_mols])
-
-            if total_pro_length == total_rct_length:
-                add_up.append(d)
-
-        return add_up
-
-    def get_single_reaction_workflow(self, name_pre="opt_freq_sp", path=None,
-                                     filenames=None, max_cores=64,
-                                     qchem_input_params=None,
-                                     sp_params=None):
-        """
-        Generates a Fireworks Workflow to find the structures and energies of
-        the reactants and products of a single reaction.
-
-        :param name_pre: str indicating the prefix which should be used for all
-        Firework names
-        :param path: Specified (sub)path in which to run the reaction. By
-        default, this is None, and the Fireworks will run in self.base_dir
-        :param filenames: Specified files within the path (if self.base_dir or
-        a subdirectory) that should be considered a part of this reaction. If
-        None, assume all files in the directory are to be involved.
-        :param max_cores: int specifying number of processes/threads that can
-        be used for this workflow.
-        :param qchem_input_params: dict
-        :param sp_params: For OptFreqSPFW, single-point calculations can be
-        treated differently from Opt and Freq. In this case, another dict
-        for sp must be used.
-        :return: Workflow
-        """
-
-        fws = []
-
-        if self.subdirs:
-            base_path = join(self.base_dir, path)
-        else:
-            base_path = self.base_dir
-
-        if filenames:
-            rcts = [f for f in filenames if f.startswith(self.reactant_pre) and
-                    f.endswith(".mol")]
-            pros = [f for f in filenames if f.startswith(self.product_pre) and
-                    f.endswith(".mol")]
-            print(rcts)
-            print(pros)
-        else:
-            # Assume that every file in the directory is part of the reaction
-            files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                     and f.endswith(".mol")]
-            rcts = [f for f in files if f.startswith(self.reactant_pre)]
-            pros = [f for f in files if f.startswith(self.product_pre)]
-
-        for i, rct in enumerate(rcts):
-            mol = get_molecule(join(base_path, rct))
-
-            infile = join(base_path, self.reactant_pre + str(i) + ".in")
-            outfile = join(base_path, self.reactant_pre + str(i) + ".out")
-
-            fw = OptFreqSPFW(molecule=mol,
-                             name="{}: {}/{}".format(name_pre, path, rct),
-                             qchem_cmd="qchem -slurm",
-                             input_file=infile,
-                             output_file=outfile,
-                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
-                             max_cores=max_cores,
-                             qchem_input_params=qchem_input_params,
-                             sp_params=sp_params,
-                             db_file=self.db_file)
-
-            fws.append(fw)
-
-        for i, pro in enumerate(pros):
-            mol = get_molecule(join(base_path, pro))
-
-            infile = join(base_path, self.product_pre + str(i) + ".in")
-            outfile = join(base_path, self.product_pre + str(i) + ".out")
-
-            fw = OptFreqSPFW(molecule=mol,
-                             name="{}: {}/{}".format(name_pre, path, pro),
-                             qchem_cmd="qchem -slurm",
-                             input_file=infile,
-                             output_file=outfile,
-                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
-                             max_cores=max_cores,
-                             qchem_input_params=qchem_input_params,
-                             sp_params=sp_params,
-                             db_file=self.db_file)
-
-            fws.append(fw)
-
-        return Workflow(fws)
-
-    def get_reaction_set_workflow(self, name_pre="opt_freq_sp", max_cores=64,
-                                  qchem_input_params=None,
-                                  sp_params=None):
-        """Generates a Fireworks Workflow to find the structures and energies of
-        the reactants and products of a single reaction.
-
-        Note: as written now, this function will only work if self.subdirs is
-        True; that is, only if each reaction is in a separate subdirectory.
-        Later additions could allow for some other means of specifying the
-        separate reactions within a single directory.
-
-        :param name_pre: str indicating the prefix which should be used for all
-        Firework names
-        :param max_cores: int specifying number of processes/threads that can
-        be used for this workflow.
-        :param qchem_input_params: dict
-        :param sp_params: For OptFreqSPFW, single-point calculations can be
-        treated differently from Opt and Freq. In this case, another dict
-        for sp must be used.
-
-        :return: Workflow
-        """
-
-        if not self.subdirs:
-            raise RuntimeError("Cannot run get_reaction_set_workflow();"
-                               "Need reactions components to be isolated in"
-                               "different subdirectories.")
-
-        def extract_id(string):
-            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
-
-        fws = []
-
-        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d))]
-
-        # Only set up a workflow if it is worthwhile (the reaction actually
-        # proceeds as written, and all atoms add up)
-        appropriate_dirs = self.quick_check(dirs)
-
-        try:
-            all_fws = self.db["tasks"].find()
-
-            # Keep track of which molecules have already been run as jobs before
-            molecules_registered = [extract_id(fw["task_label"])
-                                    for fw in all_fws]
-        except:
-            molecules_registered = []
-
-        for d in appropriate_dirs:
-            path = join(self.base_dir, d)
-            files = [f for f in listdir(path) if isfile(join(path, f))]
-            rcts = [f for f in files if f.startswith(self.reactant_pre)]
-            pros = [f for f in files if f.startswith(self.product_pre)]
-
-            for i, rct in enumerate(rcts):
-                mol_id = rct.rstrip(".mol").split("_")[-1]
-
-                if mol_id in molecules_registered:
-                    continue
-                else:
-                    molecules_registered.append(mol_id)
-
-                mol = get_molecule(join(self.base_dir, d, rct))
-
-                infile = join(path, self.reactant_pre + str(i) + ".in")
-                outfile = join(path, self.reactant_pre + str(i) + ".out")
-
-                fw = OptFreqSPFW(molecule=mol,
-                                 name="{}: {}/{}".format(name_pre, d, rct),
-                                 qchem_cmd="qchem -slurm",
-                                 input_file=infile,
-                                 output_file=outfile,
-                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
-                                 max_cores=max_cores,
-                                 qchem_input_params=qchem_input_params,
-                                 sp_params=sp_params,
-                                 db_file=self.db_file)
-
-                fws.append(fw)
-
-            for i, pro in enumerate(pros):
-                mol_id = pro.rstrip(".mol").split("_")[-1]
-
-                if mol_id in molecules_registered:
-                    continue
-                else:
-                    molecules_registered.append(mol_id)
-
-                mol = get_molecule(join(self.base_dir, d, pro))
-
-                infile = join(path, self.product_pre + str(i) + ".in")
-                outfile = join(path, self.product_pre + str(i) + ".out")
-
-                fw = OptFreqSPFW(molecule=mol,
-                                 name="{}: {}/{}".format(name_pre, d, pro),
-                                 qchem_cmd="qchem -slurm",
-                                 input_file=infile,
-                                 output_file=outfile,
-                                 qclog_file=join(path, self.reactant_pre + str(i) + ".qclog"),
-                                 max_cores=max_cores,
-                                 qchem_input_params=qchem_input_params,
-                                 sp_params=sp_params,
-                                 db_file=self.db_file)
-
-                fws.append(fw)
-
-        return Workflow(fws)
-
-    @staticmethod
-    def add_workflow(workflow):
-        """
-        Use Fireworks to add a generated workflow.
-
-        :param workflow: a Workflow object (should have been generated by one
-        of the workflow-generating functions about).
-        :return:
-        """
-
-        launchpad = LaunchPad.auto_load()
-        launchpad.add_wf(workflow)
