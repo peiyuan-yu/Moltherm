@@ -387,7 +387,7 @@ class MolThermWorkflow:
         appropriate_dirs = self.quick_check(dirs)
 
         if self.db is not None:
-            all_fws = self.db["tasks"].find()
+            all_fws = self.db.collection.find()
 
             # Keep track of which molecules have already been run as jobs before
             molecules_registered = [extract_id(fw["task_label"])
