@@ -248,8 +248,8 @@ class MolThermWorkflow:
         for d in dirs:
             path = join(self.base_dir, d)
             files = [f for f in listdir(path) if isfile(join(path, f))]
-            rcts = [f for f in files if f.startswith(self.reactant_pre)]
-            pros = [f for f in files if f.startswith(self.product_pre)]
+            rcts = [f for f in files if f.startswith(self.reactant_pre) and f.endswith(".mol")]
+            pros = [f for f in files if f.startswith(self.product_pre) and f.endswith(".mol")]
 
             rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
             pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
@@ -304,8 +304,8 @@ class MolThermWorkflow:
             # Assume that every file in the directory is part of the reaction
             files = [f for f in listdir(base_path) if isfile(join(base_path, f))
                      and f.endswith(".mol")]
-            rcts = [f for f in files if f.startswith(self.reactant_pre) and f.endswith(".mol")]
-            pros = [f for f in files if f.startswith(self.product_pre) and f.endswith(".mol")]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
 
         for i, rct in enumerate(rcts):
             mol = get_molecule(join(base_path, rct))
