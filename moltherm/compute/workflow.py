@@ -703,6 +703,8 @@ class MolTherm:
         # proceeds as written, and all atoms add up)
         appropriate_dirs = self.quick_check(dirs)
 
+        molecules_registered = []
+
         for d in appropriate_dirs:
             path = join(self.base_dir, d)
             files = [f for f in listdir(path) if isfile(join(path, f))]
@@ -710,6 +712,14 @@ class MolTherm:
             pros = [f for f in files if f.startswith(self.product_pre)]
 
             for i, rct in enumerate(rcts):
+                mol_id = rct.rstrip(".mol").lstrip(self.reactant_pre).lstrip(
+                    "1234567890_")
+
+                if mol_id in molecules_registered:
+                    continue
+                else:
+                    molecules_registered.append(mol_id)
+
                 mol = get_molecule(join(self.base_dir, d, rct))
 
                 infile = join(path, self.reactant_pre + str(i) + ".in")
@@ -729,6 +739,14 @@ class MolTherm:
                 fws.append(fw)
 
             for i, pro in enumerate(pros):
+                mol_id = rct.rstrip(".mol").lstrip(self.reactant_pre).lstrip(
+                    "1234567890_")
+
+                if mol_id in molecules_registered:
+                    continue
+                else:
+                    molecules_registered.append(mol_id)
+
                 mol = get_molecule(join(self.base_dir, d, pro))
 
                 infile = join(path, self.product_pre + str(i) + ".in")
