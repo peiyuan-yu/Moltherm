@@ -1029,4 +1029,22 @@ class ChemSpiderScraper:
 
         :return:
         """
-        pass
+
+        for molecule in molecules:
+            adaptor = BabelMolAdaptor(molecule)
+            # Use Canonical SMILES to ensure uniqueness
+            smiles = adaptor.pybel_mol.write("can").strip()
+
+            csids = self.get_chemspider_ids([molecule])[smiles]
+
+            boiling_points = self.extract_boiling_point(csids)
+            melting_points = self.extract_melting_point(csids)
+
+            entry = {
+                "molecule": molecule,
+                "smiles": smiles,
+                "boiling points": boiling_points,
+                "melting_points": melting_points
+            }
+
+            self.collection.insert_one(entry)
