@@ -355,6 +355,9 @@ class MolTherm:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
+        def extract_id(string):
+            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
         # To extract enthalpy and entropy from calculation results
         def get_thermo(record):
             enthalpy = 0
@@ -369,7 +372,18 @@ class MolTherm:
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
 
-        records = self.db.collection.find({"dir_name": directory})
+        # This is horribly inefficient. Should change the how data is stored
+        # to allow for nicer queries
+        all_records = self.db.collection.find()
+        records = []
+
+        dir_ids = [extract_id(f) for f in listdir(directory) if
+                   f.endswith(".mol")]
+
+        for record in all_records:
+            molecule_id = extract_id(record["task_label"])
+            if record["dir_name"] == directory or molecule_id in dir_ids:
+                records.append(record)
 
         # Sort files for if they are reactants or products
         reactants = []
@@ -578,14 +592,16 @@ class MolTherm:
 
         return add_up
 
-    def get_single_reaction_workflow(self, path=None, filenames=None,
-                                     max_cores=64,
+    def get_single_reaction_workflow(self, name_pre="opt_freq_sp", path=None,
+                                     filenames=None, max_cores=64,
                                      qchem_input_params=None,
                                      sp_params=None):
         """
         Generates a Fireworks Workflow to find the structures and energies of
         the reactants and products of a single reaction.
 
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
         :param path: Specified (sub)path in which to run the reaction. By
         default, this is None, and the Fireworks will run in self.base_dir
         :param filenames: Specified files within the path (if self.base_dir or
@@ -601,12 +617,6 @@ class MolTherm:
         """
 
         fws = []
-
-        if path is not None:
-            fw_pre = path
-        else:
-            fw_pre = "opt_freq_sp"
-            path = ""
 
         if self.subdirs:
             base_path = join(self.base_dir, path)
@@ -634,7 +644,7 @@ class MolTherm:
             outfile = join(base_path, self.reactant_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
-                             name=(fw_pre + " : " + rct),
+                             name="{}: {}/{}".format(name_pre, path, rct),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
@@ -653,7 +663,7 @@ class MolTherm:
             outfile = join(base_path, self.product_pre + str(i) + ".out")
 
             fw = OptFreqSPFW(molecule=mol,
-                             name=(fw_pre + " : " + pro),
+                             name="{}: {}/{}".format(name_pre, path, pro),
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
@@ -695,6 +705,9 @@ class MolTherm:
                                "Need reactions components to be isolated in"
                                "different subdirectories.")
 
+        def extract_id(string):
+            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
         fws = []
 
         dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d))]
@@ -703,7 +716,14 @@ class MolTherm:
         # proceeds as written, and all atoms add up)
         appropriate_dirs = self.quick_check(dirs)
 
-        molecules_registered = []
+        try:
+            all_fws = self.db["tasks"].find()
+
+            # Keep track of which molecules have already been run as jobs before
+            molecules_registered = [extract_id(fw["task_label"])
+                                    for fw in all_fws]
+        except:
+            molecules_registered = []
 
         for d in appropriate_dirs:
             path = join(self.base_dir, d)
@@ -751,7 +771,7 @@ class MolTherm:
                 outfile = join(path, self.product_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
-                                 name="{}: {}/{}".format(name_pre, d, rct),
+                                 name="{}: {}/{}".format(name_pre, d, pro),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
