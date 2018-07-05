@@ -510,7 +510,6 @@ class MolTherm:
         collection.insert_one(self.extract_reaction_data(directory, opt=opt,
                                                          freq=freq, sp=sp))
 
-
     def record_data_file(self, directory, filename="thermo.txt", opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo.txt file.
@@ -549,6 +548,36 @@ class MolTherm:
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
 
+    def quick_check(self, dirs):
+        """
+        Returns only those reactions which have appropriate products and
+        reactants (products, reactants have same number of atoms).
+
+        This is not a sophisticated checking mechanism, and could probably be
+        easily improved upon.
+
+        :return:
+        """
+
+        add_up = []
+
+        for d in dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre)]
+            pros = [f for f in files if f.startswith(self.product_pre)]
+
+            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
+            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
+
+            total_pro_length = sum([len(p) for p in pro_mols])
+            total_rct_length = sum([len(r) for r in rct_mols])
+
+            if total_pro_length == total_rct_length:
+                add_up.append(d)
+
+        return add_up
+
     def get_single_reaction_workflow(self, path=None, filenames=None,
                                      max_cores=64,
                                      qchem_input_params=None,
@@ -576,7 +605,7 @@ class MolTherm:
         if path is not None:
             fw_pre = path
         else:
-            fw_pre = "opt_freq_sp_"
+            fw_pre = "opt_freq_sp"
             path = ""
 
         if self.subdirs:
@@ -638,7 +667,7 @@ class MolTherm:
 
         return Workflow(fws)
 
-    def get_reaction_set_workflow(self, max_cores=64,
+    def get_reaction_set_workflow(self, name_pre="opt_freq_sp", max_cores=64,
                                   qchem_input_params=None,
                                   sp_params=None):
         """Generates a Fireworks Workflow to find the structures and energies of
@@ -649,6 +678,8 @@ class MolTherm:
         Later additions could allow for some other means of specifying the
         separate reactions within a single directory.
 
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
         :param max_cores: int specifying number of processes/threads that can
         be used for this workflow.
         :param qchem_input_params: dict
@@ -685,7 +716,7 @@ class MolTherm:
                 outfile = join(path, self.reactant_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
-                                 name=("opt_freq_sp_: " + rct),
+                                 name="{}: {}/{}".format(name_pre, d, rct),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
@@ -704,7 +735,7 @@ class MolTherm:
                 outfile = join(path, self.product_pre + str(i) + ".out")
 
                 fw = OptFreqSPFW(molecule=mol,
-                                 name=("opt_freq_sp_: " + pro),
+                                 name="{}: {}/{}".format(name_pre, d, rct),
                                  qchem_cmd="qchem -slurm",
                                  input_file=infile,
                                  output_file=outfile,
@@ -730,33 +761,3 @@ class MolTherm:
 
         launchpad = LaunchPad.auto_load()
         launchpad.add_wf(workflow)
-
-    def quick_check(self, dirs):
-        """
-        Returns only those reactions which have appropriate products and
-        reactants (products, reactants have same number of atoms).
-
-        This is not a sophisticated checking mechanism, and could probably be
-        easily improved upon.
-
-        :return:
-        """
-
-        add_up = []
-
-        for d in dirs:
-            path = join(self.base_dir, d)
-            files = [f for f in listdir(path) if isfile(join(path, f))]
-            rcts = [f for f in files if f.startswith(self.reactant_pre)]
-            pros = [f for f in files if f.startswith(self.product_pre)]
-
-            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
-            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
-
-            total_pro_length = sum([len(p) for p in pro_mols])
-            total_rct_length = sum([len(r) for r in rct_mols])
-
-            if total_pro_length == total_rct_length:
-                add_up.append(d)
-
-        return add_up
