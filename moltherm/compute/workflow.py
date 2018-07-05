@@ -10,7 +10,7 @@ from pymatgen.io.babel import BabelMolAdaptor
 
 from fireworks import Workflow, LaunchPad
 
-from atomate.qchem.database import QChemCalcDB
+from atomate.qchem.database import QChemCalcDb
 
 from moltherm.compute.fireworks import OptFreqSPFW
 from moltherm.compute.outputs import QCOutput
@@ -228,7 +228,7 @@ class MolTherm:
         self.db_file = db_file
 
         try:
-            self.db = QChemCalcDB.from_db_file(self.db_file)
+            self.db = QChemCalcDb.from_db_file(self.db_file)
         except:
             self.db = None
 
