@@ -553,10 +553,6 @@ class MolThermAnalysis:
                 entropy += qcout.data.get("entropy", 0) or 0
                 energy_opt += qcout.data.get("final_energy", 0) or 0
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
-                print(enthalpy)
-                print(entropy)
-                print(energy_opt)
-                print(energy_sp)
 
             pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
             pro_thermo["entropy"] += entropy
@@ -565,7 +561,7 @@ class MolThermAnalysis:
 
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
         thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
-        thermo_data["entropy"] = pro_thermo["entropy"] - pro_thermo["entropy"]
+        thermo_data["entropy"] = pro_thermo["entropy"] - rct_thermo["entropy"]
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
         except ZeroDivisionError:
