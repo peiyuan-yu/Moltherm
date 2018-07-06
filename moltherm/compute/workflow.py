@@ -337,7 +337,7 @@ class MolThermWorkflow:
                              qchem_cmd="qchem -slurm",
                              input_file=infile,
                              output_file=outfile,
-                             qclog_file=join(base_path, self.reactant_pre + str(i) + ".qclog"),
+                             qclog_file=join(base_path, self.product_pre + str(i) + ".qclog"),
                              max_cores=max_cores,
                              qchem_input_params=qchem_input_params,
                              sp_params=sp_params,
@@ -499,39 +499,71 @@ class MolThermAnalysis:
         """
         Naively scrape thermo data from QChem output files.
 
-        :param path: Path to a subdirectory. Will be ignored if self.subdirs
-        is False.
+        :param path: Path to a subdirectory.
 
         :return: dict {prop: value}, where properties are enthalpy, entropy.
         """
-        thermo_data = {}
-
-        rct_thermo = {"enthalpy": 0, "entropy": 0}
-        pro_thermo = {"enthalpy": 0, "entropy": 0}
 
         if path is not None:
             base_path = join(self.base_dir, path)
         else:
             base_path = self.base_dir
 
-        files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and f.endswith(".out")]
-        rcts = [f for f in files if f.startswith(self.reactant_pre)]
-        pros = [f for f in files if f.startswith(self.product_pre)]
+        def extract_id(string):
+            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
 
-        for rct in rcts:
-            qcout = QCOutput(join(base_path, rct))
-            rct_thermo["enthalpy"] += qcout.data["enthalpy"]
-            rct_thermo["entropy"] += qcout.data["entropy"]
+        rct_ids = [extract_id(f) for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.reactant_pre)]
 
-        for pro in pros:
-            qcout = QCOutput(join(base_path, pro))
-            pro_thermo["enthalpy"] += qcout.data["enthalpy"]
-            pro_thermo["entropy"] += qcout.data["entropy"]
+        pro_ids = [extract_id(f) for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.product_pre)]
+
+        rct_map = {mol: [f for f in listdir(base_path) if mol in f and ".out" in f] for mol in rct_ids}
+        pro_map = {mol: [f for f in listdir(base_path) if mol in f and ".out" in f] for mol in pro_ids}
+
+        rct_thermo = {"enthalpy": 0, "entropy": 0}
+        pro_thermo = {"enthalpy": 0, "entropy": 0}
+
+        for mol in rct_map.keys():
+            enthalpy = 0
+            entropy = 0
+            energy_opt = 0
+            energy_sp = 0
+
+            for out in rct_map[mol]:
+                qcout = QCOutput(join(base_path, mol))
+
+                enthalpy += qcout.data.get("enthalpy", 0)
+                entropy += qcout.data.get("entropy", 0)
+                energy_opt += qcout.data.get("final_energy", 0)
+                energy_sp += qcout.data.get("final_energy_sp", 0)
+
+            rct_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+            rct_thermo["entropy"] += entropy
+
+        for mol in pro_map.keys():
+            enthalpy = 0
+            entropy = 0
+            energy_opt = 0
+            energy_sp = 0
+
+            for out in pro_map[mol]:
+                qcout = QCOutput(join(base_path, mol))
+
+                enthalpy += qcout.data.get("enthalpy", 0)
+                entropy += qcout.data.get("entropy", 0)
+                energy_opt += qcout.data.get("final_energy", 0)
+                energy_sp += qcout.data.get("final_energy_sp", 0)
+
+            pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+            pro_thermo["entropy"] += entropy
+
+        thermo_data = {}
 
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
         thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
         thermo_data["entropy"] = pro_thermo["entropy"] - pro_thermo["entropy"]
+        thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
 
         return thermo_data
 
@@ -560,19 +592,24 @@ class MolThermAnalysis:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
-        def extract_id(string):
-            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
-
         # To extract enthalpy and entropy from calculation results
         def get_thermo(job):
             enthalpy = 0
             entropy = 0
+            energy_opt = 0
+            energy_sp = 0
+
             for calc in job["calcs_reversed"]:
+                if calc["task"]["type"] == "opt" or calc["task"]["type"] == "optimization":
+                    energy_opt = calc["final_energy"]
                 if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
                     enthalpy = calc["enthalpy"]
                     entropy = calc["entropy"]
-                    break
-            return {"enthalpy": enthalpy, "entropy": entropy}
+                if calc["task"]["type"] == "sp":
+                    energy_sp = calc["final_energy_sp"]
+
+            return {"enthalpy": (enthalpy - energy_opt) + energy_sp,
+                    "entropy": entropy}
 
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
@@ -683,11 +720,12 @@ class MolThermAnalysis:
         pro_thermo = [get_thermo(p) for p in products]
 
         # Compile reaction thermo from reactant and product thermos
+        delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo)
+        delta_s = sum(p["entropy"] for p in pro_thermo) - sum(r["entropy"] for r in rct_thermo)
         thermo = {
-            "enthalpy": sum(p["enthalpy"] for p in pro_thermo) -
-                        sum(r["enthalpy"] for r in rct_thermo),
-            "entropy": sum(p["entropy"] for p in pro_thermo) -
-                       sum(r["entropy"] for r in rct_thermo)
+            "enthalpy": delta_h,
+            "entropy": delta_s,
+            "t_critical": delta_h / delta_s
         }
 
         result = {"dir_name": directory,
@@ -766,3 +804,4 @@ class MolThermAnalysis:
             file.write("Single-Point Input: {}\n".format(data["sp"]))
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
+            file.write("Critical/Switching Temperature: {}\n".format(data["thermo"]["t_critical"]))
