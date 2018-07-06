@@ -733,9 +733,13 @@ class MolThermAnalysis:
         delta_s *= 4.184
         thermo = {
             "enthalpy": delta_h,
-            "entropy": delta_s,
-            "t_critical": delta_h / delta_s
+            "entropy": delta_s
         }
+
+        try:
+            thermo["t_critical"] = delta_h / delta_s
+        except ZeroDivisionError:
+            thermo["t_critical"] = 0
 
         result = {"dir_name": directory,
                   "opt": opt,
