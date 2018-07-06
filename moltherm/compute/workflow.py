@@ -509,17 +509,14 @@ class MolThermAnalysis:
         else:
             base_path = self.base_dir
 
-        def extract_id(string):
-            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+        rct_ids = len([f for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.reactant_pre)])
 
-        rct_ids = [extract_id(f) for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.reactant_pre)]
+        pro_ids = len([f for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.product_pre)])
 
-        pro_ids = [extract_id(f) for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.product_pre)]
-
-        rct_map = {mol: [f for f in listdir(base_path) if mol in f and ".out" in f] for mol in rct_ids}
-        pro_map = {mol: [f for f in listdir(base_path) if mol in f and ".out" in f] for mol in pro_ids}
+        rct_map = {m: [f for f in listdir(base_path) if f.startswith("rct_{}".format(m)) and ".out" in f] for m in range(rct_ids)}
+        pro_map = {m: [f for f in listdir(base_path) if f.startswith("pro_{}".format(m)) and ".out" in f] for m in range(pro_ids)}
 
         rct_thermo = {"enthalpy": 0, "entropy": 0}
         pro_thermo = {"enthalpy": 0, "entropy": 0}
@@ -548,7 +545,7 @@ class MolThermAnalysis:
             energy_sp = 0
 
             for out in pro_map[mol]:
-                qcout = QCOutput(join(base_path, mol))
+                qcout = QCOutput(join(base_path, out))
 
                 enthalpy += qcout.data.get("enthalpy", 0)
                 entropy += qcout.data.get("entropy", 0)
