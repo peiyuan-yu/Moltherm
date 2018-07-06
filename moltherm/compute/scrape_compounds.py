@@ -870,22 +870,24 @@ class ChemSpiderScraper:
             init_req = requests.post(init_url, json=data, headers=self.headers)
             try:
                 query_id = init_req.json()['queryId']
+
+                status_url = self.base_url + "filter/{}/status".format(query_id)
+                for i in range(max_attempts):
+                    status_request = requests.get(status_url,
+                                                  headers=self.headers)
+
+                    if status_request.json()['status'].lower() == 'complete':
+                        results_url = self.base_url + \
+                                      "filter/{}/results".format(query_id)
+
+                        results_request = requests.get(results_url,
+                                                       headers=self.headers)
+
+                        results[smiles] = results_request.json().get("results",
+                                                                     [])
+                        break
             except:
                 results[smiles] = []
-
-            status_url = self.base_url + "filter/{}/status".format(query_id)
-            for i in range(max_attempts):
-                status_request = requests.get(status_url, headers=self.headers)
-
-                if status_request.json()['status'].lower() == 'complete':
-                    results_url = self.base_url + \
-                                  "filter/{}/results".format(query_id)
-
-                    results_request = requests.get(results_url,
-                                                   headers=self.headers)
-
-                    results[smiles] = results_request.json().get("results", [])
-                    break
 
         return results
 
