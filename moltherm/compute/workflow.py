@@ -530,10 +530,11 @@ class MolThermAnalysis:
             for out in rct_map[mol]:
                 qcout = QCOutput(join(base_path, out))
 
-                enthalpy += qcout.data.get("enthalpy", 0)
-                entropy += qcout.data.get("entropy", 0)
-                energy_opt += qcout.data.get("final_energy", 0)
-                energy_sp += qcout.data.get("final_energy_sp", 0)
+                # Catch potential for Nonetype entries
+                enthalpy += qcout.data.get("enthalpy", 0) or 0
+                entropy += qcout.data.get("entropy", 0) or 0
+                energy_opt += qcout.data.get("final_energy", 0) or 0
+                energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
             rct_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
             rct_thermo["entropy"] += entropy
@@ -547,10 +548,11 @@ class MolThermAnalysis:
             for out in pro_map[mol]:
                 qcout = QCOutput(join(base_path, out))
 
-                enthalpy += qcout.data.get("enthalpy", 0)
-                entropy += qcout.data.get("entropy", 0)
-                energy_opt += qcout.data.get("final_energy", 0)
-                energy_sp += qcout.data.get("final_energy_sp", 0)
+                # Catch potential for Nonetype entries
+                enthalpy += qcout.data.get("enthalpy", 0) or 0
+                entropy += qcout.data.get("entropy", 0) or 0
+                energy_opt += qcout.data.get("final_energy", 0) or 0
+                energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
             pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
             pro_thermo["entropy"] += entropy
