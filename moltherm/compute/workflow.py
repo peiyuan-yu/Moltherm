@@ -204,6 +204,10 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
     print("{} reactions with solvent {}".format(str(num_copied), solvent))
 
 
+def extract_id(string):
+    return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
+
 class MolThermWorkflow:
     """
     This class contains all functionality needed to perform Atomate
@@ -374,9 +378,6 @@ class MolThermWorkflow:
             raise RuntimeError("Cannot run get_reaction_set_workflow();"
                                "Need reactions components to be isolated in"
                                "different subdirectories.")
-
-        def extract_id(string):
-            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
 
         fws = []
 
@@ -595,9 +596,6 @@ class MolThermAnalysis:
         if self.db is None:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
-
-        def extract_id(string):
-            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
 
         # To extract enthalpy and entropy from calculation results
         def get_thermo(job):
@@ -818,3 +816,58 @@ class MolThermAnalysis:
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
             file.write("Critical/Switching Temperature: {}\n".format(data["thermo"]["t_critical"]))
+
+    def copy_outputs_across_directories(self):
+        """
+        Copy output files between subdirectories to ensure that all reaction
+        directories that need outputs of a given molecule will have them.
+
+        Note: This function should not be used unless necessary. This function
+        was written because for each directory, only a single database entry
+        was being made (because db entries were being overwritten by default.
+
+        Logic for this function:
+
+        For each directory in self.base_dir
+            For each molecule file in directory
+                Extract ID
+                For all OTHER directories
+                    Check if ID is present in molecule files
+                    If so, copy the output files associated with that molecule
+
+        :return:
+        """
+
+        mapping = {"pro": "pro_0", "rct_1": "rct_0", "rct_2": "rct_1"}
+
+        dirs = [d for d in listdir(self.base_dir) if isdir(d) and not d.startswith("block")]
+
+        for start_d in dirs:
+            start_p = join(self.base_dir, start_d)
+            mol_files = [f for f in listdir(start_p) if isfile(f) and f.endswith(".mol")]
+
+            for mf in mol_files:
+                mol_id = extract_id(mf)
+
+                for other_d in dirs:
+                    if other_d == start_d:
+                        continue
+
+                    other_p = join(self.base_dir, other_d)
+                    # Check if this id is present
+                    other_mol_files = [f for f in listdir(other_p) if isfile(f) and f.endswith(".mol") and mol_id in f]
+                    other_out_files = [f for f in listdir(other_p) if isfile(f) and ".mol" in f]
+                    to_copy = []
+                    for other_mol in other_mol_files:
+                        if other_mol.startswith("pro"):
+                            to_copy = [f for f in other_out_files if
+                                       f.startswith("pro")]
+                        elif other_mol.startswith("rct_1"):
+                            to_copy = [f for f in other_out_files if
+                                       f.startswith("rct_0")]
+                        elif other_mol.startswith("rct_2"):
+                            to_copy = [f for f in other_out_files if
+                                       f.startswith("rct_1")]
+
+                    for file in to_copy:
+                        shutil.copyfile(join(other_p, file), join(start_p, file+"_copy"))

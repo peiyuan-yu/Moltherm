@@ -333,7 +333,7 @@ class QChemToDb(FiretaskBase):
                 f.write(json.dumps(task_doc, default=DATETIME_HANDLER))
         else:
             mmdb = QChemCalcDb.from_db_file(db_file, admin=True)
-            t_id = mmdb.insert(task_doc)
+            t_id = mmdb.insert(task_doc, update_duplicates=False)
             logger.info("Finished parsing with task_id: {}".format(t_id))
 
         defuse_children = False
