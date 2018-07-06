@@ -838,13 +838,14 @@ class MolThermAnalysis:
         :return:
         """
 
-        mapping = {"pro": "pro_0", "rct_1": "rct_0", "rct_2": "rct_1"}
+        files_copied = 0
 
-        dirs = [d for d in listdir(self.base_dir) if isdir(d) and not d.startswith("block")]
+        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d)) and not d.startswith("block")]
+        print("Number of directories: {}".format(len(dirs)))
 
         for start_d in dirs:
             start_p = join(self.base_dir, start_d)
-            mol_files = [f for f in listdir(start_p) if isfile(f) and f.endswith(".mol")]
+            mol_files = [f for f in listdir(start_p) if isfile(join(start_p, f)) and f.endswith(".mol")]
 
             for mf in mol_files:
                 mol_id = extract_id(mf)
@@ -855,8 +856,8 @@ class MolThermAnalysis:
 
                     other_p = join(self.base_dir, other_d)
                     # Check if this id is present
-                    other_mol_files = [f for f in listdir(other_p) if isfile(f) and f.endswith(".mol") and mol_id in f]
-                    other_out_files = [f for f in listdir(other_p) if isfile(f) and ".mol" in f]
+                    other_mol_files = [f for f in listdir(other_p) if isfile(join(other_p, f)) and f.endswith(".mol") and mol_id in f]
+                    other_out_files = [f for f in listdir(other_p) if isfile(join(other_p, f)) and ".out" in f]
                     to_copy = []
                     for other_mol in other_mol_files:
                         if other_mol.startswith("pro"):
@@ -871,3 +872,5 @@ class MolThermAnalysis:
 
                     for file in to_copy:
                         shutil.copyfile(join(other_p, file), join(start_p, file+"_copy"))
+                        files_copied += 1
+        print("Number of files copied: {}".format(files_copied))
