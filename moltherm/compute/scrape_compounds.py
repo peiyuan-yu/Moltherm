@@ -870,8 +870,8 @@ class ChemSpiderScraper:
             init_req = requests.post(init_url, json=data, headers=self.headers)
             try:
                 query_id = init_req.json()['queryId']
-            except KeyError:
-                raise RuntimeError("Response did not include queryId key!")
+            except:
+                results[smiles] = []
 
             status_url = self.base_url + "filter/{}/status".format(query_id)
             for i in range(max_attempts):
