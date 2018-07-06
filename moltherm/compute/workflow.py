@@ -560,8 +560,10 @@ class MolThermAnalysis:
         thermo_data = {}
 
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
-        thermo_data["enthalpy"] = pro_thermo["enthalpy"] - rct_thermo["enthalpy"]
-        thermo_data["entropy"] = pro_thermo["entropy"] - rct_thermo["entropy"]
+        # Also ensures that units are appropriate (Joules/mol,
+        # rather than cal/mol or kcal/mol)
+        thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"]) * 1000 * 4.184
+        thermo_data["entropy"] = pro_thermo["entropy"] - rct_thermo["entropy"] * 4.184
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
         except ZeroDivisionError:
@@ -723,7 +725,9 @@ class MolThermAnalysis:
 
         # Compile reaction thermo from reactant and product thermos
         delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo)
+        delta_h *= 1000 * 4.184
         delta_s = sum(p["entropy"] for p in pro_thermo) - sum(r["entropy"] for r in rct_thermo)
+        delta_s *= 4.184
         thermo = {
             "enthalpy": delta_h,
             "entropy": delta_s,
