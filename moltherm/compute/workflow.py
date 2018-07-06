@@ -596,6 +596,9 @@ class MolThermAnalysis:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
+        def extract_id(string):
+            return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
         # To extract enthalpy and entropy from calculation results
         def get_thermo(job):
             enthalpy = 0
