@@ -528,7 +528,7 @@ class MolThermAnalysis:
             energy_sp = 0
 
             for out in rct_map[mol]:
-                qcout = QCOutput(join(base_path, mol))
+                qcout = QCOutput(join(base_path, out))
 
                 enthalpy += qcout.data.get("enthalpy", 0)
                 entropy += qcout.data.get("entropy", 0)
