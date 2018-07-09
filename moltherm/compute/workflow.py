@@ -850,7 +850,7 @@ class MolThermAnalysis:
                 mol_obj = get_molecule(join(start_p, mf))
 
                 for out in out_files:
-                    qcout = QCOutput(out)
+                    qcout = QCOutput(join(start_p, out))
                     if qcout.data["initial_molecule"].species == mol_obj.species:
                         # If there is already output, do not copy any files
                         is_covered = True
@@ -877,7 +877,7 @@ class MolThermAnalysis:
                             to_check = [f for f in other_out_files if f.startswith(self.reactant_pre)]
                             to_copy = []
                             for file in to_check:
-                                qcout = QCOutput(out)
+                                qcout = QCOutput(join(other_p, out))
                                 if qcout.data["initial_molecule"].species == mol_obj.species:
                                     to_copy.append(file)
                         else:
