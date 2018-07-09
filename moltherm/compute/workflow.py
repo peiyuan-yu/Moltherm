@@ -218,6 +218,15 @@ def remove_copies(base_dir):
                     shutil.rmtree(join(base_dir, d, f))
 
 
+def find_common_reactants(base_dir, rct_id):
+    results = []
+    for d in listdir(base_dir):
+        if isdir(join(base_dir, d)) and not d.startswith("block"):
+            for f in listdir(join(base_dir, d)):
+                if rct_id in f:
+                    results.append(d)
+    return results
+
 class MolThermWorkflow:
     """
     This class contains all functionality needed to perform Atomate
