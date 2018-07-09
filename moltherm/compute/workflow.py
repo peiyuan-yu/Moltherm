@@ -228,7 +228,7 @@ def find_common_reactants(base_dir, rct_id):
     return results
 
 
-def mass_copy(base_dir, files, directories):
+def mass_copy(base_dir, from_dir, files, directories):
     for file in files:
         for directory in directories:
             if file in listdir(join(base_dir, directory)):
@@ -236,7 +236,7 @@ def mass_copy(base_dir, files, directories):
             else:
                 filename = file
 
-            shutil.copy(join(base_dir, file), join(base_dir, directory, filename))
+            shutil.copy(join(base_dir, from_dir, file), join(base_dir, directory, filename))
 
 
 class MolThermWorkflow:
