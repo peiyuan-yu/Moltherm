@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, remove
 from os.path import join, isfile, isdir, abspath
 import operator
 import shutil
@@ -206,6 +206,17 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
 
 def extract_id(string):
     return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+
+
+def remove_copies(base_dir):
+    for d in listdir(base_dir):
+        if isdir(join(base_dir, d)) and not d.startswith("block"):
+            for f in listdir(join(base_dir, d)):
+                if (f.endswith("_copy") and isfile(join(base_dir, d, f))):
+                    remove(join(base_dir, d, f))
+                elif f == "copies" and isdir(join(base_dir, d, f)):
+                    shutil.rmtree(join(base_dir, d, f))
+
 
 class MolThermWorkflow:
     """
@@ -851,7 +862,7 @@ class MolThermAnalysis:
 
                 for out in out_files:
                     qcout = QCOutput(join(start_p, out))
-                    if qcout.data["initial_molecule"].species == mol_obj.species:
+                    if sorted(qcout.data["initial_molecule"].species) == sorted(mol_obj.species):
                         # If there is already output, do not copy any files
                         is_covered = True
 
@@ -877,7 +888,7 @@ class MolThermAnalysis:
                             to_check = [f for f in other_out_files if f.startswith(self.reactant_pre)]
                             to_copy = []
                             for file in to_check:
-                                qcout = QCOutput(join(other_p, out))
+                                qcout = QCOutput(join(other_p, file))
                                 if qcout.data["initial_molecule"].species == mol_obj.species:
                                     to_copy.append(file)
                         else:
