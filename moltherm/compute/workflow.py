@@ -606,7 +606,6 @@ class MolThermAnalysis:
                 pro_thermo["enthalpy"] += enthalpy
             else:
                 pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
-
             pro_thermo["entropy"] += entropy
 
         thermo_data = {}
@@ -615,7 +614,7 @@ class MolThermAnalysis:
         # Also ensures that units are appropriate (Joules/mol,
         # rather than cal/mol or kcal/mol)
         thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"]) * 1000 * 4.184
-        thermo_data["entropy"] = pro_thermo["entropy"] - rct_thermo["entropy"] * 4.184
+        thermo_data["entropy"] = (pro_thermo["entropy"] - rct_thermo["entropy"]) * 4.184
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
         except ZeroDivisionError:
