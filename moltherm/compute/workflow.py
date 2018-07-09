@@ -847,7 +847,7 @@ class MolThermAnalysis:
                 is_covered = False
                 mol_id = extract_id(mf)
 
-                mol_obj = get_molecule(mf)
+                mol_obj = get_molecule(join(start_p, mf))
 
                 for out in out_files:
                     qcout = QCOutput(out)
