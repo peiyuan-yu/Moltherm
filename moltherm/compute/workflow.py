@@ -550,10 +550,17 @@ class MolThermAnalysis:
         rct_map = {m: [f for f in listdir(base_path) if f.startswith("rct_{}".format(m)) and ".out" in f and not f.endswith("_copy")] for m in range(rct_ids)}
         pro_map = {m: [f for f in listdir(base_path) if f.startswith("pro_{}".format(m)) and ".out" in f] for m in range(pro_ids)}
 
-        if len(rct_map[0]) == 0:
-            rct_map[0] = [f for f in listdir(base_path) if f.startswith("rct_0") and ".out" in f and f.endswith("_copy")]
-        if len(rct_map[1]) == 0:
-            rct_map[1] = [f for f in listdir(base_path) if f.startswith("rct_0") and ".out" in f and f.endswith("_copy")]
+        if len(rct_map[0]) == 0 and len(rct_map[1]) > 0:
+            rct_map[0] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
+        elif len(rct_map[1]) == 0 and len(rct_map[0]) > 0:
+            rct_map[1] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
+        elif len(rct_map[0]) == 0 and len(rct_map[1]) == 0:
+            rct_map[0] = [f for f in listdir(base_path) if
+                          f.startswith("rct_0") and ".out" in f and f.endswith(
+                              "_copy")]
+            rct_map[1] = [f for f in listdir(base_path) if
+                          f.startswith("rct_1") and ".out" in f and f.endswith(
+                              "_copy")]
 
         rct_thermo = {"enthalpy": 0, "entropy": 0}
         pro_thermo = {"enthalpy": 0, "entropy": 0}
