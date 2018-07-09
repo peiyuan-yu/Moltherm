@@ -613,8 +613,12 @@ class MolThermAnalysis:
                 if calc["task"]["type"] == "sp":
                     energy_sp = calc["final_energy_sp"]
 
-            return {"enthalpy": (enthalpy - energy_opt) + energy_sp,
-                    "entropy": entropy}
+            if energy_sp == 0:
+                return {"enthalpy": enthalpy,
+                        "entropy": entropy}
+            else:
+                return {"enthalpy": (enthalpy - energy_opt) + energy_sp,
+                        "entropy": entropy}
 
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
@@ -631,6 +635,8 @@ class MolThermAnalysis:
             molecule_id = extract_id(record["task_label"])
             if record["dir_name"] == directory or molecule_id in dir_ids:
                 records.append(record)
+                # To guarantee that only one such record is copied
+                dir_ids.remove(molecule_id)
 
         # Sort files for if they are reactants or products
         reactants = []
@@ -828,12 +834,9 @@ class MolThermAnalysis:
 
         Logic for this function:
 
-        For each directory in self.base_dir
-            For each molecule file in directory
-                Extract ID
-                For all OTHER directories
-                    Check if ID is present in molecule files
-                    If so, copy the output files associated with that molecule
+        TODO: Put a more rigorous check on this, to make sure that:
+            - The right files are copied
+            - They're only copied once
 
         :return:
         """
