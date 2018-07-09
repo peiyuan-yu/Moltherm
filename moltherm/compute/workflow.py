@@ -207,7 +207,6 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
 def extract_id(string):
     return string.split("/")[-1].rstrip(".mol").split("_")[-1]
 
-
 class MolThermWorkflow:
     """
     This class contains all functionality needed to perform Atomate
@@ -642,8 +641,7 @@ class MolThermAnalysis:
         reactants = []
         products = []
         for record in records:
-            filename = record["task_label"].split(" : ")[-1]
-
+            filename = record["task_label"].split("/")[-1]
             if opt is None:
                 for calc in record["calcs_reversed"]:
                     if calc["task"]["type"] == "opt" or \
