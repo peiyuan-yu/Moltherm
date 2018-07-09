@@ -580,7 +580,11 @@ class MolThermAnalysis:
                 energy_opt += qcout.data.get("final_energy", 0) or 0
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
-            rct_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+            if energy_sp == 0:
+                rct_thermo["enthalpy"] += enthalpy
+            else:
+                rct_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+
             rct_thermo["entropy"] += entropy
 
         for mol in pro_map.keys():
@@ -598,7 +602,11 @@ class MolThermAnalysis:
                 energy_opt += qcout.data.get("final_energy", 0) or 0
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
-            pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+            if energy_sp == 0:
+                pro_thermo["enthalpy"] += enthalpy
+            else:
+                pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+
             pro_thermo["entropy"] += entropy
 
         thermo_data = {}
