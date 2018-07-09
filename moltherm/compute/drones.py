@@ -195,12 +195,12 @@ class MolThermDrone(AbstractDrone):
             total_walltime = 0.0
             nan_found = False
             for calc in d["calcs_reversed"]:
-                if calc["walltime"] != "nan":
-                    total_walltime += calc["walltime"]
+                if calc.get("walltime", "nan") != "nan":
+                    total_walltime += calc.get("walltime", 0)
                 else:
                     nan_found = True
-                if calc["cputime"] != "nan":
-                    total_cputime += calc["cputime"]
+                if calc.get("cputime", "nan") != "nan":
+                    total_cputime += calc.get("cputime", 0)
                 else:
                     nan_found = True
             if nan_found:

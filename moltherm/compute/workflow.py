@@ -828,15 +828,9 @@ class MolThermAnalysis:
         Copy output files between subdirectories to ensure that all reaction
         directories that need outputs of a given molecule will have them.
 
-        Note: This function should not be used unless necessary. This function
-        was written because for each directory, only a single database entry
-        was being made (because db entries were being overwritten by default.
-
-        Logic for this function:
-
-        TODO: Put a more rigorous check on this, to make sure that:
-            - The right files are copied
-            - They're only copied once
+        Note: This function should not be used unless necessary. It was written
+        because for each directory, only a single database entry was being made
+        (because db entries were being overwritten by default.
 
         :return:
         """
@@ -849,13 +843,28 @@ class MolThermAnalysis:
         for start_d in dirs:
             start_p = join(self.base_dir, start_d)
             mol_files = [f for f in listdir(start_p) if isfile(join(start_p, f)) and f.endswith(".mol")]
+            out_files = [f for f in listdir(start_p) if isfile(join(start_p, f)) and ".out" in f]
 
             for mf in mol_files:
+                is_covered = False
                 mol_id = extract_id(mf)
+
+                mol_obj = get_molecule(mf)
+
+                for out in out_files:
+                    qcout = QCOutput(out)
+                    if qcout.data["initial_molecule"].species == mol_obj.species:
+                        # If there is already output, do not copy any files
+                        is_covered = True
+
+                if is_covered:
+                    continue
 
                 for other_d in dirs:
                     if other_d == start_d:
                         continue
+                    if is_covered:
+                        break
 
                     other_p = join(self.base_dir, other_d)
                     # Check if this id is present
@@ -863,17 +872,22 @@ class MolThermAnalysis:
                     other_out_files = [f for f in listdir(other_p) if isfile(join(other_p, f)) and ".out" in f]
                     to_copy = []
                     for other_mol in other_mol_files:
-                        if other_mol.startswith("pro"):
+                        if other_mol.startswith(self.product_pre):
                             to_copy = [f for f in other_out_files if
-                                       f.startswith("pro")]
-                        elif other_mol.startswith("rct_1"):
-                            to_copy = [f for f in other_out_files if
-                                       f.startswith("rct_0")]
-                        elif other_mol.startswith("rct_2"):
-                            to_copy = [f for f in other_out_files if
-                                       f.startswith("rct_1")]
-
+                                       f.startswith(self.product_pre)]
+                        elif other_mol.startswith(self.reactant_pre):
+                            to_check = [f for f in other_out_files if f.startswith(self.reactant_pre)]
+                            to_copy = []
+                            for file in to_check:
+                                qcout = QCOutput(out)
+                                if qcout.data["initial_molecule"].species == mol_obj.species:
+                                    to_copy.append(file)
+                        else:
+                            to_copy = []
                     for file in to_copy:
-                        shutil.copyfile(join(other_p, file), join(start_p, file+"_copy"))
+                        shutil.copyfile(join(other_p, file), join(start_p, file + "_copy"))
                         files_copied += 1
+
+                    if files_copied > 0:
+                        is_covered = True
         print("Number of files copied: {}".format(files_copied))
