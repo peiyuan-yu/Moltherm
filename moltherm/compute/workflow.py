@@ -227,6 +227,18 @@ def find_common_reactants(base_dir, rct_id):
                     results.append(d)
     return results
 
+
+def mass_copy(base_dir, files, directories):
+    for file in files:
+        for directory in directories:
+            if file in listdir(join(base_dir, directory)):
+                filename = file + "_copy"
+            else:
+                filename = file
+
+            shutil.copy(join(base_dir, file), join(base_dir, directory, filename))
+
+
 class MolThermWorkflow:
     """
     This class contains all functionality needed to perform Atomate
