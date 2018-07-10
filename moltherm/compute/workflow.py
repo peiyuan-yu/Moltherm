@@ -628,6 +628,10 @@ class MolThermAnalysis:
         # Combine dicts from pro_thermo and rct_thermo
         thermo_data["has_sp"] = {**pro_thermo["has_sp"], **rct_thermo["has_sp"]}
 
+        thermo_data["product_ids"] = pro_ids
+        thermo_data["reactant_ids"] = rct_ids
+        thermo_data["directory"] = path
+
         return thermo_data
 
     def extract_reaction_data(self, directory, opt=None, freq=None, sp=None):
@@ -812,13 +816,18 @@ class MolThermAnalysis:
 
         return result
 
-    def record_data_db(self, directory, opt=None, freq=None, sp=None):
+    def record_data_db(self, directory, use_files=True, use_db=False,
+                       opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo collection.
 
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
             future, more sophisticated searching should be used.
+        :param use_files: If set to True (default True), use
+            get_reaction_thermo_files to gather data
+        :param use_db: If set to True (default False), use
+            extract_reaction_data to gather data
         :param opt: dict containing information about the optimization jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
@@ -838,10 +847,17 @@ class MolThermAnalysis:
 
         collection = self.db.db["thermo"]
 
-        collection.insert_one(self.extract_reaction_data(directory, opt=opt,
+        if use_db:
+            collection.insert_one(self.extract_reaction_data(directory, opt=opt,
                                                          freq=freq, sp=sp))
+        elif use_files:
+            collection.insert_one(self.get_reaction_thermo_files(directory))
+        else:
+            raise RuntimeError("Either database or files must be used to "
+                               "extract thermo data.")
 
-    def record_data_file(self, directory, filename="thermo.txt", opt=None, freq=None, sp=None):
+    def record_data_file(self, directory, filename="thermo.txt", use_files=True,
+                         use_db=False, opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo.txt file.
 
@@ -852,6 +868,10 @@ class MolThermAnalysis:
             future, more sophisticated searching should be used.
         :param filename: File (within directory) where data should be stored.
             By default, it will be stored in thermo.txt.
+        :param use_files: If set to True (default True), use
+            get_reaction_thermo_files to gather data
+        :param use_db: If set to True (default False), use
+            extract_reaction_data to gather data
         :param opt: dict containing information about the optimization jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
