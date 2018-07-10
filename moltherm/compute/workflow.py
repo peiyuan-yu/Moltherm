@@ -607,10 +607,10 @@ class MolThermAnalysis:
             # Enthalpy calculation should actually be enthalpy - energy_sp
             # But currently, not all calculations have sp
             if energy_sp == 0:
-                pro_thermo["enthalpy"] += (enthalpy - energy_opt)
+                pro_thermo["enthalpy"] += (enthalpy + energy_opt)
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = False
             else:
-                pro_thermo["enthalpy"] += (enthalpy - energy_sp)
+                pro_thermo["enthalpy"] += (enthalpy + energy_sp)
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = True
             pro_thermo["entropy"] += entropy
 
