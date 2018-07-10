@@ -551,8 +551,8 @@ class MolThermAnalysis:
                           f.startswith("rct_1") and ".out" in f and f.endswith(
                               "_copy")]
 
-        rct_thermo = {"enthalpy": 0, "entropy": 0, "has_sp": {}}
-        pro_thermo = {"enthalpy": 0, "entropy": 0, "has_sp": {}}
+        rct_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
+        pro_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
 
         for mol in rct_map.keys():
             enthalpy = 0
@@ -570,12 +570,13 @@ class MolThermAnalysis:
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
             if energy_sp == 0:
-                rct_thermo["enthalpy"] += (enthalpy + energy_opt)
+                rct_thermo["energy"] += energy_opt
                 rct_thermo["has_sp"][self.reactant_pre + str(mol)] = False
             else:
-                rct_thermo["enthalpy"] += (enthalpy + energy_sp)
+                rct_thermo["energy"] +=  energy_sp
                 rct_thermo["has_sp"][self.reactant_pre + str(mol)] = True
-
+            
+            rct_thermo["enthalpy"] += enthalpy
             rct_thermo["entropy"] += entropy
 
         for mol in pro_map.keys():
@@ -609,7 +610,7 @@ class MolThermAnalysis:
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
         # Also ensures that units are appropriate (Joules/mol,
         # rather than cal/mol or kcal/mol, or hartree for energy)
-        energy = pro_thermo["energy"] - rct_thermo["energy"] * 627.509
+        energy = (pro_thermo["energy"] - rct_thermo["energy"]) * 627.509
         thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"])
         thermo_data["enthalpy"] = (thermo_data["enthalpy"] + energy)  * 1000 * 4.184
         thermo_data["entropy"] = (pro_thermo["entropy"] - rct_thermo["entropy"]) * 4.184
