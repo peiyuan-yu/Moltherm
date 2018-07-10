@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
+from pymatgen.core.structure import Molecule
 
 from fireworks import Workflow, LaunchPad
 
@@ -1058,9 +1059,34 @@ class MolThermAnalysis:
         out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
                      and ".out" in f]
 
-        mapping = {}
+        mapping = {mol: {"in": [], "out": []} for mol in mol_files}
 
         for file in in_files:
-            pass
+            file_mol = Molecule.from_file(join(base_path, file))
+            # Remove H because mol files may not begin with H included
+            file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+
+            for mf in mol_files:
+                mol_mol = Molecule.from_file(join(base_path, mf))
+                mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+                # Preserve initial order because that gives a better guarantee
+                # That the two are actually associated
+                if mol_species == file_species:
+                    mapping[mf]["in"].append(file)
+                    break
+
         for file in out_files:
-            pass
+            file_mol = Molecule.from_file(join(base_path, file))
+            file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+
+            for mf in mol_files:
+                mol_mol = Molecule.from_file(join(base_path, mf))
+                mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+
+                # Preserve initial order because that gives a better guarantee
+                # That the two are actually associated
+                if mol_species == file_species:
+                    mapping[mf]["out"].append(file)
+                    break
+
+        return mapping
