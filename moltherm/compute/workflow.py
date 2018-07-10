@@ -562,8 +562,8 @@ class MolThermAnalysis:
                           f.startswith("rct_1") and ".out" in f and f.endswith(
                               "_copy")]
 
-        rct_thermo = {"enthalpy": 0, "entropy": 0}
-        pro_thermo = {"enthalpy": 0, "entropy": 0}
+        rct_thermo = {"enthalpy": 0, "entropy": 0, "has_sp": {}}
+        pro_thermo = {"enthalpy": 0, "entropy": 0, "has_sp": {}}
 
         for mol in rct_map.keys():
             enthalpy = 0
@@ -581,9 +581,11 @@ class MolThermAnalysis:
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
             if energy_sp == 0:
-                rct_thermo["enthalpy"] += enthalpy
+                rct_thermo["enthalpy"] += (enthalpy + energy_opt)
+                rct_thermo["has_sp"][self.reactant_pre + str(mol)] = False
             else:
-                rct_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+                rct_thermo["enthalpy"] += (enthalpy + energy_sp)
+                rct_thermo["has_sp"][self.reactant_pre + str(mol)] = True
 
             rct_thermo["entropy"] += entropy
 
@@ -602,10 +604,14 @@ class MolThermAnalysis:
                 energy_opt += qcout.data.get("final_energy", 0) or 0
                 energy_sp += qcout.data.get("final_energy_sp", 0) or 0
 
+            # Enthalpy calculation should actually be enthalpy - energy_sp
+            # But currently, not all calculations have sp
             if energy_sp == 0:
-                pro_thermo["enthalpy"] += enthalpy
+                pro_thermo["enthalpy"] += (enthalpy - energy_opt)
+                pro_thermo["has_sp"][self.product_pre + str(mol)] = False
             else:
-                pro_thermo["enthalpy"] += (enthalpy - energy_opt) + energy_sp
+                pro_thermo["enthalpy"] += (enthalpy - energy_sp)
+                pro_thermo["has_sp"][self.product_pre + str(mol)] = True
             pro_thermo["entropy"] += entropy
 
         thermo_data = {}
@@ -619,6 +625,8 @@ class MolThermAnalysis:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
         except ZeroDivisionError:
             thermo_data["t_critical"] = None
+        # Combine dicts from pro_thermo and rct_thermo
+        thermo_data["has_sp"] = {**pro_thermo["has_sp"], **rct_thermo["has_sp"]}
 
         return thermo_data
 
