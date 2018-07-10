@@ -15,6 +15,7 @@ from atomate.qchem.database import QChemCalcDb
 
 from moltherm.compute.fireworks import OptFreqSPFW
 from moltherm.compute.outputs import QCOutput
+from moltherm.compute.inputs import QCInput
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -1062,7 +1063,8 @@ class MolThermAnalysis:
         mapping = {mol: {"in": [], "out": []} for mol in mol_files}
 
         for file in in_files:
-            file_mol = Molecule.from_file(join(base_path, file))
+            qcin = QCInput.from_file(join(base_path, file))
+            file_mol = qcin.molecule
             # Remove H because mol files may not begin with H included
             file_species = [str(s) for s in file_mol.species if str(s) != "H"]
 
@@ -1076,7 +1078,8 @@ class MolThermAnalysis:
                     break
 
         for file in out_files:
-            file_mol = Molecule.from_file(join(base_path, file))
+            qcout = QCOutput(join(base_path, file))
+            file_mol = qcout.data["initial_molecule"]
             file_species = [str(s) for s in file_mol.species if str(s) != "H"]
 
             for mf in mol_files:
