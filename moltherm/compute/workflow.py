@@ -23,19 +23,8 @@ __status__ = "Alpha"
 __date__ = "June 2018"
 
 
-""" This file contains functions necessary to actually perform our workflow
-What constitutes the workflow will naturally evolve over time. Right now, this
-is nothing more than a script describing basic steps.
-For now, we want to:
-    - Find the ideal starting conformer for reactants & products
-    - Run through QChem (for now using pymatgen, later using atomate/custodian)
-    - Determine reaction enthalpy, entropy
-    - Calculate heat capacity as function of temperature
-    - Determine working temperature range using QSPR (or database, if available?)
-    - Perform some analysis to rank candidate reactions
-
+"""
 TODO list:
-    - Learn how to use Drones and Queens to parallelize for large sets of data
     - Figure out how to query with pymatgen-db and pymongo
 """
 
@@ -212,7 +201,7 @@ def remove_copies(base_dir):
     for d in listdir(base_dir):
         if isdir(join(base_dir, d)) and not d.startswith("block"):
             for f in listdir(join(base_dir, d)):
-                if (f.endswith("_copy") and isfile(join(base_dir, d, f))):
+                if f.endswith("_copy") and isfile(join(base_dir, d, f)):
                     remove(join(base_dir, d, f))
                 elif f == "copies" and isdir(join(base_dir, d, f)):
                     shutil.rmtree(join(base_dir, d, f))
@@ -607,19 +596,22 @@ class MolThermAnalysis:
             # Enthalpy calculation should actually be enthalpy - energy_sp
             # But currently, not all calculations have sp
             if energy_sp == 0:
-                pro_thermo["enthalpy"] += (enthalpy + energy_opt)
+                pro_thermo["energy"] = energy_opt
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = False
             else:
-                pro_thermo["enthalpy"] += (enthalpy + energy_sp)
+                pro_thermo["energy"] += energy_sp
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = True
+            pro_thermo["enthalpy"] += (enthalpy)
             pro_thermo["entropy"] += entropy
 
         thermo_data = {}
 
         # Generate totals as ∆H = H_pro - H_rct, ∆S = S_pro - S_rct
         # Also ensures that units are appropriate (Joules/mol,
-        # rather than cal/mol or kcal/mol)
-        thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"]) * 1000 * 4.184 * -1
+        # rather than cal/mol or kcal/mol, or hartree for energy)
+        energy = pro_thermo["energy"] - rct_thermo["energy"] * 627.509
+        thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"])
+        thermo_data["enthalpy"] = (thermo_data["enthalpy"] + energy)  * 1000 * 4.184
         thermo_data["entropy"] = (pro_thermo["entropy"] - rct_thermo["entropy"]) * 4.184
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
