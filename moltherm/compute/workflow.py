@@ -207,16 +207,6 @@ def remove_copies(base_dir):
                     shutil.rmtree(join(base_dir, d, f))
 
 
-def find_common_reactants(base_dir, rct_id):
-    results = []
-    for d in listdir(base_dir):
-        if isdir(join(base_dir, d)) and not d.startswith("block"):
-            for f in listdir(join(base_dir, d)):
-                if rct_id in f:
-                    results.append(d)
-    return results
-
-
 def mass_copy(base_dir, from_dir, files, directories):
     for file in files:
         for directory in directories:
@@ -516,6 +506,36 @@ class MolThermAnalysis:
         except:
             self.db = None
 
+    def quick_check(self, dirs):
+        """
+        Returns only those reactions which have appropriate products and
+        reactants (products, reactants have same number of atoms).
+
+        This is not a sophisticated checking mechanism, and could probably be
+        easily improved upon.
+
+        :return:
+        """
+
+        add_up = []
+
+        for d in dirs:
+            path = join(self.base_dir, d)
+            files = [f for f in listdir(path) if isfile(join(path, f))]
+            rcts = [f for f in files if f.startswith(self.reactant_pre) and f.endswith(".mol")]
+            pros = [f for f in files if f.startswith(self.product_pre) and f.endswith(".mol")]
+
+            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
+            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
+
+            total_pro_length = sum([len(p) for p in pro_mols])
+            total_rct_length = sum([len(r) for r in rct_mols])
+
+            if total_pro_length == total_rct_length:
+                add_up.append(d)
+
+        return add_up
+
     def get_reaction_thermo_files(self, path=None):
         """
         Naively scrape thermo data from QChem output files.
@@ -530,11 +550,11 @@ class MolThermAnalysis:
         else:
             base_path = self.base_dir
 
-        rct_ids = len([f for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.reactant_pre)])
+        rct_ids = [extract_id(f) for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.reactant_pre)]
 
-        pro_ids = len([f for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.product_pre)])
+        pro_ids = [extract_id(f) for f in listdir(base_path) if
+                   f.endswith(".mol") and f.startswith(self.product_pre)]
 
         rct_map = {m: [f for f in listdir(base_path) if f.startswith("rct_{}".format(m)) and ".out" in f and not f.endswith("_copy")] for m in range(rct_ids)}
         pro_map = {m: [f for f in listdir(base_path) if f.startswith("pro_{}".format(m)) and ".out" in f] for m in range(pro_ids)}
@@ -621,11 +641,12 @@ class MolThermAnalysis:
         # Combine dicts from pro_thermo and rct_thermo
         thermo_data["has_sp"] = {**pro_thermo["has_sp"], **rct_thermo["has_sp"]}
 
-        thermo_data["product_ids"] = pro_ids
-        thermo_data["reactant_ids"] = rct_ids
-        thermo_data["directory"] = path
+        result = {"thermo": thermo_data,
+                  "directory": path,
+                  "reactant_ids": rct_ids,
+                  "product_ids": pro_ids}
 
-        return thermo_data
+        return result
 
     def extract_reaction_data(self, directory, opt=None, freq=None, sp=None):
         """
@@ -809,8 +830,8 @@ class MolThermAnalysis:
 
         return result
 
-    def record_data_db(self, directory, use_files=True, use_db=False,
-                       opt=None, freq=None, sp=None):
+    def record_reaction_data_db(self, directory, use_files=True, use_db=False,
+                                opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo collection.
 
@@ -849,8 +870,9 @@ class MolThermAnalysis:
             raise RuntimeError("Either database or files must be used to "
                                "extract thermo data.")
 
-    def record_data_file(self, directory, filename="thermo.txt", use_files=True,
-                         use_db=False, opt=None, freq=None, sp=None):
+    def record_reaction_data_file(self, directory, filename="thermo.txt",
+                                  use_files=True, use_db=False, opt=None,
+                                  freq=None, sp=None):
         """
         Record thermo data in thermo.txt file.
 
@@ -882,8 +904,14 @@ class MolThermAnalysis:
             directory = join(self.base_dir, directory)
 
         with open(join(directory, filename), "w+") as file:
-            data = self.extract_reaction_data(directory, opt=opt, freq=freq,
-                                              sp=sp)
+            if use_db:
+                data = self.extract_reaction_data(directory, opt=opt, freq=freq,
+                                                  sp=sp)
+            elif use_files:
+                data = self.get_reaction_thermo_files(directory)
+            else:
+                raise RuntimeError("Either database or files must be used to "
+                                   "extract thermo data.")
 
             file.write("Directory: {}\n".format(data["dir_name"]))
             file.write("Optimization Input: {}\n".format(data["opt"]))
@@ -961,3 +989,78 @@ class MolThermAnalysis:
                     if files_copied > 0:
                         is_covered = True
         print("Number of files copied: {}".format(files_copied))
+
+    def find_common_reactants(self, rct_id):
+        """
+        Searches all subdirectories for those that have reactant .mol files with
+        unique id rct_id.
+
+        :param rct_id: String representing unique identifier for Reaxys
+            molecules.
+        :return: List of reaction directories containing the given reactant.
+        """
+        results = []
+        for d in listdir(self.base_dir):
+            if isdir(join(self.base_dir, d)) and not d.startswith("block"):
+                for f in listdir(join(self.base_dir, d)):
+                    if rct_id in f:
+                        results.append(d)
+        return results
+
+    def map_reactants_to_reactions(self):
+        """
+        Construct a dict showing which directories share each reactant.
+
+        This is useful for analysis of common reactants, and to identify the
+        "source" of a given reactant (in which directory the calculation
+        actually took place).
+
+        :return:
+        """
+
+        mapping = {}
+        dirs = [d for d in listdir(self.base_dir)
+                if isdir(join(self.base_dir, d)) and not d.startswith("block")]
+
+        appropriate_dirs = self.quick_check(dirs)
+
+        for d in appropriate_dirs:
+            if isdir(join(self.base_dir, d)) and not d.startswith("block"):
+                molfiles = [f for f in listdir(join(self.base_dir, d))
+                            if f.endswith(".mol")
+                            and f.startswith(self.reactant_pre)]
+                for file in molfiles:
+                    f_id = extract_id(file)
+                    if f_id in mapping:
+                        mapping[f_id].append(d)
+                    else:
+                        mapping[f_id] = [d]
+
+        return mapping
+
+    def associate_qchem_to_mol(self, directory):
+        """
+        Assign all .in and .out files in a directory to one of the .mol files in that
+        directory, based on the non-H atoms in those molecules.
+
+        :param directory:
+        :return:
+        """
+
+        base_path = join(self.base_dir, directory)
+
+        mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                     and f.endswith(".mol")]
+        # Note: This will catch .in and .out files for incomplete computations
+        # TODO: What's the best way to filter these out?
+        in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                    and ".in" in f]
+        out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                     and ".out" in f]
+
+        mapping = {}
+
+        for file in in_files:
+            pass
+        for file in out_files:
+            pass
