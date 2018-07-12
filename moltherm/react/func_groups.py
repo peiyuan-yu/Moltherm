@@ -1,6 +1,3 @@
-import openbabel as ob
-import pybel as pb
-
 from pymatgen.core.strucuture import Molecule, FunctionalGroups
 from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.analysis.graphs import MoleculeGraph
@@ -134,11 +131,11 @@ class FunctionalGroupExtractor:
         specials = set()
 
         # For this function, only carbons are considered
-        nodes = [n for n in self.molgraph.graph.nodes if
+        carbons = [n for n in self.molgraph.graph.nodes if
                  str(self.species[n]) == "C"]
 
         # Condition one: double/triple bonds to heteroatoms
-        for node in nodes:
+        for node in carbons:
             neighbors = self.molgraph.graph[node]
 
             for neighbor, attributes in neighbors.items():
@@ -152,7 +149,7 @@ class FunctionalGroupExtractor:
                         specials.add(node)
 
         # Condition two: carbon-carbon double & triple bonds
-        for node in nodes:
+        for node in carbons:
             neighbors = self.molgraph.graph[node]
 
             for neighbor, attributes in neighbors.items():
@@ -161,7 +158,7 @@ class FunctionalGroupExtractor:
                     specials.add(node)
 
         # Condition three: Acetal carbons
-        for node in nodes:
+        for node in carbons:
             neighbors = self.molgraph.graph[node]
 
             neighbor_spec = [str(self.species[n]) for n in neighbors.keys()]
@@ -178,13 +175,12 @@ class FunctionalGroupExtractor:
         for ring in rings_indices:
             ring_spec = sorted([str(self.species[node]) for node in ring])
             # All rings of interest are three-member rings
-            if len(ring) == 3:
-                if ring_spec in [["C", "C", "O"],
-                                 ["C", "C", "N"],
-                                 ["C", "C", "S"]]:
-                    for node in ring:
-                        if node in nodes:
-                            specials.add(node)
+            if len(ring) == 3 and ring_spec in [["C", "C", "O"],
+                                                ["C", "C", "N"],
+                                                ["C", "C", "S"]]:
+                for node in ring:
+                    if node in carbons:
+                        specials.add(node)
 
         return specials
 
@@ -200,7 +196,8 @@ class FunctionalGroupExtractor:
         """
 
         # We will add hydrogens to functional groups
-        hydrogens = {n for n in self.molgraph.graph.nodes if str(self.species[n]) == "H"}
+        hydrogens = {n for n in self.molgraph.graph.nodes if
+                     str(self.species[n]) == "H"}
 
         # Graph representation of only marked atoms
         subgraph = self.molgraph.graph.subgraph(list(atoms)).to_undirected()
@@ -226,14 +223,67 @@ class FunctionalGroupExtractor:
         of get_special_carbon and get_heteroatoms, such as benzene rings, methyl
         groups, and ethyl groups.
 
+        TODO: Think of other functional groups that are important enough to be
+        added (ex: do we need ethyl, butyl, propyl?)
+
         :param func_groups: List of strs representing the functional groups of
             interest. Default to None, meaning that all of the functional groups
             defined in this function will be sought.
         :return:
         """
-        pass
 
-    def get_all_functional_groups(self, elements=None, func_groups=None):
+        hydrogens = {n for n in self.molgraph.graph.nodes if
+                     str(self.species[n]) == "H"}
+
+        carbons = [n for n in self.molgraph.graph.nodes if
+                   str(self.species[n]) == "C"]
+
+        if func_groups is None:
+            func_groups = ["methyl", "phenyl"]
+
+        results = []
+
+        if "methyl" in func_groups:
+            for node in carbons:
+                neighbors = self.molgraph.graph[node]
+                hs = {n for n in neighbors.keys() if n in hydrogens}
+                # Methyl group is CH3, but this will also catch methane
+                if len(hs) >= 3:
+                    hs.add(node)
+                    results.append(hs)
+
+        if "phenyl" in func_groups:
+            rings_indices = [set(sum(ring, ())) for ring in
+                             self.molgraph.find_rings()]
+
+            possible_phenyl = [r for r in rings_indices if len(r) == 6]
+
+            for ring in possible_phenyl:
+                # Phenyl group should have only one (0 for benzene) member whose
+                # neighbors are not two carbons and one hydrogen
+                num_deviants = 0
+                for node in ring:
+                    neighbors = self.molgraph.graph[node]
+                    neighbor_spec = sorted([str(self.species[neighbor])
+                                            for neighbor in neighbors])
+                    if neighbor_spec != ["C", "C", "H"]:
+                        num_deviants += 1
+
+                if num_deviants <= 1:
+                    for node in ring:
+                        neighbors = self.molgraph.graph[node]
+
+                        # Add hydrogens to the functional group
+                        for neighbor in neighbors.keys():
+                            if neighbor in hydrogens:
+                                ring.add(neighbor)
+
+                    results.append(ring)
+
+        return results
+
+    def get_all_functional_groups(self, elements=None, func_groups=None,
+                                  catch_basic=True):
         """
         Identify all functional groups (or all within a certain subset) in the
         molecule, combining the methods described above.
@@ -244,6 +294,8 @@ class FunctionalGroupExtractor:
         :param func_groups: List of strs representing the functional groups of
             interest. Default to None, meaning that all of the functional groups
             defined in this function will be sought.
+        :param catch_basic: bool. If True, use get_basic_functional_groups and
+            other methods
         :return: List of lists of ints, representing groups of connected atoms.
         """
         pass
