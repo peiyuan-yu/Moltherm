@@ -74,9 +74,7 @@ class FunctionalGroupExtractor:
                 obmol.localopt()
 
                 self.molecule = obmol.pymatgen_mol
-                molecule.molecule = obmol.pymatgen_mol
 
-                self.molgraph = molecule
             else:
                 self.molecule = molecule.molecule
                 self.molgraph = molecule
@@ -84,3 +82,103 @@ class FunctionalGroupExtractor:
         if self.molgraph is None:
             self.molgraph = MoleculeGraph.with_local_env_strategy(self.molecule,
                                                                   OpenBabelNN())
+
+        # Assign a specie and coordinates to each node in the graph,
+        # corresponding to the Site in the Molecule object
+        self.molgraph.set_node_attributes()
+
+    def get_heteroatoms(self, elements=None):
+        """
+        Identify non-H, non-C atoms in the MoleculeGraph, returning a list of
+        their node indices.
+
+        :param elements: List of elements to identify (if only certain
+            functional groups are of interest).
+        :return: list of ints representing node indices
+        """
+
+        species = nx.get_node_attributes(self.molgraph.graph, "specie")
+
+        heteroatoms = []
+
+        for node in self.molgraph.graph.nodes():
+            if elements is not None:
+                if str(species[node]) in elements:
+                    heteroatoms.append(node)
+            else:
+                if str(species[node]) not in ["C", "H"]:
+                    heteroatoms.append(node)
+
+        return heteroatoms
+
+    def get_special_carbon(self, elements=None):
+        """
+        Identify Carbon atoms in the MoleculeGraph that fit the characteristics
+        defined Ertl (2017), returning a list of their node indices.
+
+        :param elements: List of elements that will qualify a carbon as special
+            (if only certain functional groups are of interest).
+            Default None.
+        :return: list of ints representing node indices.
+        """
+        pass
+
+    def link_marked_atoms(self, atoms):
+        """
+        Take a list of marked "interesting" atoms (heteroatoms, special carbons)
+        and attempt to connect them, returning a list of disjoint groups of
+        special atoms (and their connected hydrogens).
+
+        :param atoms: List of marked "interesting" atoms, presumably identified
+            using other functions in this class.
+        :return: list of lists of ints, representing groups of connected atoms.
+        """
+        pass
+
+    def get_basic_functional_groups(self, func_groups=None):
+        """
+        Identify functional groups that cannot be identified by the Ertl method
+        of get_special_carbon and get_heteroatoms, such as benzene rings, methyl
+        groups, and ethyl groups.
+
+        :param func_groups: List of strs representing the functional groups of
+            interest. Default to None, meaning that all of the functional groups
+            defined in this function will be sought.
+        :return:
+        """
+        pass
+
+    def get_all_functional_groups(self, elements=None, func_groups=None):
+        """
+        Identify all functional groups (or all within a certain subset) in the
+        molecule, combining the methods described above.
+
+        :param elements: List of elements that will qualify a carbon as special
+            (if only certain functional groups are of interest).
+            Default None.
+        :param func_groups: List of strs representing the functional groups of
+            interest. Default to None, meaning that all of the functional groups
+            defined in this function will be sought.
+        :return: List of lists of ints, representing groups of connected atoms.
+        """
+        pass
+
+    def categorize_functional_groups(self, groups):
+        """
+        Determine classes of functional groups present in a set.
+
+        :param groups: Set of functional groups.
+        :return: dict containing representations of the groups, the indices of
+            where the group occurs in the MoleculeGraph, and how many of each
+            type of group there is.
+        """
+        pass
+
+    def make_smarts(self, group):
+        """
+        Transforms a functional group into a SMARTS string representation.
+
+        :param group: List of indices representing a functional group.
+        :return: str, a SMARTS string.
+        """
+        pass
