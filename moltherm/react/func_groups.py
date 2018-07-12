@@ -23,6 +23,7 @@ __maintainer__ = "Evan Spotte-Smith"
 __email__ = "ewcspottesmith@lbl.gov"
 __status__ = "Alpha"
 __date__ = "July 2018"
+__credit__ = "Peiyuan Yu, Peter Ertl"
 
 
 class FunctionalGroupExtractor:
@@ -87,6 +88,8 @@ class FunctionalGroupExtractor:
         # corresponding to the Site in the Molecule object
         self.molgraph.set_node_attributes()
 
+        self.species = nx.get_node_attributes(self.molgraph.graph, "specie")
+
     def get_heteroatoms(self, elements=None):
         """
         Identify non-H, non-C atoms in the MoleculeGraph, returning a list of
@@ -94,20 +97,18 @@ class FunctionalGroupExtractor:
 
         :param elements: List of elements to identify (if only certain
             functional groups are of interest).
-        :return: list of ints representing node indices
+        :return: set of ints representing node indices
         """
 
-        species = nx.get_node_attributes(self.molgraph.graph, "specie")
-
-        heteroatoms = []
+        heteroatoms = set()
 
         for node in self.molgraph.graph.nodes():
             if elements is not None:
-                if str(species[node]) in elements:
-                    heteroatoms.append(node)
+                if str(self.species[node]) in elements:
+                    heteroatoms.add(node)
             else:
-                if str(species[node]) not in ["C", "H"]:
-                    heteroatoms.append(node)
+                if str(self.species[node]) not in ["C", "H"]:
+                    heteroatoms.add(node)
 
         return heteroatoms
 
@@ -116,12 +117,76 @@ class FunctionalGroupExtractor:
         Identify Carbon atoms in the MoleculeGraph that fit the characteristics
         defined Ertl (2017), returning a list of their node indices.
 
+        The conditions for marking carbon atoms are (quoted from Ertl):
+            "- atoms connected by non-aromatic double or triple bond to any
+            heteroatom
+            - atoms in nonaromatic carbon–carbon double or triple bonds
+            - acetal carbons, i.e. sp3 carbons connected to two or more oxygens,
+            nitrogens or sulfurs; these O, N or S atoms must have only single bonds
+            - all atoms in oxirane, aziridine and thiirane rings"
+
         :param elements: List of elements that will qualify a carbon as special
             (if only certain functional groups are of interest).
             Default None.
-        :return: list of ints representing node indices.
+        :return: set of ints representing node indices.
         """
-        pass
+
+        specials = set()
+
+        # For this function, only carbons are considered
+        nodes = [n for n in self.molgraph.graph.nodes if
+                 str(self.species[n]) == "C"]
+
+        # Condition one: double/triple bonds to heteroatoms
+        for node in nodes:
+            neighbors = self.molgraph.graph[node]
+
+            for neighbor, attributes in neighbors.items():
+                if elements is not None:
+                    if str(self.species[neighbor]) in elements and \
+                        int(attributes["weight"]) in [2, 3]:
+                        specials.add(node)
+                else:
+                    if str(self.species[neighbor]) not in ["C", "H"] and \
+                        int(attributes["weight"]) in [2, 3]:
+                        specials.add(node)
+
+        # Condition two: carbon-carbon double & triple bonds
+        for node in nodes:
+            neighbors = self.molgraph.graph[node]
+
+            for neighbor, attributes in neighbors.items():
+                if str(self.species[neighbor]) == "C" and int(attributes["weight"])\
+                    in [2, 3]:
+                    specials.add(node)
+
+        # Condition three: Acetal carbons
+        for node in nodes:
+            neighbors = self.molgraph.graph[node]
+
+            neighbor_spec = [str(self.species[n]) for n in neighbors.keys()]
+
+            ons = len([n for n in neighbor_spec if n in ["O", "N", "S"]])
+
+            if len(neighbors.keys()) == 4 and ons >= 2:
+                specials.add(node)
+
+        # Condition four: oxirane/aziridine/thiirane rings
+        rings = self.molgraph.find_rings()
+        rings_indices = [set(sum(ring, ())) for ring in rings]
+
+        for ring in rings_indices:
+            ring_spec = sorted([str(self.species[node]) for node in ring])
+            # All rings of interest are three-member rings
+            if len(ring) == 3:
+                if ring_spec in [["C", "C", "O"],
+                                 ["C", "C", "N"],
+                                 ["C", "C", "S"]]:
+                    for node in ring:
+                        if node in nodes:
+                            specials.add(node)
+
+        return specials
 
     def link_marked_atoms(self, atoms):
         """
@@ -129,11 +194,31 @@ class FunctionalGroupExtractor:
         and attempt to connect them, returning a list of disjoint groups of
         special atoms (and their connected hydrogens).
 
-        :param atoms: List of marked "interesting" atoms, presumably identified
+        :param atoms: set of marked "interesting" atoms, presumably identified
             using other functions in this class.
-        :return: list of lists of ints, representing groups of connected atoms.
+        :return: list of sets of ints, representing groups of connected atoms.
         """
-        pass
+
+        # We will add hydrogens to functional groups
+        hydrogens = {n for n in self.molgraph.graph.nodes if str(self.species[n]) == "H"}
+
+        # Graph representation of only marked atoms
+        subgraph = self.molgraph.graph.subgraph(list(atoms)).to_undirected()
+
+        func_grps_no_h = [x for x in nx.connected_components(subgraph)]
+
+        func_grps = []
+        for func_grp in func_grps_no_h:
+            for node in func_grp:
+                neighbors = self.molgraph.graph[node]
+                for neighbor in neighbors.keys():
+                    # Add all associated hydrogens into the functional group
+                    if neighbor in hydrogens:
+                        func_grp.add(neighbor)
+
+            func_grps.apend(func_grp)
+
+        return func_grps
 
     def get_basic_functional_groups(self, func_groups=None):
         """
