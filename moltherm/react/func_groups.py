@@ -1,11 +1,10 @@
-from pymatgen.core.strucuture import Molecule, FunctionalGroups
+from pymatgen.core.structure import Molecule, FunctionalGroups
 from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 
 from moltherm.compute.utils import get_molecule
 
-from
 
 try:
     import networkx as nx
@@ -21,7 +20,7 @@ __maintainer__ = "Evan Spotte-Smith"
 __email__ = "ewcspottesmith@lbl.gov"
 __status__ = "Alpha"
 __date__ = "July 2018"
-__credit__ = "Peiyuan Yu, Peter Ertl"
+__credit__ = "Peiyuan Yu"
 
 
 class FunctionalGroupExtractor:
@@ -80,7 +79,9 @@ class FunctionalGroupExtractor:
 
         if self.molgraph is None:
             self.molgraph = MoleculeGraph.with_local_env_strategy(self.molecule,
-                                                                  OpenBabelNN())
+                                                                  OpenBabelNN(),
+                                                                  reorder=False,
+                                                                  extend_structure=False)
 
         # Assign a specie and coordinates to each node in the graph,
         # corresponding to the Site in the Molecule object
@@ -142,11 +143,11 @@ class FunctionalGroupExtractor:
             for neighbor, attributes in neighbors.items():
                 if elements is not None:
                     if str(self.species[neighbor]) in elements and \
-                        int(attributes["weight"]) in [2, 3]:
+                            int(attributes[0]["weight"]) in [2, 3]:
                         specials.add(node)
                 else:
                     if str(self.species[neighbor]) not in ["C", "H"] and \
-                        int(attributes["weight"]) in [2, 3]:
+                            int(attributes[0]["weight"]) in [2, 3]:
                         specials.add(node)
 
         # Condition two: carbon-carbon double & triple bonds
@@ -154,9 +155,10 @@ class FunctionalGroupExtractor:
             neighbors = self.molgraph.graph[node]
 
             for neighbor, attributes in neighbors.items():
-                if str(self.species[neighbor]) == "C" and int(attributes["weight"])\
-                    in [2, 3]:
+                if str(self.species[neighbor]) == "C"\
+                        and int(attributes[0]["weight"]) in [2, 3]:
                     specials.add(node)
+                    specials.add(neighbor)
 
         # Condition three: Acetal carbons
         for node in carbons:
@@ -207,12 +209,14 @@ class FunctionalGroupExtractor:
 
         func_grps = []
         for func_grp in func_grps_no_h:
+            grp_hs = set()
             for node in func_grp:
                 neighbors = self.molgraph.graph[node]
                 for neighbor in neighbors.keys():
                     # Add all associated hydrogens into the functional group
                     if neighbor in hydrogens:
-                        func_grp.add(neighbor)
+                        grp_hs.add(neighbor)
+            func_grp = func_grp.union(grp_hs)
 
             func_grps.append(func_grp)
 
