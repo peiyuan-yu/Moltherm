@@ -9,6 +9,7 @@ from
 
 try:
     import networkx as nx
+    import networkx.algorithms.isomorphism as iso
 except ImportError:
     raise ImportError("moltherm.react.func_groups requires the NetworkX "
                       "graph library to be installed.")
@@ -125,7 +126,7 @@ class FunctionalGroupExtractor:
         :param elements: List of elements that will qualify a carbon as special
             (if only certain functional groups are of interest).
             Default None.
-        :return: set of ints representing node indices.
+        :return: set of ints representing node indices
         """
 
         specials = set()
@@ -192,7 +193,7 @@ class FunctionalGroupExtractor:
 
         :param atoms: set of marked "interesting" atoms, presumably identified
             using other functions in this class.
-        :return: list of sets of ints, representing groups of connected atoms.
+        :return: list of sets of ints, representing groups of connected atoms
         """
 
         # We will add hydrogens to functional groups
@@ -213,7 +214,7 @@ class FunctionalGroupExtractor:
                     if neighbor in hydrogens:
                         func_grp.add(neighbor)
 
-            func_grps.apend(func_grp)
+            func_grps.append(func_grp)
 
         return func_grps
 
@@ -229,7 +230,7 @@ class FunctionalGroupExtractor:
         :param func_groups: List of strs representing the functional groups of
             interest. Default to None, meaning that all of the functional groups
             defined in this function will be sought.
-        :return:
+        :return: list of sets of ints, representing groups of connected atoms
         """
 
         hydrogens = {n for n in self.molgraph.graph.nodes if
@@ -296,9 +297,17 @@ class FunctionalGroupExtractor:
             defined in this function will be sought.
         :param catch_basic: bool. If True, use get_basic_functional_groups and
             other methods
-        :return: List of lists of ints, representing groups of connected atoms.
+        :return: list of sets of ints, representing groups of connected atoms
         """
-        pass
+
+        heteroatoms = self.get_heteroatoms(elements=elements)
+        special_cs = self.get_special_carbon(elements=elements)
+        groups = self.link_marked_atoms(heteroatoms.union(special_cs))
+
+        if catch_basic:
+            groups += self.get_basic_functional_groups(func_groups=func_groups)
+
+        return groups
 
     def categorize_functional_groups(self, groups):
         """
@@ -309,13 +318,34 @@ class FunctionalGroupExtractor:
             where the group occurs in the MoleculeGraph, and how many of each
             type of group there is.
         """
-        pass
 
-    def make_smarts(self, group):
-        """
-        Transforms a functional group into a SMARTS string representation.
+        categories = {}
 
-        :param group: List of indices representing a functional group.
-        :return: str, a SMARTS string.
-        """
-        pass
+        em = iso.numerical_edge_match("weight", 1)
+        nm = iso.categorical_node_match("specie", "C")
+
+        for group in groups:
+            molecule = [self.molecule[a] for a in group]
+
+            adaptor = BabelMolAdaptor(molecule)
+            # Use Canonical SMILES to ensure uniqueness
+            smiles = adaptor.pybel_mol.write("can").strip()
+
+            if smiles in categories:
+                this_subgraph = self.molgraph.graph.subgraph(list(group)).to_undirected()
+                for other in categories[smiles]:
+                    other_subgraph = self.molgraph.graph.subgraph(list(other)).to_undirected()
+
+                    if not nx.is_isomorphic(this_subgraph, other_subgraph,
+                                            edge_match=em, node_match=nm):
+                        break
+
+                    if group not in categories[smiles]["groups"]:
+                        categories[smiles]["groups"].append(group)
+                        categories[smiles]["count"] += 1
+
+            else:
+                categories[smiles] = {"groups": [group],
+                                      "count": 1}
+
+        return categories
