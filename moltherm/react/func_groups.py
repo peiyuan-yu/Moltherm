@@ -237,6 +237,8 @@ class FunctionalGroupExtractor:
         :return: list of sets of ints, representing groups of connected atoms
         """
 
+        strat = OpenBabelNN()
+
         hydrogens = {n for n in self.molgraph.graph.nodes if
                      str(self.species[n]) == "H"}
 
@@ -250,8 +252,8 @@ class FunctionalGroupExtractor:
 
         if "methyl" in func_groups:
             for node in carbons:
-                neighbors = self.molgraph.graph[node]
-                hs = {n for n in neighbors.keys() if n in hydrogens}
+                neighbors = strat.get_nn_info(self.molecule, node)
+                hs = {n["site_index"] for n in neighbors if n["site_index"] in hydrogens}
                 # Methyl group is CH3, but this will also catch methane
                 if len(hs) >= 3:
                     hs.add(node)
@@ -268,9 +270,9 @@ class FunctionalGroupExtractor:
                 # neighbors are not two carbons and one hydrogen
                 num_deviants = 0
                 for node in ring:
-                    neighbors = self.molgraph.graph[node]
-                    neighbor_spec = sorted([str(self.species[neighbor])
-                                            for neighbor in neighbors])
+                    neighbors = strat.get_nn_info(self.molecule, node)
+                    neighbor_spec = sorted([str(self.species[n["site_index"]])
+                                            for n in neighbors])
                     if neighbor_spec != ["C", "C", "H"]:
                         num_deviants += 1
 
@@ -329,15 +331,17 @@ class FunctionalGroupExtractor:
         nm = iso.categorical_node_match("specie", "C")
 
         for group in groups:
-            molecule = [self.molecule[a] for a in group]
+            atoms = [self.molecule[a] for a in group]
+            species = [a.specie for a in atoms]
+            coords = [a.coords for a in atoms]
 
-            adaptor = BabelMolAdaptor(molecule)
+            adaptor = BabelMolAdaptor(Molecule(species, coords))
             # Use Canonical SMILES to ensure uniqueness
             smiles = adaptor.pybel_mol.write("can").strip()
 
             if smiles in categories:
                 this_subgraph = self.molgraph.graph.subgraph(list(group)).to_undirected()
-                for other in categories[smiles]:
+                for other in categories[smiles]["groups"]:
                     other_subgraph = self.molgraph.graph.subgraph(list(other)).to_undirected()
 
                     if not nx.is_isomorphic(this_subgraph, other_subgraph,
