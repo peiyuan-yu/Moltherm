@@ -73,8 +73,7 @@ class FunctionalGroupExtractorTest(unittest.TestCase):
 
         # Test optimization
         file_no_h = os.path.join(test_dir, "func_group_test_no_h.mol")
-        mol_no_h = Molecule.from_file(file_no_h)
-        extractor_no_h = FunctionalGroupExtractor(mol_no_h, optimize=True)
+        extractor_no_h = FunctionalGroupExtractor(file_no_h, optimize=True)
 
         self.assertEqual(len(extractor_no_h.molecule), len(extractor_mol.molecule))
         # Not sure this one will work
@@ -119,13 +118,36 @@ class FunctionalGroupExtractorTest(unittest.TestCase):
         self.assertEqual(len(link_no_o), 2)
 
     def test_get_basic_functional_groups(self):
-        pass
+        basics = self.extractor.get_basic_functional_groups()
+
+        # Molecule has one methyl group which will be caught.
+        self.assertEqual(len(basics), 1)
+        self.assertEqual(len(basics[0]), 4)
+
+        basics_no_methyl = self.extractor.get_basic_functional_groups(func_groups=["phenyl"])
+        self.assertEqual(len(basics_no_methyl), 0)
 
     def test_get_all_functional_groups(self):
-        pass
+        heteroatoms = self.extractor.get_heteroatoms()
+        special_cs = self.extractor.get_special_carbon()
+
+        link = self.extractor.link_marked_atoms(heteroatoms.union(special_cs))
+        basics = self.extractor.get_basic_functional_groups()
+
+        all_func = self.extractor.get_all_functional_groups()
+
+        self.assertEqual(len(all_func), (len(link) + len(basics)))
+        self.assertEqual(sorted(all_func), sorted(link + basics))
 
     def test_categorize_functional_groups(self):
-        pass
+        all_func = self.extractor.get_all_functional_groups()
+        categorized = self.extractor.categorize_functional_groups(all_func)
+
+        self.assertTrue("O=C1C=CC(=O)[N]1" in categorized.keys())
+        self.assertTrue("[CH3]" in categorized.keys())
+
+        total_count = sum([c["count"] for c in categorized.values()])
+        self.assertEqual(total_count, 2)
 
 if __name__ == "__main__":
     unittest.main()
