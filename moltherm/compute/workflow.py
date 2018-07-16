@@ -365,20 +365,25 @@ class MolThermAnalysis:
         pro_ids = [extract_id(f) for f in listdir(base_path) if
                    f.endswith(".mol") and f.startswith(self.product_pre)]
 
-        rct_map = {m: [f for f in listdir(base_path) if f.startswith("rct_{}".format(m)) and ".out" in f and not f.endswith("_copy")] for m in range(rct_ids)}
-        pro_map = {m: [f for f in listdir(base_path) if f.startswith("pro_{}".format(m)) and ".out" in f] for m in range(pro_ids)}
+        rct_map = {m: [f for f in listdir(base_path) if
+                       f.startswith(self.reactant_pre) and m in f
+                       and ".out" in f and not f.endswith("_copy")]
+                   for m in rct_ids}
+        pro_map = {m: [f for f in listdir(base_path)
+                       if f.startswith(self.product_pre) and m in f
+                       and ".out" in f] for m in pro_ids}
 
-        if len(rct_map[0]) == 0 and len(rct_map[1]) > 0:
-            rct_map[0] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
-        elif len(rct_map[1]) == 0 and len(rct_map[0]) > 0:
-            rct_map[1] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
-        elif len(rct_map[0]) == 0 and len(rct_map[1]) == 0:
-            rct_map[0] = [f for f in listdir(base_path) if
-                          f.startswith("rct_0") and ".out" in f and f.endswith(
-                              "_copy")]
-            rct_map[1] = [f for f in listdir(base_path) if
-                          f.startswith("rct_1") and ".out" in f and f.endswith(
-                              "_copy")]
+        # if len(rct_map[0]) == 0 and len(rct_map[1]) > 0:
+        #     rct_map[0] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
+        # elif len(rct_map[1]) == 0 and len(rct_map[0]) > 0:
+        #     rct_map[1] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
+        # elif len(rct_map[0]) == 0 and len(rct_map[1]) == 0:
+        #     rct_map[0] = [f for f in listdir(base_path) if
+        #                   f.startswith("rct_0") and ".out" in f and f.endswith(
+        #                       "_copy")]
+        #     rct_map[1] = [f for f in listdir(base_path) if
+        #                   f.startswith("rct_1") and ".out" in f and f.endswith(
+        #                       "_copy")]
 
         rct_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
         pro_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
@@ -402,7 +407,7 @@ class MolThermAnalysis:
                 rct_thermo["energy"] += energy_opt
                 rct_thermo["has_sp"][self.reactant_pre + str(mol)] = False
             else:
-                rct_thermo["energy"] +=  energy_sp
+                rct_thermo["energy"] += energy_sp
                 rct_thermo["has_sp"][self.reactant_pre + str(mol)] = True
             
             rct_thermo["enthalpy"] += enthalpy
@@ -425,13 +430,14 @@ class MolThermAnalysis:
 
             # Enthalpy calculation should actually be enthalpy - energy_sp
             # But currently, not all calculations have sp
-            if energy_sp == 0:
-                pro_thermo["energy"] = energy_opt
+            if int(energy_sp) == 0:
+                pro_thermo["energy"] += energy_opt
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = False
             else:
                 pro_thermo["energy"] += energy_sp
                 pro_thermo["has_sp"][self.product_pre + str(mol)] = True
-            pro_thermo["enthalpy"] += (enthalpy)
+
+            pro_thermo["enthalpy"] += enthalpy
             pro_thermo["entropy"] += entropy
 
         thermo_data = {}
@@ -441,7 +447,7 @@ class MolThermAnalysis:
         # rather than cal/mol or kcal/mol, or hartree for energy)
         energy = (pro_thermo["energy"] - rct_thermo["energy"]) * 627.509
         thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"])
-        thermo_data["enthalpy"] = (thermo_data["enthalpy"] + energy)  * 1000 * 4.184
+        thermo_data["enthalpy"] = (thermo_data["enthalpy"] + energy) * 1000 * 4.184
         thermo_data["entropy"] = (pro_thermo["entropy"] - rct_thermo["entropy"]) * 4.184
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
