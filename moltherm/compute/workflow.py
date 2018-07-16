@@ -272,13 +272,14 @@ class MolThermWorkflow:
 
         return Workflow(fws)
 
-    def get_unfinished_jobs(self, sp_params, dirs=None, max_cores=24):
+    def get_unfinished_jobs(self, sp_params, name_pre="single_point", dirs=None, max_cores=24):
         """
         Look for jobs where optimization and frequency calculations have
         successfully completed, but single-point has not. Then, for these cases,
         construct a workflow which will only run the sp job.
 
         :param sp_params: dict containing input parameters for single-point job
+        :param name_pre: str representing prefix for all jobs.
         :param dirs: list of subdirectories to check for unfinished jobs.
             Default None, meaning that all subdirectories will be checked.
         :param max_cores: max_cores (int): Maximum number of cores to
@@ -334,7 +335,6 @@ class MolThermWorkflow:
                         if sp_out.data.get("completion", []):
                             sp_complete = True
 
-
                 if freq_complete and not sp_complete:
                     # Check if there is already an sp input file
                     freq_in_file = None
@@ -362,7 +362,7 @@ class MolThermWorkflow:
                             mol = freq_in_file.molecule
 
                             fw = SinglePointFW(molecule=mol,
-                                               name="single_point: {}/{}".format(d, mol_id),
+                                               name="{}: {}/{}".format(name_pre, d, mol_id),
                                                qchem_cmd="qchem -slurm",
                                                multimode="openmp",
                                                input_file=infile,
@@ -384,7 +384,7 @@ class MolThermWorkflow:
                         mol = sp_in_file.molecule
 
                         fw = SinglePointFW(molecule=mol,
-                                           name="single_point: {}/{}".format(d, mol_id),
+                                           name="{}: {}/{}".format(name_pre, d, mol_id),
                                            qchem_cmd="qchem -slurm",
                                            multimode="openmp",
                                            input_file=infile,
@@ -397,10 +397,7 @@ class MolThermWorkflow:
                         fws.append(fw)
                         molecules_cleared.append(mol_id)
 
-
         return Workflow(fws)
-
-
 
     @staticmethod
     def add_workflow(workflow):
