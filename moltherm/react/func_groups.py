@@ -3,8 +3,6 @@ from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 
-from moltherm.compute.utils import get_molecule
-
 
 try:
     import networkx as nx
@@ -46,7 +44,14 @@ class FunctionalGroupExtractor:
         if isinstance(molecule, str):
             try:
                 if optimize:
-                    self.molecule = get_molecule(molecule)
+                    obmol = BabelMolAdaptor.from_file(molecule,
+                                                      file_format="mol")
+                    # OBMolecule does not contain pymatgen Molecule information
+                    # So, we need to wrap the obmol in a BabelMolAdapter
+                    obmol.add_hydrogen()
+                    obmol.make3d()
+                    obmol.localopt()
+                    self.molecule = obmol.pymatgen_mol
                 else:
                     self.molecule = Molecule.from_file(molecule)
             except OSError:
