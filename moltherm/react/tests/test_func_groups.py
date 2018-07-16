@@ -17,12 +17,10 @@ __date__ = "July 13, 2018"
 
 import unittest
 import os
-import copy
 import warnings
 from pymatgen.core.structure import Molecule
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
-from pymatgen.io.babel import BabelMolAdaptor
 from moltherm.react.func_groups import FunctionalGroupExtractor
 
 test_dir = os.path.join(os.path.dirname(__file__), "..", "..", "..",
@@ -76,7 +74,6 @@ class FunctionalGroupExtractorTest(unittest.TestCase):
         extractor_no_h = FunctionalGroupExtractor(file_no_h, optimize=True)
 
         self.assertEqual(len(extractor_no_h.molecule), len(extractor_mol.molecule))
-        # Not sure this one will work
         self.assertEqual(extractor_no_h.species, extractor_mol.species)
 
     def test_get_heteroatoms(self):
