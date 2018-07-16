@@ -5,9 +5,11 @@ import shutil
 
 from bs4 import BeautifulSoup
 
+from pymatgen.core.structure import Molecule
 from pymatgen.io.qchem_io.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
 
+from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 
 """
@@ -179,11 +181,80 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
     print("{} reactions with solvent {}".format(str(num_copied), solvent))
 
 
+def associate_qchem_to_mol(base_dir, directory):
+    """
+    Assign all .in and .out files in a directory to one of the .mol files in that
+    directory, based on the non-H atoms in those molecules.
+
+    :param directory:
+    :return:
+    """
+
+    base_path = join(base_dir, directory)
+
+    mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                 and f.endswith(".mol")]
+    # Note: This will catch .in and .out files for incomplete computations
+    # TODO: What's the best way to filter these out?
+    in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                and ".in" in f]
+    out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                 and ".out" in f]
+
+    mapping = {mol: {"in": [], "out": []} for mol in mol_files}
+
+    for file in in_files:
+        qcin = QCInput.from_file(join(base_path, file))
+        file_mol = qcin.molecule
+        # Remove H because mol files may not begin with H included
+        file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+
+        for mf in mol_files:
+            mol_mol = Molecule.from_file(join(base_path, mf))
+            mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+            # Preserve initial order because that gives a better guarantee
+            # That the two are actually associated
+            if mol_species == file_species:
+                mapping[mf]["in"].append(file)
+                break
+
+    for file in out_files:
+        qcout = QCOutput(join(base_path, file))
+        file_mol = qcout.data["initial_molecule"]
+        file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+
+        for mf in mol_files:
+            mol_mol = Molecule.from_file(join(base_path, mf))
+            mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+
+            # Preserve initial order because that gives a better guarantee
+            # That the two are actually associated
+            if mol_species == file_species:
+                mapping[mf]["out"].append(file)
+                break
+
+    return mapping
+
+
 def extract_id(string):
-    return string.split("/")[-1].rstrip(".mol").split("_")[-1]
+    """
+    Extract unique molecule ID from a filepath.
+
+    :param string: Path or filename.
+    :return: str representing unique ID
+    """
+
+    return string.split("/")[-1].replace(".mol", "").split("_")[-1]
 
 
 def remove_copies(base_dir):
+    """
+    Move through subdirectories in base_dir to eliminate all *_copy files.
+
+    :param base_dir: str representing a path to a directory.
+    :return:
+    """
+
     for d in listdir(base_dir):
         if isdir(join(base_dir, d)) and not d.startswith("block"):
             for f in listdir(join(base_dir, d)):
@@ -194,6 +265,16 @@ def remove_copies(base_dir):
 
 
 def mass_copy(base_dir, from_dir, files, directories):
+    """
+    Copy files from one directory into many directories.
+
+    :param base_dir: str representing a path to a the base directory (all other
+        directories should be subdirectories of this base directory)
+    :param from_dir: str representing a path to the original subdirectory
+    :param files: list of filenames within from_dir
+    :param directories: list of directories to copy into
+    :return:
+    """
     for file in files:
         for directory in directories:
             if file in listdir(join(base_dir, directory)):
