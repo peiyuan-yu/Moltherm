@@ -373,18 +373,6 @@ class MolThermAnalysis:
                        if f.startswith(self.product_pre) and m in f
                        and ".out" in f] for m in pro_ids}
 
-        # if len(rct_map[0]) == 0 and len(rct_map[1]) > 0:
-        #     rct_map[0] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
-        # elif len(rct_map[1]) == 0 and len(rct_map[0]) > 0:
-        #     rct_map[1] = [f for f in listdir(base_path) if f.startswith("rct_") and ".out" in f and f.endswith("_copy")]
-        # elif len(rct_map[0]) == 0 and len(rct_map[1]) == 0:
-        #     rct_map[0] = [f for f in listdir(base_path) if
-        #                   f.startswith("rct_0") and ".out" in f and f.endswith(
-        #                       "_copy")]
-        #     rct_map[1] = [f for f in listdir(base_path) if
-        #                   f.startswith("rct_1") and ".out" in f and f.endswith(
-        #                       "_copy")]
-
         rct_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
         pro_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
 
@@ -398,10 +386,13 @@ class MolThermAnalysis:
                 qcout = QCOutput(join(base_path, out))
 
                 # Catch potential for Nonetype entries
-                enthalpy += qcout.data.get("enthalpy", 0) or 0
-                entropy += qcout.data.get("entropy", 0) or 0
-                energy_opt += qcout.data.get("final_energy", 0) or 0
-                energy_sp += qcout.data.get("final_energy_sp", 0) or 0
+                if "freq" in out:
+                    enthalpy = qcout.data.get("enthalpy", 0) or 0
+                    entropy = qcout.data.get("entropy", 0) or 0
+                elif "opt" in out:
+                    energy_opt = qcout.data.get("final_energy", 0) or 0
+                elif "sp" in out:
+                    energy_sp = qcout.data.get("final_energy_sp", 0) or 0
 
             if energy_sp == 0:
                 rct_thermo["energy"] += energy_opt
@@ -409,9 +400,10 @@ class MolThermAnalysis:
             else:
                 rct_thermo["energy"] += energy_sp
                 rct_thermo["has_sp"][self.reactant_pre + str(mol)] = True
-            
+
             rct_thermo["enthalpy"] += enthalpy
             rct_thermo["entropy"] += entropy
+            print(path, mol, enthalpy, energy_sp)
 
         for mol in pro_map.keys():
             enthalpy = 0
@@ -423,10 +415,13 @@ class MolThermAnalysis:
                 qcout = QCOutput(join(base_path, out))
 
                 # Catch potential for Nonetype entries
-                enthalpy += qcout.data.get("enthalpy", 0) or 0
-                entropy += qcout.data.get("entropy", 0) or 0
-                energy_opt += qcout.data.get("final_energy", 0) or 0
-                energy_sp += qcout.data.get("final_energy_sp", 0) or 0
+                if "freq" in out:
+                    enthalpy = qcout.data.get("enthalpy", 0) or 0
+                    entropy = qcout.data.get("entropy", 0) or 0
+                elif "opt" in out:
+                    energy_opt = qcout.data.get("final_energy", 0) or 0
+                elif "sp" in out:
+                    energy_sp = qcout.data.get("final_energy_sp", 0) or 0
 
             # Enthalpy calculation should actually be enthalpy - energy_sp
             # But currently, not all calculations have sp
@@ -439,6 +434,7 @@ class MolThermAnalysis:
 
             pro_thermo["enthalpy"] += enthalpy
             pro_thermo["entropy"] += entropy
+            print(path, mol, enthalpy, energy_sp)
 
         thermo_data = {}
 
@@ -446,8 +442,9 @@ class MolThermAnalysis:
         # Also ensures that units are appropriate (Joules/mol,
         # rather than cal/mol or kcal/mol, or hartree for energy)
         energy = (pro_thermo["energy"] - rct_thermo["energy"]) * 627.509
-        thermo_data["enthalpy"] = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"])
-        thermo_data["enthalpy"] = (thermo_data["enthalpy"] + energy) * 1000 * 4.184
+        enthalpy = (pro_thermo["enthalpy"] - rct_thermo["enthalpy"])
+        print(path, energy, enthalpy)
+        thermo_data["enthalpy"] = (energy + enthalpy) * 1000 * 4.184
         thermo_data["entropy"] = (pro_thermo["entropy"] - rct_thermo["entropy"]) * 4.184
         try:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
