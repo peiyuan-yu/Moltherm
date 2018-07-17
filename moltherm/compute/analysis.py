@@ -2,6 +2,9 @@ from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
 
+from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
+from pymatgen.io.babel import BabelMolAdaptor
+
 from atomate.qchem.database import QChemCalcDb
 
 from moltherm.compute.drones import MolThermDrone
@@ -72,7 +75,7 @@ class MolThermAnalysis:
 
         return add_up
 
-    def get_reaction_thermo_files(self, path=None):
+    def extract_reaction_thermo_files(self, path):
         """
         Naively scrape thermo data from QChem output files.
 
@@ -81,10 +84,7 @@ class MolThermAnalysis:
         :return: dict {prop: value}, where properties are enthalpy, entropy.
         """
 
-        if path is not None:
-            base_path = join(self.base_dir, path)
-        else:
-            base_path = self.base_dir
+        base_path = join(self.base_dir, path)
 
         rct_ids = [extract_id(f) for f in listdir(base_path) if
                    f.endswith(".mol") and f.startswith(self.reactant_pre)]
@@ -187,7 +187,7 @@ class MolThermAnalysis:
 
         return result
 
-    def extract_reaction_data(self, directory, opt=None, freq=None, sp=None):
+    def extract_reaction_thermo_db(self, directory, opt=None, freq=None, sp=None):
         """
         Gathers all relevant reaction parameters, including references to
         each job performed.
@@ -389,6 +389,8 @@ class MolThermAnalysis:
             input_file=input_file,
             output_file=output_file,
             multirun=False)
+
+        task_doc["mol_id"] = extract_id(task_doc["task_label"])
 
         if self.db is None:
             raise RuntimeError("Cannot record data to db without valid database"
@@ -605,3 +607,62 @@ class MolThermAnalysis:
                         mapping[f_id] = [d]
 
         return mapping
+
+    def get_molecule_data(self, mol_id):
+        """
+        Compile all useful molecular data for analysis, including molecule size
+        (number of atoms), molecular weight, enthalpy, entropy, and functional
+        groups.
+
+        NOTE: This function automatically converts energy, enthalpy, and entropy
+        into SI units (J/mol and J/mol*K)
+
+        :param mol_id: Unique ID associated with the molecule.
+        :return: dict of relevant molecule data.
+        """
+
+        mol_data = {}
+
+        if self.db is None:
+            raise RuntimeError("Cannot query database; connection is invalid."
+                               " Try to connect again.")
+
+        collection = self.db.db["molecules"]
+
+        mol_entry = collection.find_one({"mol_id": mol_id})
+
+        for calc in mol_entry["calcs_reversed"]:
+            if calc["task"]["name"] in ["freq", "frequency"]:
+                mol_data["enthalpy"] = calc["enthalpy"] * 4.184 * 1000
+                mol_data["entropy"] = calc["entropy"] * 4.184
+            if calc["task"]["name"] == "sp":
+                mol_data["energy"] = calc["final_energy_sp"] * 627.509 * 4.184 * 1000
+            if calc["task"]["name"] in ["opt", "optimization"]:
+                mol_data["molecule"] = calc["molecule_from_optimized_geometry"]
+
+        adaptor = BabelMolAdaptor(mol_data["molecule"])
+        obmol = adaptor.openbabel_mol
+
+        mol_data["number_atoms"] = len(mol_data["molecule"])
+        mol_data["molecular_weight"] = obmol.GetMolWt()
+
+        extractor = FunctionalGroupExtractor(mol_data["molecule"])
+        func_grps = extractor.get_all_functional_groups()
+
+        mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
+
+        return mol_data
+
+    def get_reaction_data(self, directory=None, mol_ids=None):
+        """
+        Compile all useful data for a set of molecules associated with a
+        particular reaction. This data will be compiled on a reaction basis
+        (difference between reactants and products) as well as an individual
+        molecule basis.
+
+        :param directory: Subdirectory where molecule data is located.
+        :param mol_ids: List of unique IDs for molecules associated with the
+            reaction
+        :return: dict of relevant reaction data.
+        """
+        pass
