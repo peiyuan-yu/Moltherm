@@ -7,3 +7,6 @@ openbabel
 bs4
 lxml
 pubchempy
+pandas
+scikit-learn
+statsmodels

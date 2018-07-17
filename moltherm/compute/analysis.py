@@ -1,6 +1,12 @@
 from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
+import itertools
+
+import numpy as np
+import pandas as pd
+import sklearn as sk
+import statsmodels.api as sm
 
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
@@ -19,9 +25,9 @@ __status__ = "Alpha"
 __date__ = "July 2018"
 
 
-class MolThermAnalysis:
+class MolThermDataProcessor:
     """
-    This class can be used to analyze data from MolThermWorkflow workflows,
+    This class can be used to extract data from MolThermWorkflow workflows,
     including extracting thermo data from calculations and generating predicted
     boiling and melting points.
     """
@@ -641,10 +647,13 @@ class MolThermAnalysis:
                 mol_data["molecule"] = calc["molecule_from_optimized_geometry"]
 
         adaptor = BabelMolAdaptor(mol_data["molecule"])
-        obmol = adaptor.openbabel_mol
+        pbmol = adaptor.pybel_mol
 
         mol_data["number_atoms"] = len(mol_data["molecule"])
-        mol_data["molecular_weight"] = obmol.GetMolWt()
+        mol_data["molecular_weight"] = pbmol.molwt
+        mol_data["surface_area"] = pbmol.data["Surface Area"]
+        # This might not be efficient
+        mol_data["tpsa"] = pbmol.calcdesc()["TPSA"]
 
         extractor = FunctionalGroupExtractor(mol_data["molecule"])
         func_grps = extractor.get_all_functional_groups()
@@ -665,4 +674,140 @@ class MolThermAnalysis:
             reaction
         :return: dict of relevant reaction data.
         """
-        pass
+
+        reaction_data = {}
+
+        collection = self.db.db["molecules"]
+
+        if directory is not None:
+            entries = collection.find({"dir_name": join(self.base_dir, directory)})
+            mol_ids = [extract_id(e["task_label"]) for e in entries]
+
+            component_data = [self.get_molecule_data(m) for m in mol_ids]
+
+        elif mol_ids is not None:
+            component_data = [self.get_molecule_data(m) for m in mol_ids]
+
+        else:
+            raise ValueError("get_reaction_data requires either a directory or "
+                             "a set of molecule ids.")
+
+        component_data = sorted(component_data, key=lambda x: len(x["molecule"]))
+
+        reaction_data["product"] = component_data[-1]
+        reaction_data["reactants"] = component_data[:-1]
+
+        return reaction_data
+
+
+class MolThermAnalyzer:
+    """
+    This class performs analysis based on the data obtained from
+    MolThermWorkflow and extracted via MolThermDataProcessor.
+    """
+
+    def __init__(self, dataset, setup=True, in_features=None, dep_features=None,
+                 func_groups=None):
+        """
+        :param dataset: A list of dicts representing all data necessary to
+            represent a reaction.
+        :param setup: If True (default), then clean the data (put it in a format
+            that is appropriate for analysis).
+        :param in_features: List of feature/descriptor names for independent
+            variables (number_atoms, molecular_weight, etc.).
+        :param dep_features: List of feature/descriptor names for dependent
+            variables (enthalpy, entropy)
+        """
+
+        if in_features is None:
+           self.in_features = ["number_atoms", "molecular_weight",
+                               "surface_area", "tpsa", "functional_groups"]
+        else:
+            self.in_features = in_features
+
+        if dep_features is None:
+            self.dep_features = ["enthalpy", "entropy", "t_star"]
+        else:
+            self.dep_features = dep_features
+
+        if "functional_groups" in self.in_features:
+            if func_groups is None:
+                if setup:
+                    self.func_groups = self._setup_func_groups(dataset)
+                else:
+                    self.func_groups = np.arange(len(dataset["reactants"]["functional_groups"][0]))
+            else:
+                self.func_groups = func_groups
+
+        if setup:
+            self.dataset = self._setup_dataset(dataset)
+        else:
+            self.dataset = dataset
+
+    def _setup_func_groups(self, dataset):
+        """
+        Construct a numpy array with labels corresponding to each functional
+        group that appears in the dataset.
+
+        :param dataset: list of dicts representing all data necessary to
+            represent a reaction.
+        :return: np.ndarray
+        """
+
+        func_groups = {}
+
+        for datapoint in dataset:
+            molecules = [datapoint["product"]] + datapoint["reactants"]
+            for molecule in molecules:
+                func_groups.update(molecule)
+
+        return np.array(list(func_groups.keys()))
+
+    def _setup_dataset(self, dataset):
+        """
+        Alter dataset to make it appropriate for analysis.
+
+        :param dataset:
+        :return: dict containing individual molecule information as well as
+            overall reaction information.
+        """
+
+        new_dset = {"molecules": {}, "reactions": {}}
+
+        all_molecules = []
+
+        num_reactions = len(dataset)
+
+        for datapoint in dataset:
+            if datapoint["product"] not in all_molecules:
+                all_molecules.append(datapoint["product"])
+
+            for rct in datapoint["reactants"]:
+                if rct not in all_molecules:
+                    all_molecules.append(rct)
+
+        num_molecules = len(all_molecules)
+
+        for marker in (self.in_features + self.dep_features):
+            new_dset["molecules"][marker] = np.zeros(num_molecules)
+
+            for i, mol in enumerate(all_molecules):
+                if marker == "enthalpy":
+                    new_dset["molecules"][marker][i] = mol["enthalpy"] + mol["energy"]
+                else:
+                    new_dset["molecules"][marker][i] = mol[marker]
+
+            new_dset["reactions"][marker] = np.zeros(num_reactions)
+
+            for i, react in enumerate(dataset):
+                if marker == "enthalpy":
+                    pro_data = react["product"]["enthalpy"] + react["product"]["energy"]
+                    rct_data = sum(r["enthalpy"] + r["energy"]
+                                   for r in react["reactants"])
+                else:
+                    pro_data = react["product"][marker]
+                    rct_data = sum(r[marker] for r in react["reactants"])
+
+                new_dset["reactions"][marker][i] = pro_data - rct_data
+
+        return new_dset
