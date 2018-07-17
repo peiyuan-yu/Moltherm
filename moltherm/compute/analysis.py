@@ -4,6 +4,7 @@ import shutil
 
 from atomate.qchem.database import QChemCalcDb
 
+from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.outputs import QCOutput
 from moltherm.compute.utils import get_molecule, extract_id
 
@@ -212,27 +213,23 @@ class MolThermAnalysis:
                                "and try again later.")
 
         # To extract enthalpy and entropy from calculation results
+        # Note: After all sp jobs are finished, it should be unnecessary to use
+        # energy_opt
         def get_thermo(job):
             enthalpy = 0
             entropy = 0
-            energy_opt = 0
             energy_sp = 0
 
             for calc in job["calcs_reversed"]:
-                if calc["task"]["type"] == "opt" or calc["task"]["type"] == "optimization":
-                    energy_opt = calc["final_energy"]
                 if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
                     enthalpy = calc["enthalpy"]
                     entropy = calc["entropy"]
                 if calc["task"]["type"] == "sp":
                     energy_sp = calc["final_energy_sp"]
 
-            if energy_sp == 0:
                 return {"enthalpy": enthalpy,
-                        "entropy": entropy}
-            else:
-                return {"enthalpy": (enthalpy - energy_opt) + energy_sp,
-                        "entropy": entropy}
+                        "entropy": entropy,
+                        "energy": energy_sp}
 
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
@@ -344,7 +341,9 @@ class MolThermAnalysis:
         pro_thermo = [get_thermo(p) for p in products]
 
         # Compile reaction thermo from reactant and product thermos
-        delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo)
+        delta_e = sum(p["energy"] for p in pro_thermo) - sum(r["energy"] for r in rct_thermo)
+        delta_e *= 627.509
+        delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo) + delta_e
         delta_h *= 1000 * 4.184
         delta_s = sum(p["entropy"] for p in pro_thermo) - sum(r["entropy"] for r in rct_thermo)
         delta_s *= 4.184
@@ -367,6 +366,37 @@ class MolThermAnalysis:
                   "thermo": thermo}
 
         return result
+
+    def record_molecule_data_db(self, calc_dir, input_file, output_file):
+        """
+        Compile calculation information for a single molecule and record it in
+        the molecules collection.
+
+        :param calc_dir: Directory where molecule information is stored.
+        :param input_file: Basic format for input files. The Drone which
+            compiles the molecule information will use this to pattern-match
+            files.
+        :param output_file: Basic format for output files. The Drone which
+            compiles the molecule information will use this to pattern-match
+            files.
+        :return:
+        """
+
+        drone = MolThermDrone()
+
+        task_doc = drone.assimilate(
+            path=calc_dir,
+            input_file=input_file,
+            output_file=output_file,
+            multirun=False)
+
+        if self.db is None:
+            raise RuntimeError("Cannot record data to db without valid database"
+                               " connection!")
+
+        collection = self.db.db["molecules"]
+
+        collection.insert_one(task_doc)
 
     def record_reaction_data_db(self, directory, use_files=True, use_db=False,
                                 opt=None, freq=None, sp=None):
@@ -452,9 +482,9 @@ class MolThermAnalysis:
                                    "extract thermo data.")
 
             file.write("Directory: {}\n".format(data["dir_name"]))
-            file.write("Optimization Input: {}\n".format(data["opt"]))
-            file.write("Frequency Input: {}\n".format(data["freq"]))
-            file.write("Single-Point Input: {}\n".format(data["sp"]))
+            file.write("Optimization Input: {}\n".format(data.get("opt", "")))
+            file.write("Frequency Input: {}\n".format(data.get("freq", "")))
+            file.write("Single-Point Input: {}\n".format(data.get("sp", "")))
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
             file.write("Critical/Switching Temperature: {}\n".format(data["thermo"]["t_critical"]))
