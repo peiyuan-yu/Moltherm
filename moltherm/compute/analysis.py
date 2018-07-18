@@ -15,7 +15,7 @@ from atomate.qchem.database import QChemCalcDb
 
 from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.outputs import QCOutput
-from moltherm.compute.utils import get_molecule, extract_id
+from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -611,6 +611,52 @@ class MolThermDataProcessor:
                         mapping[f_id] = [d]
 
         return mapping
+
+    def get_completed_molecules(self, dirs=None):
+        """
+        Returns a list of molecules with completed opt, freq, and sp output
+        files.
+
+        :param dirs: List of directories to search for completed molecules.
+        :return:
+        """
+
+        completed_molecules = set()
+
+        all_dirs = [d for d in listdir(self.base_dir)
+                    if isdir(d) and not d.startswith("block")]
+
+        if dirs is not None:
+            all_dirs = [d for d in all_dirs if d in dirs]
+
+        for d in all_dirs:
+            path = join(self.base_dir, d)
+            mapping = associate_qchem_to_mol(self.base_dir, d)
+
+            for molfile, qcfiles in mapping.items():
+                mol_id = extract_id(molfile)
+
+                for outfile in qcfiles["out"]:
+                    if "sp" in outfile:
+                        spfile = QCOutput(join(path, outfile))
+
+                        completion = spfile.get("completion", False)
+
+                        # Currently will catch iefpcm or smd
+                        if completion:
+                            completed_molecules.add(mol_id)
+
+        return completed_molecules
+
+
+    def get_completed_reactions(self):
+        """
+        Returns a list of directories (reactions) where all molecules are
+        completed.
+
+        :return: list of directories with complete information.
+        """
+        pass
 
     def get_molecule_data(self, mol_id):
         """
