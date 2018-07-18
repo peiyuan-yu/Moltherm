@@ -5,11 +5,11 @@ import itertools
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import sklearn as sk
 from sklearn.metrics import mean_squared_error, mean_absolute_error,
 # import statsmodels.api as sm
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
@@ -615,13 +615,15 @@ class MolThermDataProcessor:
 
         return mapping
 
-    def get_completed_molecules(self, dirs=None):
+    def get_completed_molecules(self, dirs=None, extra=False):
         """
         Returns a list of molecules with completed opt, freq, and sp output
         files.
 
         :param dirs: List of directories to search for completed molecules.
-        :return:
+        :params extra: If True, include directory of completed reaction and name
+            of molfile along with mol_id
+        :return: set of completed molecules
         """
 
         completed = set()
@@ -647,7 +649,10 @@ class MolThermDataProcessor:
 
                         # Currently will catch iefpcm or smd
                         if completion:
-                            completed.add(mol_id)
+                            if extra:
+                                completed.add((d, molfile, mol_id))
+                            else:
+                                completed.add(mol_id)
 
         return completed
 
