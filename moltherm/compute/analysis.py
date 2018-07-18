@@ -627,7 +627,7 @@ class MolThermDataProcessor:
         :return: dict of relevant molecule data.
         """
 
-        mol_data = {}
+        mol_data = {"id": mol_id}
 
         if self.db is None:
             raise RuntimeError("Cannot query database; connection is invalid."
@@ -694,6 +694,8 @@ class MolThermDataProcessor:
 
         component_data = sorted(component_data, key=lambda x: len(x["molecule"]))
 
+        reaction_data["directory"] = directory
+        reaction_data["mol_ids"] = mol_ids
         reaction_data["product"] = component_data[-1]
         reaction_data["reactants"] = component_data[:-1]
 
@@ -721,7 +723,7 @@ class MolThermAnalyzer:
 
         if in_features is None:
            self.in_features = ["number_atoms", "molecular_weight",
-                               "surface_area", "tpsa", "functional_groups"]
+                               "surface_area", "tpsa"]
         else:
             self.in_features = in_features
 
@@ -730,14 +732,13 @@ class MolThermAnalyzer:
         else:
             self.dep_features = dep_features
 
-        if "functional_groups" in self.in_features:
-            if func_groups is None:
-                if setup:
-                    self.func_groups = self._setup_func_groups(dataset)
-                else:
-                    self.func_groups = np.arange(len(dataset["reactants"]["functional_groups"][0]))
+        if func_groups is None:
+            if setup:
+                self.func_groups = self._setup_func_groups(dataset)
             else:
-                self.func_groups = func_groups
+                self.func_groups = np.arange(len(dataset["reactants"]["functional_groups"][0]))
+        else:
+            self.func_groups = func_groups
 
         if setup:
             self.dataset = self._setup_dataset(dataset)
@@ -767,7 +768,7 @@ class MolThermAnalyzer:
         """
         Alter dataset to make it appropriate for analysis.
 
-        :param dataset:
+        :param dataset: list of dicts, with each dict representing a reaction
         :return: dict containing individual molecule information as well as
             overall reaction information.
         """
@@ -786,8 +787,14 @@ class MolThermAnalyzer:
                 if rct not in all_molecules:
                     all_molecules.append(rct)
 
+        new_dset["molecules"]["ids"] = np.array([m["id"] for m in all_molecules])
+        new_dset["reactions"]["ids"] = np.array([p["mol_ids"] for p in dataset])
+        new_dset["reactions"]["dirs"] = np.array([p["directory"] for p in dataset])
+
         num_molecules = len(all_molecules)
 
+        # Vectorize molecule and reaction features, including thermodynamic
+        # properties, surface area, etc.
         for marker in (self.in_features + self.dep_features):
             new_dset["molecules"][marker] = np.zeros(num_molecules)
 
@@ -810,4 +817,62 @@ class MolThermAnalyzer:
 
                 new_dset["reactions"][marker][i] = pro_data - rct_data
 
+        new_dset["molecules"]["functional_groups"] = np.zeros((num_molecules,
+                                                               len(self.func_groups)))
+        # Vectorize functional groups
+        for i, mol in enumerate(all_molecules):
+            for j, grp in enumerate(self.func_groups):
+                if grp in mol["functional_groups"].keys():
+                    new_dset["molecules"]["functional_groups"][i, j] = mol["functional_groups"][grp]["count"]
+
+        new_dset["reactions"]["functional_groups"] = np.zeros((num_reactions,
+                                                               len(self.func_groups)))
+        for i, react in enumerate(dataset):
+            pro_grps = np.zeros(len(self.func_groups))
+            rct_grps = np.zeros(len(self.func_groups))
+
+            for j, grp in enumerate(self.func_groups):
+                if grp in react["product"]["functional_groups"].keys():
+                    pro_grps[j] = react["product"]["functional_groups"][grp]["count"]
+
+                for mol in react["reactants"]
+                    if grp in mol["functional_groups"].keys():
+                        rct_grps += mol["functional_groups"][grp]["count"]
+
+            new_dset["reactions"]["functional_groups"][i] = pro_grps - rct_grps
+
         return new_dset
+
+    def analyze_functional_groups(self, out_features):
+        """
+
+        :param out_features:
+        :return:
+        """
+        pass
+
+    def analyze_features(self, in_features, out_features):
+        """
+
+        :param in_features:
+        :param out_features:
+        :return:
+        """
+        pass
+
+    def plot_relation_functional_groups(self, out_feature):
+        """
+
+        :param out_feature:
+        :return:
+        """
+        pass
+
+    def plot_relation(self, in_feature, out_feature):
+        """
+
+        :param in_feature:
+        :param out_feature:
+        :return:
+        """
+        pass
