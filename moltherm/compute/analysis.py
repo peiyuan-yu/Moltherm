@@ -376,11 +376,12 @@ class MolThermDataProcessor:
 
         return result
 
-    def record_molecule_data_db(self, calc_dir, input_file, output_file):
+    def record_molecule_data_db(self, mol_id, calc_dir, input_file, output_file):
         """
         Compile calculation information for a single molecule and record it in
         the molecules collection.
 
+        :param mol_id: Unique identifier for molecule (str)
         :param calc_dir: Directory where molecule information is stored.
         :param input_file: Basic format for input files. The Drone which
             compiles the molecule information will use this to pattern-match
@@ -399,7 +400,7 @@ class MolThermDataProcessor:
             output_file=output_file,
             multirun=False)
 
-        task_doc["mol_id"] = extract_id(task_doc["task_label"])
+        task_doc["mol_id"] = mol_id
 
         if self.db is None:
             raise RuntimeError("Cannot record data to db without valid database"
@@ -441,10 +442,10 @@ class MolThermDataProcessor:
         collection = self.db.db["thermo"]
 
         if use_db:
-            collection.insert_one(self.extract_reaction_data(directory, opt=opt,
+            collection.insert_one(self.extract_reaction_thermo_db(directory, opt=opt,
                                                          freq=freq, sp=sp))
         elif use_files:
-            collection.insert_one(self.get_reaction_thermo_files(directory))
+            collection.insert_one(self.extract_reaction_thermo_files(directory))
         else:
             raise RuntimeError("Either database or files must be used to "
                                "extract thermo data.")
@@ -984,56 +985,56 @@ class MolThermAnalyzer:
                 "coefficients": coefficients,
                 "intercept": intercept}
 
-    def plot_relation_functional_group(self, group, dep_feature, molecules=False):
-        """
-        Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
-        a single functional group.
-
-        :param group: Functional group to be plotted. Must be a member of
-            self.func_groups
-        :param dep_feature: Dependent feature to be evaluated. Must be a member
-            of self.dep_features
-        :param molecules: If true, plot on an individual molecule basis, rather
-            than on a reaction basis
-        :return:
-        """
-
-        sns.set(style="ticks", color_codes=True)
-
-        col = self.func_groups.index(group)
-
-        if molecules:
-            group_data = self.dataset["molecules"]["functional_groups"][:, col]
-            dep_data = self.dataset["molecules"][dep_feature]
-        else:
-            group_data = self.dataset["reactions"]["functional_groups"][:, col]
-            dep_data = self.dataset["reactions"][dep_feature]
-
-        dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
-
-        sns.catplot(x=group, y=dep_feature, data=dframe)
-
-    def plot_relation(self, in_feature, dep_feature, molecules=False):
-        """
-
-        :param in_feature: Independent feature to be evaluated. Must be a member
-            of self.in_features
-        :param dep_feature: Dependent feature to be evaluated. Must be a member
-            of self.dep_features
-        :param molecules: If true, plot on an individual molecule basis, rather
-            than on a reaction basis
-        :return:
-        """
-
-        sns.set(style="ticks", color_codes=True)
-
-        if molecules:
-            in_data = self.dataset["molecules"][in_feature]
-            dep_data = self.dataset["molecules"][dep_feature]
-        else:
-            in_data = self.dataset["reactions"][in_feature]
-            dep_data = self.dataset["reactions"][dep_feature]
-
-        dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
-
-        sns.catplot(x=in_feature, y=dep_feature, data=dframe)
+    # def plot_relation_functional_group(self, group, dep_feature, molecules=False):
+    #     """
+    #     Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
+    #     a single functional group.
+    #
+    #     :param group: Functional group to be plotted. Must be a member of
+    #         self.func_groups
+    #     :param dep_feature: Dependent feature to be evaluated. Must be a member
+    #         of self.dep_features
+    #     :param molecules: If true, plot on an individual molecule basis, rather
+    #         than on a reaction basis
+    #     :return:
+    #     """
+    #
+    #     sns.set(style="ticks", color_codes=True)
+    #
+    #     col = self.func_groups.index(group)
+    #
+    #     if molecules:
+    #         group_data = self.dataset["molecules"]["functional_groups"][:, col]
+    #         dep_data = self.dataset["molecules"][dep_feature]
+    #     else:
+    #         group_data = self.dataset["reactions"]["functional_groups"][:, col]
+    #         dep_data = self.dataset["reactions"][dep_feature]
+    #
+    #     dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
+    #
+    #     sns.catplot(x=group, y=dep_feature, data=dframe)
+    #
+    # def plot_relation(self, in_feature, dep_feature, molecules=False):
+    #     """
+    #
+    #     :param in_feature: Independent feature to be evaluated. Must be a member
+    #         of self.in_features
+    #     :param dep_feature: Dependent feature to be evaluated. Must be a member
+    #         of self.dep_features
+    #     :param molecules: If true, plot on an individual molecule basis, rather
+    #         than on a reaction basis
+    #     :return:
+    #     """
+    #
+    #     sns.set(style="ticks", color_codes=True)
+    #
+    #     if molecules:
+    #         in_data = self.dataset["molecules"][in_feature]
+    #         dep_data = self.dataset["molecules"][dep_feature]
+    #     else:
+    #         in_data = self.dataset["reactions"][in_feature]
+    #         dep_data = self.dataset["reactions"][dep_feature]
+    #
+    #     dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
+    #
+    #     sns.catplot(x=in_feature, y=dep_feature, data=dframe)
