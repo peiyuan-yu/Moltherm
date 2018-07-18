@@ -6,7 +6,7 @@ import itertools
 import numpy as np
 import pandas as pd
 import sklearn as sk
-import statsmodels.api as sm
+# import statsmodels.api as sm
 
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
@@ -598,9 +598,7 @@ class MolThermDataProcessor:
         dirs = [d for d in listdir(self.base_dir)
                 if isdir(join(self.base_dir, d)) and not d.startswith("block")]
 
-        appropriate_dirs = self.quick_check(dirs)
-
-        for d in appropriate_dirs:
+        for d in dirs:
             if isdir(join(self.base_dir, d)) and not d.startswith("block"):
                 molfiles = [f for f in listdir(join(self.base_dir, d))
                             if f.endswith(".mol")

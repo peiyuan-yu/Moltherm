@@ -299,7 +299,7 @@ class MolThermWorkflow:
 
         molecules_cleared = []
 
-        appropriate_dirs = self.quick_check(all_dirs)
+        appropriate_dirs = all_dirs
 
         if dirs is not None:
             appropriate_dirs = [d for d in appropriate_dirs if d in dirs]
