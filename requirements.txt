@@ -10,3 +10,4 @@ pubchempy
 pandas
 scikit-learn
 statsmodels
+seaborn

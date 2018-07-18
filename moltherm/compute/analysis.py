@@ -5,6 +5,8 @@ import itertools
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 import sklearn as sk
 # import statsmodels.api as sm
 
@@ -665,7 +667,7 @@ class MolThermDataProcessor:
 
             mols = [extract_id(f) for f in listdir(path) if isfile(join(path, f)) and f.endswith(".mol")]
 
-            are_completed = [True for m in mols if m in completed_molecules else False]
+            are_completed = [True if m in completed_molecules else False for m in mols]
 
             if all(are_completed):
                 completed_reactions.add(d)
@@ -911,9 +913,29 @@ class MolThermAnalyzer:
             analyzed
         :param molecules: If True, perform analysis on an individual molecule
             basis, rather than on a reaction basis
-        :return: statsmodels summary
+        :return: dict of statistical values
         """
-        pass
+
+        if molecules:
+            in_frame = pd.DataFrame(self.dataset["molecules"]["functional_groups"],
+                                    columns=self.func_groups)
+            dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
+                                     columns=[dep_feature])
+        else:
+            in_frame = pd.DataFrame(self.dataset["reactions"]["functional_groups"],
+                                    columns=self.func_groups)
+            dep_frame = pd.DataFrame(self.dataset["reactions"][dep_feature],
+                                     columns=[dep_feature])
+
+        lm = sk.linear_model.LinearRegression()
+
+        score = lm.score(in_frame, dep_frame)
+        coefficients = lm.coef_
+        intercept = lm.intercept_
+
+        return {"r_squared": score,
+                "coefficients": coefficients,
+                "intercept": intercept}
 
     def analyze_features(self, in_features, dep_feature, molecules=False):
         """
@@ -927,27 +949,67 @@ class MolThermAnalyzer:
             analyzed
         :param molecules: If True, perform analysis on an individual molecule
             basis, rather than on a reaction basis
-        :return: statsmodels summary
-        :return: statsmodels summary
+        :return: dict of statistical values
         """
-        pass
 
-    def plot_relation_functional_groups(self, dep_feature, molecules=False):
+        if molecules:
+            in_dataset = {feat: self.dataset["molecules"][feat] for feat in
+                          in_features}
+            in_frame = pd.DataFrame(data=in_dataset)
+            dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
+                                     columns=[dep_feature])
+
+        else:
+            in_dataset = {feat: self.dataset["reactions"][feat] for feat in
+                          in_features}
+            in_frame = pd.DataFrame(data=in_dataset)
+            dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
+                                     columns=[dep_feature])
+
+        lm = sk.linear_model.LinearRegression()
+
+        score = lm.score(in_frame, dep_frame)
+        coefficients = lm.coef_
+        intercept = lm.intercept_
+
+        return {"r_squared": score,
+                "coefficients": coefficients,
+                "intercept": intercept}
+
+    def plot_relation_functional_group(self, group, dep_feature, molecules=False):
         """
-        Plot
+        Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
+        a single functional group.
 
-        :param dep_feature:
-        :param molecules:
+        :param group: Functional group to be plotted. Must be a member of
+            self.func_groups
+        :param dep_feature: Dependent feature to be evaluated. Must be a member
+            of self.dep_features
+        :param molecules: If true, plot on an individual molecule basis, rather
+            than on a reaction basis
         :return:
         """
-        pass
 
-    def plot_relation(self, in_feature, out_feature, molecules=False):
+        col = self.func_groups.index(group)
+
+        if molecules:
+            group_data = self.dataset["molecules"]["functional_groups"][:, col]
+            dep_data = self.dataset["molecules"][dep_feature]
+        else:
+            group_data = self.dataset["reactions"]["functional_groups"][:, col]
+            dep_data = self.dataset["reactions"][dep_feature]
+
+        
+
+    def plot_relation(self, in_feature, dep_feature, molecules=False):
         """
 
-        :param in_feature:
-        :param out_feature:
-        :param molecules:
+        :param in_feature: Independent feature to be evaluated. Must be a member
+            of self.in_features
+        :param dep_feature: Dependent feature to be evaluated. Must be a member
+            of self.dep_features
+        :param molecules: If true, plot on an individual molecule basis, rather
+            than on a reaction basis
         :return:
         """
         pass

@@ -121,7 +121,6 @@ class SinglePointFW(Firework):
                  input_file="mol.qin",
                  output_file="mol.qout",
                  qclog_file="mol.qclog",
-                 input_exists=False,
                  max_cores=64,
                  sp_params=None,
                  reversed_direction=False,
@@ -157,21 +156,18 @@ class SinglePointFW(Firework):
         sp_params = sp_params or {}
         t = []
 
-        if input_exists:
-            t.append(
-                WriteCustomInput(molecule=molecule,
-                                 rem=sp_params.get("rem", {"job_type": "sp",
-                                                           "method": "wb97x-d",
-                                                           "basis": "6-311++g(d,p)",
-                                                           "max_scf_cycles": 200,
-                                                           "gen_scfman": True,
-                                                           "scf_algorithm": "diis",
-                                                           "solvent_method": "pcm"}),
-                                 opt=sp_params.get("opt", None),
-                                 pcm=sp_params.get("pcm", {"theory": "iefpcm"}),
-                                 solvent=sp_params.get("solvent", {"dielectric": 80.4}),
-                                 smx=sp_params.get("smx", None),
-                                 input_file=input_file))
+        t.append(
+            WriteCustomInput(molecule=molecule,
+                             rem=sp_params.get("rem", {"job_type": "sp",
+                                                       "method": "wb97x-d",
+                                                       "basis": "6-311++g(d,p)",
+                                                       "max_scf_cycles": 200,
+                                                       "gen_scfman": True,
+                                                       "scf_algorithm": "diis",
+                                                       "solvent_method": "pcm"}),
+                             pcm=sp_params.get("pcm", {"theory": "iefpcm"}),
+                             solvent=sp_params.get("solvent", {"dielectric": 80.4}),
+                             input_file=input_file))
 
         t.append(
             RunQChemCustodian(

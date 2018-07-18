@@ -338,59 +338,32 @@ class MolThermWorkflow:
                 if freq_complete and not sp_complete:
                     # Check if there is already an sp input file
                     freq_in_file = None
-                    sp_in_file = None
 
                     for in_file in in_files:
                         if "freq" in in_file:
                             freq_in_file = in_file
-                        if "sp" in in_file:
-                            sp_in_file = in_file
 
-                    if sp_in_file is None:
-                        if freq_in_file is None:
-                            # We could parse output files to get previous input
-                            # information, but we should try to keep all input
-                            # files in the same directory
-                            continue
-                        else:
-                            infile = join(path, key.replace(".mol", "") + ".in")
-                            outfile = join(path, key.replace(".mol", "") + ".out")
-                            qclogfile = join(path, key.replace(".mol", "") + ".qclog")
-
-                            freq_in_file = QCInput.from_file(join(path,
-                                                                  freq_in_file))
-                            mol = freq_in_file.molecule
-
-                            fw = SinglePointFW(molecule=mol,
-                                               name="{}: {}/{}".format(name_pre, d, mol_id),
-                                               qchem_cmd="qchem -slurm",
-                                               multimode="openmp",
-                                               input_file=infile,
-                                               output_file=outfile,
-                                               qclog_file=qclogfile,
-                                               max_cores=max_cores,
-                                               sp_params=sp_params)
-
-                            fws.append(fw)
-                            molecules_cleared.append(mol_id)
-
+                    if freq_in_file is None:
+                        # We could parse output files to get previous input
+                        # information, but we should try to keep all input
+                        # files in the same directory
+                        continue
                     else:
-                        infile = sp_in_file
-                        outfile = join(path, infile.replace(".in", ".out"))
-                        qclogfile = join(path, infile.replace(".in", ".qclog"))
+                        infile = join(path, key.replace(".mol", "") + ".in")
+                        outfile = join(path, key.replace(".mol", "") + ".out")
+                        qclogfile = join(path, key.replace(".mol", "") + ".qclog")
 
-                        sp_in_file = QCInput.from_file(join(path, infile))
-
-                        mol = sp_in_file.molecule
+                        freq_in_file = QCInput.from_file(join(path,
+                                                              freq_in_file))
+                        mol = freq_in_file.molecule
 
                         fw = SinglePointFW(molecule=mol,
                                            name="{}: {}/{}".format(name_pre, d, mol_id),
                                            qchem_cmd="qchem -slurm",
                                            multimode="openmp",
-                                           input_file=join(path, infile),
+                                           input_file=infile,
                                            output_file=outfile,
                                            qclog_file=qclogfile,
-                                           input_exists=True,
                                            max_cores=max_cores,
                                            sp_params=sp_params)
 
