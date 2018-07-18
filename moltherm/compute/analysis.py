@@ -621,7 +621,8 @@ class MolThermDataProcessor:
         :return:
         """
 
-        completed_molecules = set()
+        completed = set()
+        incomplete = set()
 
         all_dirs = [d for d in listdir(self.base_dir)
                     if isdir(d) and not d.startswith("block")]
@@ -640,13 +641,15 @@ class MolThermDataProcessor:
                     if "sp" in outfile:
                         spfile = QCOutput(join(path, outfile))
 
-                        completion = spfile.get("completion", False)
+                        completion = spfile.data.get("completion", False)
 
                         # Currently will catch iefpcm or smd
                         if completion:
-                            completed_molecules.add(mol_id)
+                            completed.add(molfile)
+                        else:
+                            incomplete.add(molfile)
 
-        return completed_molecules
+        return completed, incomplete
 
 
     def get_completed_reactions(self):
