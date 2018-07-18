@@ -622,10 +622,9 @@ class MolThermDataProcessor:
         """
 
         completed = set()
-        incomplete = set()
 
         all_dirs = [d for d in listdir(self.base_dir)
-                    if isdir(d) and not d.startswith("block")]
+                    if isdir(join(self.base_dir, d)) and not d.startswith("block")]
 
         if dirs is not None:
             all_dirs = [d for d in all_dirs if d in dirs]
@@ -645,12 +644,9 @@ class MolThermDataProcessor:
 
                         # Currently will catch iefpcm or smd
                         if completion:
-                            completed.add(molfile)
-                        else:
-                            incomplete.add((molfile, qcfiles["out"]))
+                            completed.add(mol_id)
 
-        return completed, incomplete
-
+        return completed
 
     def get_completed_reactions(self):
         """
@@ -659,7 +655,22 @@ class MolThermDataProcessor:
 
         :return: list of directories with complete information.
         """
-        pass
+
+        completed_molecules = self.get_completed_molecules()
+
+        completed_reactions = set()
+
+        for d in listdir(self.base_dir):
+            path = join(d, self.base_dir)
+
+            mols = [extract_id(f) for f in listdir(path) if isfile(join(path, f)) and f.endswith(".mol")]
+
+            are_completed = [True for m in mols if m in completed_molecules else False]
+
+            if all(are_completed):
+                completed_reactions.add(d)
+
+        return completed_reactions
 
     def get_molecule_data(self, mol_id):
         """

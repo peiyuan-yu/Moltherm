@@ -387,7 +387,7 @@ class MolThermWorkflow:
                                            name="{}: {}/{}".format(name_pre, d, mol_id),
                                            qchem_cmd="qchem -slurm",
                                            multimode="openmp",
-                                           input_file=infile,
+                                           input_file=join(path, infile),
                                            output_file=outfile,
                                            qclog_file=qclogfile,
                                            input_exists=True,
