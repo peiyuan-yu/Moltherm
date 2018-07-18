@@ -835,7 +835,7 @@ class MolThermAnalyzer:
                 if grp in react["product"]["functional_groups"].keys():
                     pro_grps[j] = react["product"]["functional_groups"][grp]["count"]
 
-                for mol in react["reactants"]
+                for mol in react["reactants"]:
                     if grp in mol["functional_groups"].keys():
                         rct_grps += mol["functional_groups"][grp]["count"]
 
@@ -843,36 +843,53 @@ class MolThermAnalyzer:
 
         return new_dset
 
-    def analyze_functional_groups(self, out_features):
+    def analyze_functional_groups(self, dep_feature, molecules=False):
         """
+        Perform a regression analysis to determine the effect of various
+        functional groups on a particular dependent feature (for instance,
+        enthalpy)
 
-        :param out_features:
+        :param dep_feature: str representing a dependent variable to be
+            analyzed
+        :param molecules: If True, perform analysis on an individual molecule
+            basis, rather than on a reaction basis
+        :return: statsmodels summary
+        """
+        pass
+
+    def analyze_features(self, in_features, dep_feature, molecules=False):
+        """
+        Perform a regression analysis to determine the effect of various
+        parameters (molecular weight, for instance) on a particular dependent
+        feature (for instance, enthalpy)
+
+        :param in_features: list of strs representing independent variables to
+            be analyzed
+        :param dep_feature: str representing a dependent variable to be
+            analyzed
+        :param molecules: If True, perform analysis on an individual molecule
+            basis, rather than on a reaction basis
+        :return: statsmodels summary
+        :return: statsmodels summary
+        """
+        pass
+
+    def plot_relation_functional_groups(self, dep_feature, molecules=False):
+        """
+        Plot
+
+        :param dep_feature:
+        :param molecules:
         :return:
         """
         pass
 
-    def analyze_features(self, in_features, out_features):
-        """
-
-        :param in_features:
-        :param out_features:
-        :return:
-        """
-        pass
-
-    def plot_relation_functional_groups(self, out_feature):
-        """
-
-        :param out_feature:
-        :return:
-        """
-        pass
-
-    def plot_relation(self, in_feature, out_feature):
+    def plot_relation(self, in_feature, out_feature, molecules=False):
         """
 
         :param in_feature:
         :param out_feature:
+        :param molecules:
         :return:
         """
         pass

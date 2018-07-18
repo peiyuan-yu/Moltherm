@@ -166,11 +166,11 @@ class SinglePointFW(Firework):
                                                            "max_scf_cycles": 200,
                                                            "gen_scfman": True,
                                                            "scf_algorithm": "diis",
-                                                           "solvent_method": "smd"}),
+                                                           "solvent_method": "pcm"}),
                                  opt=sp_params.get("opt", None),
-                                 pcm=sp_params.get("pcm", None),
-                                 solvent=sp_params.get("solvent", None),
-                                 smx=sp_params.get("smx", {"solvent": "water"}),
+                                 pcm=sp_params.get("pcm", {"theory": "iefpcm"}),
+                                 solvent=sp_params.get("solvent", {"dielectric": 80.4}),
+                                 smx=sp_params.get("smx", None),
                                  input_file=input_file))
 
         t.append(
