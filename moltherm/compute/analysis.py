@@ -647,7 +647,7 @@ class MolThermDataProcessor:
                         if completion:
                             completed.add(molfile)
                         else:
-                            incomplete.add(molfile)
+                            incomplete.add((molfile, qcfiles["out"]))
 
         return completed, incomplete
 
