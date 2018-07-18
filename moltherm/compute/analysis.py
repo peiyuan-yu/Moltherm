@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import sklearn as sk
+from sklearn.metrics import mean_squared_error, mean_absolute_error,
 # import statsmodels.api as sm
 
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
@@ -928,6 +929,7 @@ class MolThermAnalyzer:
                                      columns=[dep_feature])
 
         lm = sk.linear_model.LinearRegression()
+        lm.fit(in_frame, dep_frame)
 
         score = lm.score(in_frame, dep_frame)
         coefficients = lm.coef_
@@ -967,6 +969,7 @@ class MolThermAnalyzer:
                                      columns=[dep_feature])
 
         lm = sk.linear_model.LinearRegression()
+        lm.fit(in_frame, dep_frame)
 
         score = lm.score(in_frame, dep_frame)
         coefficients = lm.coef_
@@ -990,6 +993,8 @@ class MolThermAnalyzer:
         :return:
         """
 
+        sns.set(style="ticks", color_codes=True)
+
         col = self.func_groups.index(group)
 
         if molecules:
@@ -999,7 +1004,9 @@ class MolThermAnalyzer:
             group_data = self.dataset["reactions"]["functional_groups"][:, col]
             dep_data = self.dataset["reactions"][dep_feature]
 
-        
+        dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
+
+        sns.catplot(x=group, y=dep_feature, data=dframe)
 
     def plot_relation(self, in_feature, dep_feature, molecules=False):
         """
@@ -1012,4 +1019,16 @@ class MolThermAnalyzer:
             than on a reaction basis
         :return:
         """
-        pass
+
+        sns.set(style="ticks", color_codes=True)
+
+        if molecules:
+            in_data = self.dataset["molecules"][in_feature]
+            dep_data = self.dataset["molecules"][dep_feature]
+        else:
+            in_data = self.dataset["reactions"][in_feature]
+            dep_data = self.dataset["reactions"][dep_feature]
+
+        dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
+
+        sns.catplot(x=in_feature, y=dep_feature, data=dframe)
