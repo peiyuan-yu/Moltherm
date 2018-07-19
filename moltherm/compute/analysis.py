@@ -660,11 +660,19 @@ class MolThermDataProcessor:
         :return: list of directories with complete information.
         """
 
-        completed_molecules = self.get_completed_molecules()
+        if self.db is None:
+            raise RuntimeError("Could not connect to database. Check db_file"
+                               "and try again later.")
+
+        collection = self.db.db["molecules"]
+
+        completed_molecules = [x["mol_id"] for x in collection.find({}, {"mol_id": 1})]
 
         completed_reactions = set()
 
-        for d in listdir(self.base_dir):
+        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d)) and not d.startswith("block")]
+
+        for d in dirs:
             path = join(d, self.base_dir)
 
             mols = [extract_id(f) for f in listdir(path) if isfile(join(path, f)) and f.endswith(".mol")]
