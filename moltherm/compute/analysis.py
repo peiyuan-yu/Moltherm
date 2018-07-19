@@ -4,10 +4,12 @@ import shutil
 
 import numpy as np
 import pandas as pd
-import sklearn as sk
+from sklearn.linear_model import LinearRegression
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-import seaborn as sns
+import seaborn
+from seaborn import stripplot, regplot
+
 
 from pymatgen.core.structure import Molecule
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
@@ -848,7 +850,7 @@ class MolThermAnalyzer:
         for datapoint in dataset:
             molecules = [datapoint["product"]] + datapoint["reactants"]
             for molecule in molecules:
-                func_groups.update(molecule)
+                func_groups.update(molecule["functional_groups"])
 
         return np.array(list(func_groups.keys()))
 
@@ -957,7 +959,7 @@ class MolThermAnalyzer:
             dep_frame = pd.DataFrame(self.dataset["reactions"][dep_feature],
                                      columns=[dep_feature])
 
-        lm = sk.linear_model.LinearRegression()
+        lm = LinearRegression()
         lm.fit(in_frame, dep_frame)
 
         score = lm.score(in_frame, dep_frame)
@@ -997,7 +999,7 @@ class MolThermAnalyzer:
             dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
                                      columns=[dep_feature])
 
-        lm = sk.linear_model.LinearRegression()
+        lm = LinearRegression()
         lm.fit(in_frame, dep_frame)
 
         score = lm.score(in_frame, dep_frame)
@@ -1022,9 +1024,9 @@ class MolThermAnalyzer:
         :return:
         """
 
-        sns.set(style="ticks", color_codes=True)
+        seaborn.set(style="ticks", color_codes=True)
 
-        col = self.func_groups.index(group)
+        col = list(self.func_groups).index(group)
 
         if molecules:
             group_data = self.dataset["molecules"]["functional_groups"][:, col]
@@ -1035,7 +1037,8 @@ class MolThermAnalyzer:
 
         dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
 
-        sns.catplot(x=group, y=dep_feature, data=dframe)
+        stripplot(x=group, y=dep_feature, data=dframe)
+        plt.show()
 
     def plot_relation(self, in_feature, dep_feature, molecules=False):
         """
@@ -1049,7 +1052,7 @@ class MolThermAnalyzer:
         :return:
         """
 
-        sns.set(style="ticks", color_codes=True)
+        seaborn.set(style="ticks", color_codes=True)
 
         if molecules:
             in_data = self.dataset["molecules"][in_feature]
@@ -1060,4 +1063,5 @@ class MolThermAnalyzer:
 
         dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
 
-        sns.catplot(x=in_feature, y=dep_feature, data=dframe)
+        regplot(x=in_feature, y=dep_feature, data=dframe)
+        plt.show()
