@@ -13,7 +13,7 @@ from monty.json import jsanitize
 from monty.json import MSONable
 from pymatgen.core import Molecule
 
-from pymatgen.io.qchem_io.utils import read_table_pattern, read_pattern, process_parsed_coords
+from pymatgen.io.qchem.utils import read_table_pattern, read_pattern, process_parsed_coords
 
 __author__ = "Samuel Blau, Brandon Wood, Shyam Dwaraknath"
 __copyright__ = "Copyright 2018, The Materials Project"

@@ -1,15 +1,13 @@
 from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
-import itertools
 
 import numpy as np
 import pandas as pd
 import sklearn as sk
-from sklearn.metrics import mean_squared_error, mean_absolute_error
-# import statsmodels.api as sm
-# import matplotlib.pyplot as plt
-# import seaborn as sns
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
@@ -989,56 +987,56 @@ class MolThermAnalyzer:
                 "coefficients": coefficients,
                 "intercept": intercept}
 
-    # def plot_relation_functional_group(self, group, dep_feature, molecules=False):
-    #     """
-    #     Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
-    #     a single functional group.
-    #
-    #     :param group: Functional group to be plotted. Must be a member of
-    #         self.func_groups
-    #     :param dep_feature: Dependent feature to be evaluated. Must be a member
-    #         of self.dep_features
-    #     :param molecules: If true, plot on an individual molecule basis, rather
-    #         than on a reaction basis
-    #     :return:
-    #     """
-    #
-    #     sns.set(style="ticks", color_codes=True)
-    #
-    #     col = self.func_groups.index(group)
-    #
-    #     if molecules:
-    #         group_data = self.dataset["molecules"]["functional_groups"][:, col]
-    #         dep_data = self.dataset["molecules"][dep_feature]
-    #     else:
-    #         group_data = self.dataset["reactions"]["functional_groups"][:, col]
-    #         dep_data = self.dataset["reactions"][dep_feature]
-    #
-    #     dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
-    #
-    #     sns.catplot(x=group, y=dep_feature, data=dframe)
-    #
-    # def plot_relation(self, in_feature, dep_feature, molecules=False):
-    #     """
-    #
-    #     :param in_feature: Independent feature to be evaluated. Must be a member
-    #         of self.in_features
-    #     :param dep_feature: Dependent feature to be evaluated. Must be a member
-    #         of self.dep_features
-    #     :param molecules: If true, plot on an individual molecule basis, rather
-    #         than on a reaction basis
-    #     :return:
-    #     """
-    #
-    #     sns.set(style="ticks", color_codes=True)
-    #
-    #     if molecules:
-    #         in_data = self.dataset["molecules"][in_feature]
-    #         dep_data = self.dataset["molecules"][dep_feature]
-    #     else:
-    #         in_data = self.dataset["reactions"][in_feature]
-    #         dep_data = self.dataset["reactions"][dep_feature]
-    #
-    #     dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
-    #
-    #     sns.catplot(x=in_feature, y=dep_feature, data=dframe)
+    def plot_relation_functional_group(self, group, dep_feature, molecules=False):
+        """
+        Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
+        a single functional group.
+
+        :param group: Functional group to be plotted. Must be a member of
+            self.func_groups
+        :param dep_feature: Dependent feature to be evaluated. Must be a member
+            of self.dep_features
+        :param molecules: If true, plot on an individual molecule basis, rather
+            than on a reaction basis
+        :return:
+        """
+
+        sns.set(style="ticks", color_codes=True)
+
+        col = self.func_groups.index(group)
+
+        if molecules:
+            group_data = self.dataset["molecules"]["functional_groups"][:, col]
+            dep_data = self.dataset["molecules"][dep_feature]
+        else:
+            group_data = self.dataset["reactions"]["functional_groups"][:, col]
+            dep_data = self.dataset["reactions"][dep_feature]
+
+        dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
+
+        sns.catplot(x=group, y=dep_feature, data=dframe)
+
+    def plot_relation(self, in_feature, dep_feature, molecules=False):
+        """
+
+        :param in_feature: Independent feature to be evaluated. Must be a member
+            of self.in_features
+        :param dep_feature: Dependent feature to be evaluated. Must be a member
+            of self.dep_features
+        :param molecules: If true, plot on an individual molecule basis, rather
+            than on a reaction basis
+        :return:
+        """
+
+        sns.set(style="ticks", color_codes=True)
+
+        if molecules:
+            in_data = self.dataset["molecules"][in_feature]
+            dep_data = self.dataset["molecules"][dep_feature]
+        else:
+            in_data = self.dataset["reactions"][in_feature]
+            dep_data = self.dataset["reactions"][dep_feature]
+
+        dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
+
+        sns.catplot(x=in_feature, y=dep_feature, data=dframe)

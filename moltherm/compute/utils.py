@@ -6,7 +6,7 @@ import shutil
 from bs4 import BeautifulSoup
 
 from pymatgen.core.structure import Molecule
-from pymatgen.io.qchem_io.sets import OptSet, FreqSet, SinglePointSet
+from pymatgen.io.qchem.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
 
 from moltherm.compute.inputs import QCInput

@@ -18,7 +18,6 @@ from custodian.qchem.new_handlers import QChemErrorHandler
 
 from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.inputs import QCInput
-from moltherm.compute.outputs import QCOutput
 from moltherm.compute.jobs import QCJob
 
 logger = get_logger(__name__)
