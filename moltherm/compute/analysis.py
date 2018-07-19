@@ -9,6 +9,7 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from pymatgen.core.structure import Molecule
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
 
@@ -356,9 +357,9 @@ class MolThermDataProcessor:
         }
 
         try:
-            thermo["t_critical"] = delta_h / delta_s
+            thermo["t_star"] = delta_h / delta_s
         except ZeroDivisionError:
-            thermo["t_critical"] = 0
+            thermo["t_star"] = 0
 
         result = {"dir_name": directory,
                   "opt": opt,
@@ -713,14 +714,15 @@ class MolThermDataProcessor:
             if calc["task"]["name"] == "sp":
                 mol_data["energy"] = calc["final_energy_sp"] * 627.509 * 4.184 * 1000
             if calc["task"]["name"] in ["opt", "optimization"]:
-                mol_data["molecule"] = calc["molecule_from_optimized_geometry"]
+                mol_dict = calc["molecule_from_optimized_geometry"]
+                mol_data["molecule"] = Molecule.from_dict(mol_dict)
+
 
         adaptor = BabelMolAdaptor(mol_data["molecule"])
         pbmol = adaptor.pybel_mol
 
         mol_data["number_atoms"] = len(mol_data["molecule"])
         mol_data["molecular_weight"] = pbmol.molwt
-        mol_data["surface_area"] = pbmol.data["Surface Area"]
         # This might not be efficient
         mol_data["tpsa"] = pbmol.calcdesc()["TPSA"]
 
@@ -745,17 +747,19 @@ class MolThermDataProcessor:
         """
 
         reaction_data = {}
-
-        collection = self.db.db["molecules"]
+        reaction_data["thermo"] = None
 
         if directory is not None:
-            entries = collection.find({"dir_name": join(self.base_dir, directory)})
-            mol_ids = [extract_id(e["task_label"]) for e in entries]
+            mol_ids = [extract_id(f) for f in listdir(join(self.base_dir, directory))
+                        if f.endswith(".mol")]
 
             component_data = [self.get_molecule_data(m) for m in mol_ids]
+
+            reaction_data["thermo"] = self.extract_reaction_thermo_db(directory)["thermo"]
 
         elif mol_ids is not None:
             component_data = [self.get_molecule_data(m) for m in mol_ids]
+
 
         else:
             raise ValueError("get_reaction_data requires either a directory or "
@@ -767,6 +771,22 @@ class MolThermDataProcessor:
         reaction_data["mol_ids"] = mol_ids
         reaction_data["product"] = component_data[-1]
         reaction_data["reactants"] = component_data[:-1]
+
+        if reaction_data["thermo"] is None:
+            reaction_data["thermo"] = {}
+            pro_h = reaction_data["product"]["enthalpy"] + reaction_data["product"]["energy"]
+            rct_h = sum(r["enthalpy"] + r["energy"]
+                        for r in reaction_data["reactants"])
+            reaction_data["thermo"]["enthalpy"] = pro_h - rct_h
+
+            pro_s = reaction_data["product"]["entropy"]
+            rct_s = sum(r["entropy"] for r in reaction_data["reactants"])
+            reaction_data["thermo"]["entropy"] = pro_s - rct_s
+
+            try:
+                reaction_data["thermo"]["t_star"] = reaction_data["thermo"]["enthalpy"] / reaction_data["thermo"]["entropy"]
+            except ZeroDivisionError:
+                reaction_data["thermo"]["t_star"] = 0
 
         return reaction_data
 
@@ -791,8 +811,7 @@ class MolThermAnalyzer:
         """
 
         if in_features is None:
-           self.in_features = ["number_atoms", "molecular_weight",
-                               "surface_area", "tpsa"]
+           self.in_features = ["number_atoms", "molecular_weight", "tpsa"]
         else:
             self.in_features = in_features
 
@@ -870,21 +889,23 @@ class MolThermAnalyzer:
             for i, mol in enumerate(all_molecules):
                 if marker == "enthalpy":
                     new_dset["molecules"][marker][i] = mol["enthalpy"] + mol["energy"]
+                elif marker == "t_star":
+                    continue
                 else:
                     new_dset["molecules"][marker][i] = mol[marker]
 
             new_dset["reactions"][marker] = np.zeros(num_reactions)
 
             for i, react in enumerate(dataset):
-                if marker == "enthalpy":
-                    pro_data = react["product"]["enthalpy"] + react["product"]["energy"]
-                    rct_data = sum(r["enthalpy"] + r["energy"]
-                                   for r in react["reactants"])
+                thermo = react["thermo"]
+                pro = react["product"]
+                rcts = react["reactants"]
+                if marker in thermo.keys():
+                    new_dset["reactions"][marker][i] = thermo[marker]
                 else:
-                    pro_data = react["product"][marker]
-                    rct_data = sum(r[marker] for r in react["reactants"])
-
-                new_dset["reactions"][marker][i] = pro_data - rct_data
+                    pro_data = pro[marker]
+                    rct_data = sum(rct[marker] for rct in rcts)
+                    new_dset["reactions"][marker][i] = pro_data - rct_data
 
         new_dset["molecules"]["functional_groups"] = np.zeros((num_molecules,
                                                                len(self.func_groups)))
@@ -906,7 +927,7 @@ class MolThermAnalyzer:
 
                 for mol in react["reactants"]:
                     if grp in mol["functional_groups"].keys():
-                        rct_grps += mol["functional_groups"][grp]["count"]
+                        rct_grps[j] += mol["functional_groups"][grp]["count"]
 
             new_dset["reactions"]["functional_groups"][i] = pro_grps - rct_grps
 
