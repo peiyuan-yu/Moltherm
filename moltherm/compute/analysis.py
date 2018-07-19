@@ -236,9 +236,9 @@ class MolThermDataProcessor:
                 if calc["task"]["type"] == "sp":
                     energy_sp = calc["final_energy_sp"]
 
-                return {"enthalpy": enthalpy,
-                        "entropy": entropy,
-                        "energy": energy_sp}
+            return {"enthalpy": enthalpy,
+                    "entropy": entropy,
+                    "energy": energy_sp}
 
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
@@ -246,12 +246,17 @@ class MolThermDataProcessor:
         mol_files = [f for f in listdir(directory) if f.endswith(".mol")]
 
         dir_ids = [extract_id(f) for f in mol_files]
+        print(dir_ids)
 
         collection = self.db.db["molecules"]
         records = []
 
         for mol_id in dir_ids:
-            records.append(collection.find_one({"mol_id": str(mol_id)}))
+            record = collection.find_one({"mol_id": str(mol_id)})
+            print(record["mol_id"])
+            records.append(record)
+
+        pass
 
         # Sort files for if they are reactants or products
         reactants = []
