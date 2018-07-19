@@ -246,135 +246,131 @@ class MolThermDataProcessor:
         mol_files = [f for f in listdir(directory) if f.endswith(".mol")]
 
         dir_ids = [extract_id(f) for f in mol_files]
-        print(dir_ids)
 
         collection = self.db.db["molecules"]
         records = []
 
         for mol_id in dir_ids:
             record = collection.find_one({"mol_id": str(mol_id)})
-            print(record["mol_id"])
             records.append(record)
 
-        pass
-
         # Sort files for if they are reactants or products
-        # reactants = []
-        # products = []
-        # for i, record in enumerate(records):
-        #     filename = mol_files[i]
-        #     if opt is None:
-        #         for calc in record["calcs_reversed"]:
-        #             if calc["task"]["type"] == "opt" or \
-        #                     calc["task"]["type"] == "optimization":
-        #                 method = calc["input"]["rem"]["method"]
-        #                 basis = calc["input"]["rem"]["basis"]
-        #                 solvent_method = calc["input"]["rem"].get(
-        #                     "solvent_method", None)
-        #                 if solvent_method == "smd":
-        #                     if calc["input"]["smx"] is None:
-        #                         solvent = None
-        #                     else:
-        #                         solvent = calc["input"]["smx"]["solvent"]
-        #                 elif solvent_method == "pcm":
-        #                     solvent = calc["input"]["solvent"]
-        #                 else:
-        #                     solvent = None
-        #
-        #                 opt = {"method": method,
-        #                        "basis": basis,
-        #                        "solvent_method": solvent_method,
-        #                        "solvent": solvent}
-        #                 break
-        #     if freq is None:
-        #         for calc in record["calcs_reversed"]:
-        #             if calc["task"]["type"] == "freq" or \
-        #                     calc["task"]["type"] == "frequency":
-        #                 method = calc["input"]["rem"]["method"]
-        #                 basis = calc["input"]["rem"]["basis"]
-        #                 solvent_method  = calc["input"]["rem"].get(
-        #                     "solvent_method", None)
-        #                 if solvent_method == "smd":
-        #                     if calc["input"]["smx"] is None:
-        #                         solvent = None
-        #                     else:
-        #                         solvent = calc["input"]["smx"]["solvent"]
-        #                 elif solvent_method == "pcm":
-        #                     solvent = calc["input"]["solvent"]
-        #                 else:
-        #                     solvent = None
-        #
-        #                 freq = {"method": method,
-        #                         "basis": basis,
-        #                         "solvent_method": solvent_method,
-        #                         "solvent": solvent}
-        #                 break
-        #     if sp is None:
-        #         for calc in record["calcs_reversed"]:
-        #             if calc["task"]["type"] == "sp":
-        #                 method = calc["input"]["rem"]["method"]
-        #                 basis = calc["input"]["rem"]["basis"]
-        #                 solvent_method  = calc["input"]["rem"].get(
-        #                     "solvent_method", None)
-        #                 if solvent_method == "smd":
-        #                     if calc["input"]["smx"] is None:
-        #                         solvent = None
-        #                     else:
-        #                         solvent = calc["input"]["smx"]["solvent"]
-        #                 elif solvent_method == "pcm":
-        #                     solvent = calc["input"]["solvent"]
-        #                 else:
-        #                     solvent = None
-        #
-        #                 sp = {"method": method,
-        #                       "basis": basis,
-        #                       "solvent_method": solvent_method,
-        #                       "solvent": solvent}
-        #                 break
-        #
-        #     if filename.startswith(self.reactant_pre):
-        #         reactants.append(record)
-        #     elif filename.startswith(self.product_pre):
-        #         products.append(record)
-        #     else:
-        #         print("Skipping {} because it cannot be determined if it is"
-        #               "reactant or product.".format(filename))
-        #         continue
-        #
-        # # Get ids
-        # reactant_ids = [r["mol_id"] for r in reactants]
-        # product_ids = [p["mol_id"] for p in products]
-        #
-        # # Get thermo data
-        # rct_thermo = [get_thermo(r) for r in reactants]
-        # pro_thermo = [get_thermo(p) for p in products]
-        #
-        # # Compile reaction thermo from reactant and product thermos
-        # delta_e = sum(p["energy"] for p in pro_thermo) - sum(r["energy"] for r in rct_thermo)
-        # delta_e *= 627.509
-        # delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo) + delta_e
-        # delta_h *= 1000 * 4.184
-        # delta_s = sum(p["entropy"] for p in pro_thermo) - sum(r["entropy"] for r in rct_thermo)
-        # delta_s *= 4.184
-        # thermo = {
-        #     "enthalpy": delta_h,
-        #     "entropy": delta_s
-        # }
-        #
-        # try:
-        #     thermo["t_critical"] = delta_h / delta_s
-        # except ZeroDivisionError:
-        #     thermo["t_critical"] = 0
-        #
-        # result = {"dir_name": directory,
-        #           "opt": opt,
-        #           "freq": freq,
-        #           "sp": sp,
-        #           "reactant_ids": reactant_ids,
-        #           "product_ids": product_ids,
-        #           "thermo": thermo}
-        #
-        # return result
+        reactants = []
+        products = []
+        for i, record in enumerate(records):
+            filename = mol_files[i]
+            if opt is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "opt" or \
+                            calc["task"]["type"] == "optimization":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        opt = {"method": method,
+                               "basis": basis,
+                               "solvent_method": solvent_method,
+                               "solvent": solvent}
+                        break
+            if freq is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "freq" or \
+                            calc["task"]["type"] == "frequency":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        freq = {"method": method,
+                                "basis": basis,
+                                "solvent_method": solvent_method,
+                                "solvent": solvent}
+                        break
+            if sp is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["task"]["type"] == "sp":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        sp = {"method": method,
+                              "basis": basis,
+                              "solvent_method": solvent_method,
+                              "solvent": solvent}
+                        break
+
+            if filename.startswith(self.reactant_pre):
+                reactants.append(record)
+            elif filename.startswith(self.product_pre):
+                products.append(record)
+            else:
+                print("Skipping {} because it cannot be determined if it is"
+                      "reactant or product.".format(filename))
+                continue
+
+        # Get ids
+        reactant_ids = [r["mol_id"] for r in reactants]
+        product_ids = [p["mol_id"] for p in products]
+
+        # Get thermo data
+        rct_thermo = [get_thermo(r) for r in reactants]
+        pro_thermo = [get_thermo(p) for p in products]
+
+        # Compile reaction thermo from reactant and product thermos
+        delta_e = sum(p["energy"] for p in pro_thermo) - sum(r["energy"] for r in rct_thermo)
+        delta_e *= 627.509
+        delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(r["enthalpy"] for r in rct_thermo) + delta_e
+        delta_h *= 1000 * 4.184
+        delta_s = sum(p["entropy"] for p in pro_thermo) - sum(r["entropy"] for r in rct_thermo)
+        delta_s *= 4.184
+        thermo = {
+            "enthalpy": delta_h,
+            "entropy": delta_s
+        }
+
+        try:
+            thermo["t_critical"] = delta_h / delta_s
+        except ZeroDivisionError:
+            thermo["t_critical"] = 0
+
+        result = {"dir_name": directory,
+                  "opt": opt,
+                  "freq": freq,
+                  "sp": sp,
+                  "reactant_ids": reactant_ids,
+                  "product_ids": product_ids,
+                  "thermo": thermo}
+
+        return result
 
     def record_molecule_data_db(self, mol_id, calc_dir, input_file, output_file):
         """
