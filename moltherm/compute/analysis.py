@@ -243,35 +243,30 @@ class MolThermDataProcessor:
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
 
-        # This is horribly inefficient. Should change the how data is stored
-        # to allow for nicer queries
-        all_records = self.db.collection.find()
+        mol_files = [f for f in listdir(directory) if f.endswith(".mol")]
+
+        dir_ids = [extract_id(f) for f in mol_files]
+
+        collection = self.db.db["molecules"]
         records = []
 
-        dir_ids = [extract_id(f) for f in listdir(directory) if
-                   f.endswith(".mol")]
-
-        for record in all_records:
-            molecule_id = extract_id(record["task_label"])
-            if record["dir_name"] == directory or molecule_id in dir_ids:
-                records.append(record)
-                # To guarantee that only one such record is copied
-                dir_ids.remove(molecule_id)
+        for mol_id in dir_ids:
+            records.append(collection.find_one({"mol_id": str(mol_id)}))
 
         # Sort files for if they are reactants or products
         reactants = []
         products = []
-        for record in records:
-            filename = record["task_label"].split("/")[-1]
+        for i, record in enumerate(records):
+            filename = mol_files[i]
             if opt is None:
                 for calc in record["calcs_reversed"]:
                     if calc["task"]["type"] == "opt" or \
                             calc["task"]["type"] == "optimization":
                         method = calc["input"]["rem"]["method"]
                         basis = calc["input"]["rem"]["basis"]
-                        solvent_method  = calc["input"]["rem"].get(
+                        solvent_method = calc["input"]["rem"].get(
                             "solvent_method", None)
-                        if solvent_method == "smd" or solvent_method == "sm12":
+                        if solvent_method == "smd":
                             if calc["input"]["smx"] is None:
                                 solvent = None
                             else:
@@ -294,7 +289,7 @@ class MolThermDataProcessor:
                         basis = calc["input"]["rem"]["basis"]
                         solvent_method  = calc["input"]["rem"].get(
                             "solvent_method", None)
-                        if solvent_method == "smd" or solvent_method == "sm12":
+                        if solvent_method == "smd":
                             if calc["input"]["smx"] is None:
                                 solvent = None
                             else:
@@ -305,9 +300,9 @@ class MolThermDataProcessor:
                             solvent = None
 
                         freq = {"method": method,
-                               "basis": basis,
-                               "solvent_method": solvent_method,
-                               "solvent": solvent}
+                                "basis": basis,
+                                "solvent_method": solvent_method,
+                                "solvent": solvent}
                         break
             if sp is None:
                 for calc in record["calcs_reversed"]:
@@ -316,7 +311,7 @@ class MolThermDataProcessor:
                         basis = calc["input"]["rem"]["basis"]
                         solvent_method  = calc["input"]["rem"].get(
                             "solvent_method", None)
-                        if solvent_method == "smd" or solvent_method == "sm12":
+                        if solvent_method == "smd":
                             if calc["input"]["smx"] is None:
                                 solvent = None
                             else:
@@ -327,9 +322,9 @@ class MolThermDataProcessor:
                             solvent = None
 
                         sp = {"method": method,
-                               "basis": basis,
-                               "solvent_method": solvent_method,
-                               "solvent": solvent}
+                              "basis": basis,
+                              "solvent_method": solvent_method,
+                              "solvent": solvent}
                         break
 
             if filename.startswith(self.reactant_pre):
@@ -342,8 +337,8 @@ class MolThermDataProcessor:
                 continue
 
         # Get ids
-        reactant_ids = [r["_id"] for r in reactants]
-        product_ids = [p["_id"] for p in products]
+        reactant_ids = [r["mol_id"] for r in reactants]
+        product_ids = [p["mol_id"] for p in products]
 
         # Get thermo data
         rct_thermo = [get_thermo(r) for r in reactants]
