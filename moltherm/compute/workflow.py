@@ -1,3 +1,4 @@
+import os
 from os import listdir
 from os.path import join, isfile, isdir
 
@@ -380,8 +381,9 @@ class MolThermWorkflow:
         return Workflow(fws)
 
     def get_modified_molecule_workflow(self, directory, reactant, index,
-                                       func_group,
-                                       new_dir=True):
+                                       func_group, qchem_input_params,
+                                       sp_params, bond_order=1,
+                                       new_dir=None):
         """
         Modify a reactant molecule, mimic that change in the product, and then
         create a workflow with the modified molecules (and any other molecules
@@ -398,9 +400,10 @@ class MolThermWorkflow:
         :param func_group: Either a string representing a functional group (from
             pymatgen.structure.core.FunctionalGroups), or a Molecule with a
             dummy atom X.
-        :param new_dir: If True (default), create a new directory for this
-            reaction to occur, with ALL of the *.mol files (not just those
-            modified) copied.
+        :param bond_order: Order of the bond between the functional group and
+            the base molecule. Default 1, for single bond.
+        :param new_dir: Name for new directory to store modified molecules.
+            Default is None.
         :return:
         """
 
@@ -424,18 +427,88 @@ class MolThermWorkflow:
                                                        reorder=False,
                                                        extend_structure=False)
         pro_mg.set_node_attributes()
+        pro_graph = pro_mg.graph.to_undirected()
+
         rct_mg = MoleculeGraph.with_local_env_strategy(rct_mol, strat,
                                                        reorder=False,
                                                        extend_structure=False)
         rct_mg.set_node_attributes()
+        rct_graph = rct_mg.graph.to_undirected()
 
         # To determine the subgraph of pro_mg that is derived from the reactant
-        matcher = iso.GraphMatcher(pro_mg.graph.to_undirected(),
-                                   rct_mg.graph.to_undirected(),
+        matcher = iso.GraphMatcher(pro_graph, rct_graph,
                                    node_match=nm)
 
-        for mapping in matcher.subgraph_isomorphisms_iter():
-            print(mapping)
+        if not matcher.subgraph_is_isomorphic():
+            raise RuntimeError("Cannot find reactant molecule within product "
+                               "molecule.")
+        else:
+            for mm in matcher.subgraph_isomorphisms_iter():
+                mapping = mm
+
+        # Reverse mapping
+        mapping = {mapping[i]: i for i in mapping.keys()}
+
+        new_path = None
+        if new_dir is not None:
+            try:
+                os.mkdir(join(self.base_dir, new_dir))
+            except FileExistsError:
+                print("New directory {} already exists in {}".format(new_dir, self.base_dir))
+
+            new_path = join(self.base_dir, new_dir)
+
+        # Check environment around molecule to be substituted
+        # neighbors = rct_graph[index].keys()
+        # for neighbor in neighbors:
+        #     sec_neighbors = [dex for dex in rct_graph[neighbor].keys() if dex != index]
+        #     for sec in sec_neighbors:
+        #         weight = rct_graph[neighbor][sec][0]["weight"]
+        #         if weight == 2:
+        #             raise ValueError("Invalid index; cannot make substitution "
+        #                              "on double bond.")
+
+        rct_mg.substitute_group(index, func_group, OpenBabelNN,
+                                bond_order=bond_order,
+                                extend_structure=False)
+        pro_mg.substitute_group(mapping[index], func_group, OpenBabelNN,
+                                bond_order=bond_order,
+                                extend_structure=False)
+
+        rct_name = rct_file.replace(".mol", "{}{}".format(func_group, index))
+        pro_name = pro_file.replace(".mol", "{}{}".format(func_group, index))
+
+        if new_path is None:
+            new_path = base_path
+
+        rct_mg.molecule.to(fmt="mol", filename=join(base_path, rct_name + ".mol"))
+        pro_mg.molecule.to(fmt="mol", filename=join(base_path, pro_name + ".mol"))
+
+        fws = []
+
+        fws.append(OptFreqSPFW(molecule=rct_mg.molecule,
+                               name="Modification: {}/{}".format(new_path, rct_name),
+                               qchem_cmd="qchem -slurm",
+                               input_file=join(new_path, rct_name + ".in"),
+                               output_file=join(new_path, rct_name + ".out"),
+                               qclog_file=join(new_path, rct_name + ".qclog"),
+                               max_cores=24,
+                               qchem_input_params=qchem_input_params,
+                               sp_params=sp_params,
+                               db_file=self.db_file))
+
+        fws.append(OptFreqSPFW(molecule=pro_mg.molecule,
+                               name="Modification: {}/{}".format(new_path, pro_name),
+                               qchem_cmd="qchem -slurm",
+                               input_file=join(new_path, pro_name + ".in"),
+                               output_file=join(new_path, pro_name + ".out"),
+                               qclog_file=join(new_path, pro_name + ".qclog"),
+                               max_cores=24,
+                               qchem_input_params=qchem_input_params,
+                               sp_params=sp_params,
+                               db_file=self.db_file))
+
+        return Workflow(fws)
 
     @staticmethod
     def add_workflow(workflow):
