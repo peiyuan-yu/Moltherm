@@ -1,6 +1,7 @@
 from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -55,7 +56,7 @@ class MolThermDataProcessor:
         except:
             self.db = None
 
-    def quick_check(self, dirs):
+    def check_appropriate_dirs(self, dirs):
         """
         Returns only those reactions which have appropriate products and
         reactants (products, reactants have same number of atoms).
@@ -74,8 +75,8 @@ class MolThermDataProcessor:
             rcts = [f for f in files if f.startswith(self.reactant_pre) and f.endswith(".mol")]
             pros = [f for f in files if f.startswith(self.product_pre) and f.endswith(".mol")]
 
-            rct_mols = [Molecule.from_file(join(path, r)) for r in rcts]
-            pro_mols = [Molecule.from_file(join(path, p)) for p in pros]
+            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
+            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
 
             total_pro_length = sum([len(p) for p in pro_mols])
             total_rct_length = sum([len(r) for r in rct_mols])
@@ -725,13 +726,27 @@ class MolThermDataProcessor:
 
         mol_data["number_atoms"] = len(mol_data["molecule"])
         mol_data["molecular_weight"] = pbmol.molwt
-        # This might not be efficient
         mol_data["tpsa"] = pbmol.calcdesc()["TPSA"]
 
         extractor = FunctionalGroupExtractor(mol_data["molecule"])
+        molgraph = extractor.molgraph
         func_grps = extractor.get_all_functional_groups()
 
         mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
+
+        double_bonds = 0
+        triple_bonds = 0
+        for bond in molgraph.to_undirected().edges():
+            if int(bond["weight"]) == 2:
+                double_bonds += 1
+            elif int(bond["weight"]) == 3:
+                triple_bonds += 1
+
+        mol_data["double_bonds"] = double_bonds
+        mol_data["triple_bonds"] = triple_bonds
+
+        species = [str(s.specie) for s in mol_data["molecule"].sites]
+        mol_data["species"] = dict(Counter(species))
 
         return mol_data
 
@@ -800,20 +815,24 @@ class MolThermAnalyzer:
     """
 
     def __init__(self, dataset, setup=True, in_features=None, dep_features=None,
-                 func_groups=None):
+                 func_groups=None, species=None):
         """
         :param dataset: A list of dicts representing all data necessary to
             represent a reaction.
         :param setup: If True (default), then clean the data (put it in a format
             that is appropriate for analysis).
-        :param in_features: List of feature/descriptor names for independent
+        :param in_features: list of feature/descriptor names for independent
             variables (number_atoms, molecular_weight, etc.).
-        :param dep_features: List of feature/descriptor names for dependent
+        :param dep_features: list of feature/descriptor names for dependent
             variables (enthalpy, entropy)
+        :param func_groups: list of str representations of functional groups
+        :param species: list of str representations of species present in the
+            dataset
         """
 
         if in_features is None:
-           self.in_features = ["number_atoms", "molecular_weight", "tpsa"]
+           self.in_features = ["number_atoms", "molecular_weight", "tpsa",
+                               "double_bonds", "triple_bonds", "species"]
         else:
             self.in_features = in_features
 
@@ -829,6 +848,13 @@ class MolThermAnalyzer:
                 self.func_groups = np.arange(len(dataset["reactants"]["functional_groups"][0]))
         else:
             self.func_groups = func_groups
+
+        if species is None:
+            if setup:
+                self.species = self._setup_species(dataset)
+            else:
+                self.species = ["C", "H", "O", "N", "S", "P", "F", "Cl", "Br",
+                                "I"]
 
         if setup:
             self.dataset = self._setup_dataset(dataset)
@@ -853,6 +879,25 @@ class MolThermAnalyzer:
                 func_groups.update(molecule["functional_groups"])
 
         return np.array(list(func_groups.keys()))
+
+    def _setup_species(self, dataset):
+        """
+        Construct a numpy array with str representations of each species that
+        appears in the dataset.
+
+        :param dataset: list of dicts representing all data necessary to
+            represent a reaction.
+        :return: np.ndarray
+        """
+
+        species = {}
+
+        for datapoint in dataset:
+            molecules = [datapoint["product"]] + datapoint["reactants"]
+            for molecule in molecules:
+                species.update(molecule["species"])
+
+        return np.array(list(species.keys()))
 
     def _setup_dataset(self, dataset):
         """
