@@ -74,8 +74,8 @@ class MolThermDataProcessor:
             rcts = [f for f in files if f.startswith(self.reactant_pre) and f.endswith(".mol")]
             pros = [f for f in files if f.startswith(self.product_pre) and f.endswith(".mol")]
 
-            rct_mols = [get_molecule(join(self.base_dir, d, r)) for r in rcts]
-            pro_mols = [get_molecule(join(self.base_dir, d, p)) for p in pros]
+            rct_mols = [Molecule.from_file(join(path, r)) for r in rcts]
+            pro_mols = [Molecule.from_file(join(path, p)) for p in pros]
 
             total_pro_length = sum([len(p) for p in pro_mols])
             total_rct_length = sum([len(r) for r in rct_mols])
