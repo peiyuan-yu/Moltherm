@@ -11,3 +11,4 @@ pandas
 scikit-learn
 statsmodels
 seaborn
+networkx

@@ -5,10 +5,17 @@ from fireworks import Workflow, LaunchPad
 
 from atomate.qchem.database import QChemCalcDb
 
+from pymatgen.core.structure import Molecule, FunctionalGroups
+from pymatgen.analysis.graphs import MoleculeGraph
+from pymatgen.analysis.local_env import OpenBabelNN
+
 from moltherm.compute.fireworks import OptFreqSPFW, SinglePointFW
 from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
+
+import networkx as nx
+import networkx.algorithms.isomorphism as iso
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -371,6 +378,64 @@ class MolThermWorkflow:
                         molecules_cleared.append(mol_id)
 
         return Workflow(fws)
+
+    def get_modified_molecule_workflow(self, directory, reactant, index,
+                                       func_group,
+                                       new_dir=True):
+        """
+        Modify a reactant molecule, mimic that change in the product, and then
+        create a workflow with the modified molecules (and any other molecules
+        not already in the database).
+
+        Note: this function will check if a substitution is "allowed"; that is,
+
+
+        :param directory: Subdirectory where the reaction files are.
+        :param reactant: File name of the reactant to be modified. It MUST be
+            a reactant, and cannot be the product molecule.
+        :param index: Index (in the reactant molecule) where the functional
+            group is to be substituted.
+        :param func_group: Either a string representing a functional group (from
+            pymatgen.structure.core.FunctionalGroups), or a Molecule with a
+            dummy atom X.
+        :param new_dir: If True (default), create a new directory for this
+            reaction to occur, with ALL of the *.mol files (not just those
+            modified) copied.
+        :return:
+        """
+
+        base_path = join(self.base_dir, directory)
+        mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f)) and
+                     f.endswith(".mol")]
+        # For this workflow, assume a single product
+        pro_file = [f for f in mol_files if f.startswith(self.product_pre)][0]
+        rct_file = [f for f in mol_files if f == reactant][0]
+
+        pro_mol = get_molecule(join(base_path, pro_file))
+        rct_mol = get_molecule(join(base_path, rct_file))
+
+        # Set up - strategy to extract bond orders
+        # Node match for isomorphism check
+        strat = OpenBabelNN()
+        nm = iso.categorical_node_match("specie", "C")
+
+        # Set up molecule graphs, including node attributes
+        pro_mg = MoleculeGraph.with_local_env_strategy(pro_mol, strat,
+                                                       reorder=False,
+                                                       extend_structure=False)
+        pro_mg.set_node_attributes()
+        rct_mg = MoleculeGraph.with_local_env_strategy(rct_mol, strat,
+                                                       reorder=False,
+                                                       extend_structure=False)
+        rct_mg.set_node_attributes()
+
+        # To determine the subgraph of pro_mg that is derived from the reactant
+        matcher = iso.GraphMatcher(pro_mg.graph.to_undirected(),
+                                   rct_mg.graph.to_undirected(),
+                                   node_match=nm)
+
+        for mapping in matcher.subgraph_isomorphisms_iter():
+            print(mapping)
 
     @staticmethod
     def add_workflow(workflow):
