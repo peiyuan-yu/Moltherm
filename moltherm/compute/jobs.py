@@ -200,31 +200,31 @@ class QCJob(Job):
                 **QCJob_kwargs))
             outdata = QCOutput(output_file + ".freq_" + str(ii)).data
             errors = outdata.get("errors")
+
+            if sp_params is not None:
+                sp_input = QCInput(
+                    molecule=opt_outdata.get(
+                        "molecule_from_optimized_geometry"),
+                    rem=sp_params.get("rem", {"method": "m06-2x",
+                                              "basis": "6-311++g(d,p)"}),
+                    opt=sp_params.get("opt", None),
+                    pcm=sp_params.get("pcm", None),
+                    solvent=sp_params.get("solvent", None),
+                    smx=sp_params.get("smx", None))
+
+            sp_input.write_file(input_file)
+            yield (QCJob(qchem_command=qchem_command,
+                         multimode=multimode,
+                         input_file=input_file,
+                         output_file=output_file,
+                         qclog_file=qclog_file,
+                         suffix=".sp",
+                         **QCJob_kwargs))
+
             if len(errors) != 0:
                 raise AssertionError('No errors should be encountered while flattening frequencies!')
             if outdata.get('frequencies')[0] > 0.0:
                 print("All frequencies positive!")
-
-                if sp_params is not None:
-                    sp_input = QCInput(
-                        molecule=opt_outdata.get(
-                            "molecule_from_optimized_geometry"),
-                        rem=sp_params.get("rem", {"method": "m06-2x",
-                                                  "basis": "6-311++g(d,p)"}),
-                        opt=sp_params.get("opt", None),
-                        pcm=sp_params.get("pcm", None),
-                        solvent=sp_params.get("solvent", None),
-                        smx=sp_params.get("smx", None))
-
-                sp_input.write_file(input_file)
-                yield (QCJob(qchem_command=qchem_command,
-                             multimode=multimode,
-                             input_file=input_file,
-                             output_file=output_file,
-                             qclog_file=qclog_file,
-                             suffix=".sp",
-                             **QCJob_kwargs))
-
                 break
             else:
                 negative_freq_vecs = outdata.get("frequency_mode_vectors")[0]
