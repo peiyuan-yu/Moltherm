@@ -1,6 +1,7 @@
 import os
 from os import listdir
 from os.path import join, isfile, isdir
+import shutil
 
 from fireworks import Workflow, LaunchPad
 
@@ -411,11 +412,8 @@ class MolThermWorkflow:
         mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f)) and
                      f.endswith(".mol")]
         # For this workflow, assume a single product
-        pro_file = [f for f in mol_files if f.startswith(self.product_pre)][0]
         rct_file = [f for f in mol_files if f == reactant][0]
-
-        pro_mol = get_molecule(join(base_path, pro_file))
-        rct_mol = get_molecule(join(base_path, rct_file))
+        pro_file = [f for f in mol_files if f.startswith(self.product_pre)][0]
 
         # Set up - strategy to extract bond orders
         # Node match for isomorphism check
@@ -423,17 +421,19 @@ class MolThermWorkflow:
         nm = iso.categorical_node_match("specie", "C")
 
         # Set up molecule graphs, including node attributes
-        pro_mg = MoleculeGraph.with_local_env_strategy(pro_mol, strat,
+        rct_mg = MoleculeGraph.with_local_env_strategy(get_molecule(join(base_path, rct_file)),
+                                                       strat,
+                                                       reorder=False,
+                                                       extend_structure=False)
+        rct_mg.set_node_attributes(s)
+        rct_graph = rct_mg.graph.to_undirected()
+
+        pro_mg = MoleculeGraph.with_local_env_strategy(get_molecule(join(base_path, pro_file)),
+                                                       strat,
                                                        reorder=False,
                                                        extend_structure=False)
         pro_mg.set_node_attributes()
         pro_graph = pro_mg.graph.to_undirected()
-
-        rct_mg = MoleculeGraph.with_local_env_strategy(rct_mol, strat,
-                                                       reorder=False,
-                                                       extend_structure=False)
-        rct_mg.set_node_attributes()
-        rct_graph = rct_mg.graph.to_undirected()
 
         # To determine the subgraph of pro_mg that is derived from the reactant
         matcher = iso.GraphMatcher(pro_graph, rct_graph,
@@ -481,8 +481,12 @@ class MolThermWorkflow:
         if new_path is None:
             new_path = base_path
 
-        rct_mg.molecule.to(fmt="mol", filename=join(base_path, rct_name + ".mol"))
-        pro_mg.molecule.to(fmt="mol", filename=join(base_path, pro_name + ".mol"))
+        rct_mg.molecule.to(fmt="mol", filename=join(new_path, rct_name + ".mol"))
+        pro_mg.molecule.to(fmt="mol", filename=join(new_path, pro_name + ".mol"))
+
+        for mol_file in mol_files:
+            if mol_file != pro_file and mol_file != rct_file:
+                shutil.copyfile(join(base_path, mol_file), join(new_path, mol_file))
 
         fws = []
 
