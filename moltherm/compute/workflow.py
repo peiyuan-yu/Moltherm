@@ -425,7 +425,7 @@ class MolThermWorkflow:
                                                        strat,
                                                        reorder=False,
                                                        extend_structure=False)
-        rct_mg.set_node_attributes(s)
+        rct_mg.set_node_attributes()
         rct_graph = rct_mg.graph.to_undirected()
 
         pro_mg = MoleculeGraph.with_local_env_strategy(get_molecule(join(base_path, pro_file)),
