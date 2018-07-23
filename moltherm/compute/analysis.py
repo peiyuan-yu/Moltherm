@@ -1075,6 +1075,9 @@ class MolThermAnalyzer:
         coefficients = lm.coef_
         intercept = lm.intercept_
 
+        coefficients = {e: coefficients[0][i] for i, e in
+                        enumerate(in_frame.columns.values.tolist())}
+
         return {"r_squared": score,
                 "coefficients": coefficients,
                 "intercept": intercept}
@@ -1094,7 +1097,7 @@ class MolThermAnalyzer:
         seaborn.set(style="ticks", color_codes=True)
 
         if in_feature in self.species:
-            col = self.species.index(in_feature)
+            col = np.where(self.species == in_feature)[0][0]
             if molecules:
                 in_data = self.dataset["molecules"]["species"][:, col]
                 dep_data = self.dataset["molecules"][dep_feature]
@@ -1102,7 +1105,7 @@ class MolThermAnalyzer:
                 in_data = self.dataset["reactions"]["species"][:, col]
                 dep_data = self.dataset["reactions"][dep_feature]
         elif in_feature in self.func_groups:
-            col = self.func_groups.index(in_feature)
+            col = np.where(self.func_groups == in_feature)[0][0]
             if molecules:
                 in_data = self.dataset["molecules"]["functional_groups"][:, col]
                 dep_data = self.dataset["molecules"][dep_feature]
