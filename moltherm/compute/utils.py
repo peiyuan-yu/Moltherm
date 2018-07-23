@@ -197,9 +197,9 @@ def associate_qchem_to_mol(base_dir, directory):
     # Note: This will catch .in and .out files for incomplete computations
     # TODO: What's the best way to filter these out?
     in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                and ".in" in f]
+                and ".in" in f and not f.startswith("atomate")]
     out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and ".out" in f]
+                 and ".out" in f and not f.startswith("atomate")]
 
     mapping = {mol: {"in": [], "out": []} for mol in mol_files}
 

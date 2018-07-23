@@ -383,7 +383,7 @@ class MolThermWorkflow:
 
     def get_modified_molecule_workflow(self, directory, reactant, index,
                                        func_group, qchem_input_params,
-                                       sp_params, bond_order=1,
+                                       sp_params, bond_order=1, do_rct=True,
                                        new_dir=None):
         """
         Modify a reactant molecule, mimic that change in the product, and then
@@ -403,6 +403,8 @@ class MolThermWorkflow:
             dummy atom X.
         :param bond_order: Order of the bond between the functional group and
             the base molecule. Default 1, for single bond.
+        :param do_rct: If True (default), calculate both modified reactant and
+            modified product; if False, only calculate for the product.
         :param new_dir: Name for new directory to store modified molecules.
             Default is None.
         :return:
@@ -458,16 +460,6 @@ class MolThermWorkflow:
 
             new_path = join(self.base_dir, new_dir)
 
-        # Check environment around molecule to be substituted
-        # neighbors = rct_graph[index].keys()
-        # for neighbor in neighbors:
-        #     sec_neighbors = [dex for dex in rct_graph[neighbor].keys() if dex != index]
-        #     for sec in sec_neighbors:
-        #         weight = rct_graph[neighbor][sec][0]["weight"]
-        #         if weight == 2:
-        #             raise ValueError("Invalid index; cannot make substitution "
-        #                              "on double bond.")
-
         rct_mg.substitute_group(index, func_group, OpenBabelNN,
                                 bond_order=bond_order,
                                 extend_structure=False)
@@ -490,17 +482,6 @@ class MolThermWorkflow:
 
         fws = []
 
-        fws.append(OptFreqSPFW(molecule=rct_mg.molecule,
-                               name="Modification: {}/{}".format(new_path, rct_name),
-                               qchem_cmd="qchem -slurm",
-                               input_file=join(new_path, rct_name + ".in"),
-                               output_file=join(new_path, rct_name + ".out"),
-                               qclog_file=join(new_path, rct_name + ".qclog"),
-                               max_cores=24,
-                               qchem_input_params=qchem_input_params,
-                               sp_params=sp_params,
-                               db_file=self.db_file))
-
         fws.append(OptFreqSPFW(molecule=pro_mg.molecule,
                                name="Modification: {}/{}".format(new_path, pro_name),
                                qchem_cmd="qchem -slurm",
@@ -511,6 +492,21 @@ class MolThermWorkflow:
                                qchem_input_params=qchem_input_params,
                                sp_params=sp_params,
                                db_file=self.db_file))
+
+        if do_rct:
+            fws.append(OptFreqSPFW(molecule=rct_mg.molecule,
+                                   name="Modification: {}/{}".format(new_path,
+                                                                     rct_name),
+                                   qchem_cmd="qchem -slurm",
+                                   input_file=join(new_path, rct_name + ".in"),
+                                   output_file=join(new_path,
+                                                    rct_name + ".out"),
+                                   qclog_file=join(new_path,
+                                                   rct_name + ".qclog"),
+                                   max_cores=24,
+                                   qchem_input_params=qchem_input_params,
+                                   sp_params=sp_params,
+                                   db_file=self.db_file))
 
         return Workflow(fws)
 
