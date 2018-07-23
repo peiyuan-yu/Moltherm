@@ -6,7 +6,6 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn
 from seaborn import stripplot, regplot
@@ -1082,13 +1081,16 @@ class MolThermAnalyzer:
                 "coefficients": coefficients,
                 "intercept": intercept}
 
-    def plot_relation(self, in_feature, dep_feature, molecules=False):
+    def plot_relation(self, in_feature, dep_feature, categorical=False,
+                      molecules=False):
         """
 
         :param in_feature: Independent feature to be evaluated. Must be a member
             of self.in_features
         :param dep_feature: Dependent feature to be evaluated. Must be a member
             of self.dep_features
+        :param categorical: If True (default False), use a strip plot rather
+            than a regular plot to display data.
         :param molecules: If true, plot on an individual molecule basis, rather
             than on a reaction basis
         :return:
@@ -1122,5 +1124,129 @@ class MolThermAnalyzer:
 
         dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
 
-        regplot(x=in_feature, y=dep_feature, data=dframe)
+        if categorical:
+            stripplot(x=in_feature, y=dep_feature, data=dframe)
+        else:
+            regplot(x=in_feature, y=dep_feature, data=dframe)
         plt.show()
+
+    def analyze_heat_capacity(self, reaction_index=None, reaction_dir=None,
+                              max_conc=1.0, solvent_capacity=0.0,
+                              plot_dest=None):
+        """
+        Determine the effective heat capacity of a thermochemical reaction
+        system as a function of temperature.
+
+        :param reaction_index: Index in the dataset for the reaction in
+            question. Default None
+        :param reaction_dir: Name of reaction directory. Default None
+        :param max_conc: Maximum concentration of the reactants in the solution.
+            Default is 1.0 mol/L
+        :param solvent_capacity: Heat capacity of the solvent, which will be
+            added to the effective heat capacity of the reaction. Default is
+            0.0, which means that there is no solvent
+        :param plot_dest: File path pointing to destination for plot. Default is
+            None, meaning no plot will be made
+        :return: tuple (temp_at_max, maximum) representing peak of heat capacity
+            curve
+        """
+
+        plt.rc('font', size=14)
+        R = 8.31446
+
+        if reaction_index is not None:
+            index = reaction_index
+        elif reaction_dir is not None:
+            index = np.where(self.dataset["reactions"]["dirs"] == reaction_dir)[0][0]
+        else:
+            raise ValueError("User must supply either a reaction index or "
+                             "directory name.")
+
+        delta_h = self.dataset["reactions"]["enthalpy"][index]
+        delta_s = self.dataset["reactoins"]["entropy"][index]
+
+        fig, ax = plt.subplots()
+        ax.set(xlabel='T (°C)', ylabel='C (J/g·K)', title='Specific heat')
+
+        conc_i = 0.99 * max_conc
+        conc_f = 0.01 * max_conc
+
+        K_eq_i = conc_i / (max_conc - conc_i) ** 2
+        K_eq_f = conc_f / (max_conc - conc_f) ** 2
+
+        temp_i = delta_s / (delta_s - R * np.log(K_eq_i))
+        temp_f = delta_s / (delta_s - R * np.log(K_eq_f))
+        T = np.linspace(temp_i, temp_f, 1000)
+        T_in_deg_C = T - 273.15
+
+        K_eq = np.exp(delta_s / R - delta_h / (R * T))
+        Cp = delta_h ** 2 / (R * (T ** 2) * K_eq) * (((2 * max_conc + 1 / K_eq) / (2 * np.sqrt((2 * max_conc + 1 / K_eq) ** 2 - 4 * max_conc ** 2))) - 0.5) + solvent_capacity
+
+        max_cp = np.argmax(Cp)
+        maximum = max(Cp) / 1000
+        temp_at_max = T_in_deg_C[max_cp]
+        print('The highest specific heat is ' + str(maximum) + ' J/g·K at ' + str(temp_at_max) + ' C°.')
+
+        if plot_dest is not None:
+            ax.plot(T_in_deg_C, Cp / 1000)
+            fig.savefig(plot_dest, dpi=300)
+
+        return temp_at_max, maximum
+
+    def analyze_energy_density(self, reaction_index=None, reaction_dir=None,
+                               max_conc=1.0, solvent_capacity=0.0,
+                               plot_dest=None):
+        """
+        Determine the effective energy density of a thermochemical reaction
+        system as a function of temperature.
+
+        :param reaction_index: Index in the dataset for the reaction in
+            question. Default None
+        :param reaction_dir: Name of reaction directory. Default None
+        :param max_conc: Maximum concentration of the reactants in the solution.
+            Default is 1.0 mol/L
+        :param solvent_capacity: Heat capacity of the solvent, which will be
+            added to the effective heat capacity of the reaction. Default is
+            0.0, which means that there is no solvent.
+        :param plot_dest: File path pointing to destination for plot. Default is
+            None, meaning no plot will be made
+        :return: Maximum energy density over the range of interest
+        """
+
+        plt.rc('font', size=14)
+        R = 8.31446
+
+        if reaction_index is not None:
+            index = reaction_index
+        elif reaction_dir is not None:
+            index = np.where(self.dataset["reactions"]["dirs"] == reaction_dir)[0][0]
+        else:
+            raise ValueError("User must supply either a reaction index or "
+                             "directory name.")
+
+        delta_h = self.dataset["reactions"]["enthalpy"][index]
+        delta_s = self.dataset["reactoins"]["entropy"][index]
+
+        fig, ax = plt.subplots()
+        ax.set(xlabel='T (°C)', ylabel='Energy density (MJ/kg)',
+                 title='Energy density')
+
+        conc_i = 0.99 * max_conc
+        conc_f = 0.01 * max_conc
+
+        K_eq_i = conc_i / (max_conc - conc_i) ** 2
+        K_eq_f = conc_f / (max_conc - conc_f) ** 2
+
+        temp_i = delta_s / (delta_s - R * np.log(K_eq_i))
+        temp_f = delta_s / (delta_s - R * np.log(K_eq_f))
+        T = np.linspace(temp_i, temp_f, 1000)
+        T_in_deg_C = T - 273.15
+
+        K_eq = np.exp(delta_s / R - delta_h / (R * T))
+        H = delta_h * (((2 * max_conc + 1 / K_eq) - np.sqrt((2 * max_conc + 1 / K_eq) ** 2 - 4 * max_conc ** 2)) / 2 - conc_i) + solvent_capacity * (T - temp_i)
+
+        if plot_dest is not None:
+            ax.plot(T_in_deg_C, H / 1000000)
+            fig.savefig(plot_dest, dpi=300)
+
+        return max(H)
