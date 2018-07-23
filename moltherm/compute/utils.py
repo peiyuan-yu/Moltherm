@@ -1,4 +1,4 @@
-from os import listdir, remove
+from os import listdir, remove, rename
 from os.path import join, isfile, isdir
 import operator
 import shutil
@@ -283,3 +283,44 @@ def mass_copy(base_dir, from_dir, files, directories):
                 filename = file
 
             shutil.copy(join(base_dir, from_dir, file), join(base_dir, directory, filename))
+
+def rename_products(base_dir, product_prefix, exclude=None):
+    """
+    Add additional information to files associated with products.
+
+    This function exists because with the currently used id scheme for
+    functional-group substituted molecules, there could be ambiguity between
+    products with similar substitutions.
+
+    :param base_dir: str representing a path to a the base directory (all other
+        directories should be subdirectories of this base directory)
+    :param product_prefix: str which all product files should begin with
+    :param exclude: list of subdirectories which should not be changed. Default
+        is None.
+    :return:
+    """
+
+    dirs = [d for d in listdir(base_dir) if isdir(join(base_dir, d)) and not
+            d.startswith("block")]
+    if exclude is not None:
+        dirs = [d for d in dirs if d not in exclude]
+
+    for d in dirs:
+        path = join(base_dir, d)
+
+        product_files = [f for f in listdir(path) if isfile(join(path, f)) and
+                         f.startswith(product_prefix)]
+
+        if d.endswith("furan"):
+            id_suffix = "x103221"
+        elif d.endswith("maleimide"):
+            id_suffix = "x106910"
+        elif d.endswith("acrylonitrile"):
+            id_suffix = "x605310"
+        else:
+            id_suffix = ""
+
+        for file in product_files:
+            base_id = extract_id(file)
+            new_name = file.replace(base_id, base_id+id_suffix)
+            rename(join(path, file), join(path, new_name))
