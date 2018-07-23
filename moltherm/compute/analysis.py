@@ -954,6 +954,7 @@ class MolThermAnalyzer:
                 if marker == "enthalpy":
                     new_dset["molecules"][marker][i] = mol["enthalpy"] + mol["energy"]
                 elif marker == "t_star":
+                    # Turning temperature is not defined for individual molecules
                     continue
                 elif marker == "species":
                     for j, spe in enumerate(self.species):
@@ -1017,41 +1018,6 @@ class MolThermAnalyzer:
 
         return new_dset
 
-    def analyze_functional_groups(self, dep_feature, molecules=False):
-        """
-        Perform a regression analysis to determine the effect of various
-        functional groups on a particular dependent feature (for instance,
-        enthalpy)
-
-        :param dep_feature: str representing a dependent variable to be
-            analyzed
-        :param molecules: If True, perform analysis on an individual molecule
-            basis, rather than on a reaction basis
-        :return: dict of statistical values
-        """
-
-        if molecules:
-            in_frame = pd.DataFrame(self.dataset["molecules"]["functional_groups"],
-                                    columns=self.func_groups)
-            dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
-                                     columns=[dep_feature])
-        else:
-            in_frame = pd.DataFrame(self.dataset["reactions"]["functional_groups"],
-                                    columns=self.func_groups)
-            dep_frame = pd.DataFrame(self.dataset["reactions"][dep_feature],
-                                     columns=[dep_feature])
-
-        lm = LinearRegression()
-        lm.fit(in_frame, dep_frame)
-
-        score = lm.score(in_frame, dep_frame)
-        coefficients = lm.coef_
-        intercept = lm.intercept_
-
-        return {"r_squared": score,
-                "coefficients": coefficients,
-                "intercept": intercept}
-
     def analyze_features(self, in_features, dep_feature, molecules=False):
         """
         Perform a regression analysis to determine the effect of various
@@ -1069,16 +1035,37 @@ class MolThermAnalyzer:
 
         if molecules:
             in_dataset = {feat: self.dataset["molecules"][feat] for feat in
-                          in_features}
+                          in_features if not (feat == "species" or
+                                              feat == "functional_groups")}
+            if "species" in in_features:
+                species = {s: self.dataset["molecules"]["species"][:, i]
+                           for i, s in enumerate(self.species)}
+                in_dataset.update(species)
+            if "functional_groups" in in_features:
+                func_grps = {f: self.dataset["molecules"]["functional_groups"][:, i]
+                           for i, f in enumerate(self.func_groups)}
+                in_dataset.update(func_grps)
+
             in_frame = pd.DataFrame(data=in_dataset)
             dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
                                      columns=[dep_feature])
 
         else:
             in_dataset = {feat: self.dataset["reactions"][feat] for feat in
-                          in_features}
+                          in_features if not (feat == "species" or
+                                              feat == "functional_groups")}
+
+            if "species" in in_features:
+                species = {s: self.dataset["reactions"]["species"][:, i]
+                           for i, s in enumerate(self.species)}
+                in_dataset.update(species)
+            if "functional_groups" in in_features:
+                func_grps = {f: self.dataset["reactions"]["functional_groups"][:, i]
+                           for i, f in enumerate(self.func_groups)}
+                in_dataset.update(func_grps)
+
             in_frame = pd.DataFrame(data=in_dataset)
-            dep_frame = pd.DataFrame(self.dataset["molecules"][dep_feature],
+            dep_frame = pd.DataFrame(self.dataset["reactions"][dep_feature],
                                      columns=[dep_feature])
 
         lm = LinearRegression()
@@ -1091,36 +1078,6 @@ class MolThermAnalyzer:
         return {"r_squared": score,
                 "coefficients": coefficients,
                 "intercept": intercept}
-
-    def plot_relation_functional_group(self, group, dep_feature, molecules=False):
-        """
-        Plot some dependent feature (enthalpy, entropy, etc.) versus counts of
-        a single functional group.
-
-        :param group: Functional group to be plotted. Must be a member of
-            self.func_groups
-        :param dep_feature: Dependent feature to be evaluated. Must be a member
-            of self.dep_features
-        :param molecules: If true, plot on an individual molecule basis, rather
-            than on a reaction basis
-        :return:
-        """
-
-        seaborn.set(style="ticks", color_codes=True)
-
-        col = list(self.func_groups).index(group)
-
-        if molecules:
-            group_data = self.dataset["molecules"]["functional_groups"][:, col]
-            dep_data = self.dataset["molecules"][dep_feature]
-        else:
-            group_data = self.dataset["reactions"]["functional_groups"][:, col]
-            dep_data = self.dataset["reactions"][dep_feature]
-
-        dframe = pd.DataFrame(data={group: group_data, dep_feature: dep_data})
-
-        stripplot(x=group, y=dep_feature, data=dframe)
-        plt.show()
 
     def plot_relation(self, in_feature, dep_feature, molecules=False):
         """
@@ -1136,12 +1093,29 @@ class MolThermAnalyzer:
 
         seaborn.set(style="ticks", color_codes=True)
 
-        if molecules:
-            in_data = self.dataset["molecules"][in_feature]
-            dep_data = self.dataset["molecules"][dep_feature]
+        if in_feature in self.species:
+            col = self.species.index(in_feature)
+            if molecules:
+                in_data = self.dataset["molecules"]["species"][:, col]
+                dep_data = self.dataset["molecules"][dep_feature]
+            else:
+                in_data = self.dataset["reactions"]["species"][:, col]
+                dep_data = self.dataset["reactions"][dep_feature]
+        elif in_feature in self.func_groups:
+            col = self.func_groups.index(in_feature)
+            if molecules:
+                in_data = self.dataset["molecules"]["functional_groups"][:, col]
+                dep_data = self.dataset["molecules"][dep_feature]
+            else:
+                in_data = self.dataset["reactions"]["functional_groups"][:, col]
+                dep_data = self.dataset["reactions"][dep_feature]
         else:
-            in_data = self.dataset["reactions"][in_feature]
-            dep_data = self.dataset["reactions"][dep_feature]
+            if molecules:
+                in_data = self.dataset["molecules"][in_feature]
+                dep_data = self.dataset["molecules"][dep_feature]
+            else:
+                in_data = self.dataset["reactions"][in_feature]
+                dep_data = self.dataset["reactions"][dep_feature]
 
         dframe = pd.DataFrame(data={in_feature: in_data, dep_feature: dep_data})
 
