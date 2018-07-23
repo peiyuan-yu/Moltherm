@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn
 from seaborn import stripplot, regplot
 
+import networkx as nx
 
 from pymatgen.core.structure import Molecule
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
@@ -734,13 +735,18 @@ class MolThermDataProcessor:
 
         mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
 
+        weights = nx.get_edge_attributes(molgraph.graph, "weight")
+        bonds_checked = set()
         double_bonds = 0
         triple_bonds = 0
-        for bond in molgraph.to_undirected().edges():
-            if int(bond["weight"]) == 2:
+        for bond, weight in weights.items():
+            # Remove index from multidigraph
+            bond = (bond[0], bond[1])
+            if int(weight) == 2 and bond not in bonds_checked:
                 double_bonds += 1
-            elif int(bond["weight"]) == 3:
+            elif int(weight) == 3 and bond not in bonds_checked:
                 triple_bonds += 1
+            bonds_checked.add(bond)
 
         mol_data["double_bonds"] = double_bonds
         mol_data["triple_bonds"] = triple_bonds
@@ -832,7 +838,8 @@ class MolThermAnalyzer:
 
         if in_features is None:
            self.in_features = ["number_atoms", "molecular_weight", "tpsa",
-                               "double_bonds", "triple_bonds", "species"]
+                               "double_bonds", "triple_bonds", "species",
+                               "functional_groups"]
         else:
             self.in_features = in_features
 
@@ -840,6 +847,13 @@ class MolThermAnalyzer:
             self.dep_features = ["enthalpy", "entropy", "t_star"]
         else:
             self.dep_features = dep_features
+
+        if species is None:
+            if setup:
+                self.species = self._setup_species(dataset)
+            else:
+                self.species = ["C", "H", "O", "N", "S", "P", "F", "Cl", "Br",
+                                "I"]
 
         if func_groups is None:
             if setup:
@@ -849,19 +863,13 @@ class MolThermAnalyzer:
         else:
             self.func_groups = func_groups
 
-        if species is None:
-            if setup:
-                self.species = self._setup_species(dataset)
-            else:
-                self.species = ["C", "H", "O", "N", "S", "P", "F", "Cl", "Br",
-                                "I"]
-
         if setup:
             self.dataset = self._setup_dataset(dataset)
         else:
             self.dataset = dataset
 
-    def _setup_func_groups(self, dataset):
+    @staticmethod
+    def _setup_func_groups(dataset):
         """
         Construct a numpy array with labels corresponding to each functional
         group that appears in the dataset.
@@ -880,7 +888,8 @@ class MolThermAnalyzer:
 
         return np.array(list(func_groups.keys()))
 
-    def _setup_species(self, dataset):
+    @staticmethod
+    def _setup_species(dataset):
         """
         Construct a numpy array with str representations of each species that
         appears in the dataset.
@@ -931,17 +940,43 @@ class MolThermAnalyzer:
         # Vectorize molecule and reaction features, including thermodynamic
         # properties, surface area, etc.
         for marker in (self.in_features + self.dep_features):
-            new_dset["molecules"][marker] = np.zeros(num_molecules)
+            # Fill dataset for molecules
+            if marker == "species":
+                new_dset["molecules"][marker] = np.zeros((num_molecules,
+                                                         len(self.species)))
+            elif marker == "functional_groups":
+                new_dset["molecules"][marker] = np.zeros((num_molecules,
+                                                          len(self.func_groups)))
+            else:
+                new_dset["molecules"][marker] = np.zeros(num_molecules)
 
             for i, mol in enumerate(all_molecules):
                 if marker == "enthalpy":
                     new_dset["molecules"][marker][i] = mol["enthalpy"] + mol["energy"]
                 elif marker == "t_star":
                     continue
+                elif marker == "species":
+                    for j, spe in enumerate(self.species):
+                        if spe in mol["species"].keys():
+                            new_dset["molecules"]["species"][i, j] = mol["species"][spe]
+                elif marker == "functional_groups":
+                    for j, grp in enumerate(self.func_groups):
+                        if grp in mol["functional_groups"].keys():
+                            new_dset["molecules"]["functional_groups"][i, j] = \
+                            mol["functional_groups"][grp]["count"]
                 else:
                     new_dset["molecules"][marker][i] = mol[marker]
 
-            new_dset["reactions"][marker] = np.zeros(num_reactions)
+            # Now fill dataset for reactions
+
+            if marker == "species":
+                new_dset["reactions"][marker] = np.zeros((num_reactions,
+                                                          len(self.species)))
+            elif marker == "functional_groups":
+                new_dset["reactions"][marker] = np.zeros((num_reactions,
+                                                          len(self.func_groups)))
+            else:
+                new_dset["reactions"][marker] = np.zeros(num_reactions)
 
             for i, react in enumerate(dataset):
                 thermo = react["thermo"]
@@ -949,34 +984,36 @@ class MolThermAnalyzer:
                 rcts = react["reactants"]
                 if marker in thermo.keys():
                     new_dset["reactions"][marker][i] = thermo[marker]
+                elif marker == "species":
+                    pro_species = np.zeros(len(self.species))
+                    rct_species = np.zeros(len(self.species))
+
+                    for j, spe in enumerate(self.func_groups):
+                        if spe in react["product"]["species"].keys():
+                            pro_species[j] = react["product"]["species"][spe]
+
+                        for mol in react["reactants"]:
+                            if spe in mol["species"].keys():
+                                rct_species[j] += mol["species"][spe]
+
+                    new_dset["reactions"]["species"][i] = pro_species - rct_species
+                elif marker == "functional_groups":
+                    pro_grps = np.zeros(len(self.func_groups))
+                    rct_grps = np.zeros(len(self.func_groups))
+
+                    for j, grp in enumerate(self.func_groups):
+                        if grp in react["product"]["functional_groups"].keys():
+                            pro_grps[j] = react["product"]["functional_groups"][grp]["count"]
+
+                        for mol in react["reactants"]:
+                            if grp in mol["functional_groups"].keys():
+                                rct_grps[j] += mol["functional_groups"][grp]["count"]
+
+                    new_dset["reactions"]["functional_groups"][i] = pro_grps - rct_grps
                 else:
                     pro_data = pro[marker]
                     rct_data = sum(rct[marker] for rct in rcts)
                     new_dset["reactions"][marker][i] = pro_data - rct_data
-
-        new_dset["molecules"]["functional_groups"] = np.zeros((num_molecules,
-                                                               len(self.func_groups)))
-        # Vectorize functional groups
-        for i, mol in enumerate(all_molecules):
-            for j, grp in enumerate(self.func_groups):
-                if grp in mol["functional_groups"].keys():
-                    new_dset["molecules"]["functional_groups"][i, j] = mol["functional_groups"][grp]["count"]
-
-        new_dset["reactions"]["functional_groups"] = np.zeros((num_reactions,
-                                                               len(self.func_groups)))
-        for i, react in enumerate(dataset):
-            pro_grps = np.zeros(len(self.func_groups))
-            rct_grps = np.zeros(len(self.func_groups))
-
-            for j, grp in enumerate(self.func_groups):
-                if grp in react["product"]["functional_groups"].keys():
-                    pro_grps[j] = react["product"]["functional_groups"][grp]["count"]
-
-                for mol in react["reactants"]:
-                    if grp in mol["functional_groups"].keys():
-                        rct_grps[j] += mol["functional_groups"][grp]["count"]
-
-            new_dset["reactions"]["functional_groups"][i] = pro_grps - rct_grps
 
         return new_dset
 
