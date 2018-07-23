@@ -2,6 +2,7 @@ from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
 from collections import Counter
+import re
 
 import numpy as np
 import pandas as pd
@@ -811,6 +812,58 @@ class MolThermDataProcessor:
                 reaction_data["thermo"]["t_star"] = 0
 
         return reaction_data
+
+    @staticmethod
+    def parse_epi_suite_data(file):
+        """
+        Parse predicted data from the US EPA's EPI Suite batch mode.
+
+        Currently, this function only extracts the predicted boiling point,
+        melting point, and solubility.
+
+        :param file: Path to EPI Suite output file.
+        :return: list of dicts with predicted molecular data
+        """
+
+        parsed_results = []
+
+        with open(file, 'r') as file:
+            entries = file.read().split("\n\n========================\n\n")[1:-1]
+
+            for entry in entries:
+                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+)",
+                                   entry)
+                if smiles:
+                    smiles = smiles.group(1)
+                else:
+                    smiles = None
+                name = re.search(r"CHEM\s+:\s+([A-Za-z0-9_]+\.mol)", entry)
+                if name:
+                    name = name.group(1)
+                else:
+                    name = None
+                bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
+                if bp:
+                    bp = bp.group(1)
+                else:
+                    bp = None
+                mp = re.search(r"\s+Melting Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Mean or Weighted MP\)", entry)
+                if mp:
+                    mp = mp.group(1)
+                else:
+                    mp = None
+                solubility = re.search(r"\s+Water Solubility at 25 deg C \(mg/L\):\s+([e0-9\+\-\.]+)", entry)
+                if solubility:
+                    solubility = solubility.group(1)
+                else:
+                    solubility = None
+
+                parsed_results.append({"name": name,
+                                       "smiles": smiles,
+                                       "bp": bp,
+                                       "mp": mp,
+                                       "solubility": solubility})
+        return parsed_results
 
 
 class MolThermAnalyzer:
