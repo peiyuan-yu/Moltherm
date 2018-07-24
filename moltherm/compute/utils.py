@@ -284,6 +284,7 @@ def mass_copy(base_dir, from_dir, files, directories):
 
             shutil.copy(join(base_dir, from_dir, file), join(base_dir, directory, filename))
 
+
 def rename_products(base_dir, product_prefix, exclude=None):
     """
     Add additional information to files associated with products.
@@ -321,6 +322,6 @@ def rename_products(base_dir, product_prefix, exclude=None):
             id_suffix = ""
 
         for file in product_files:
-            base_id = extract_id(file)
-            new_name = file.replace(base_id, base_id+id_suffix)
+            before_suffix = file.split(".")[0]
+            new_name = file.replace(before_suffix, before_suffix+id_suffix)
             rename(join(path, file), join(path, new_name))
