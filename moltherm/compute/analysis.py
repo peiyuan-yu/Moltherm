@@ -701,7 +701,7 @@ class MolThermDataProcessor:
         :return: dict of relevant molecule data.
         """
 
-        mol_data = {"id": mol_id}
+        mol_data = {"mol_id": mol_id}
 
         if self.db is None:
             raise RuntimeError("Cannot query database; connection is invalid."
@@ -790,7 +790,7 @@ class MolThermDataProcessor:
 
         component_data = sorted(component_data, key=lambda x: len(x["molecule"]))
 
-        reaction_data["directory"] = directory
+        reaction_data["dir_name"] = directory
         reaction_data["mol_ids"] = mol_ids
         reaction_data["product"] = component_data[-1]
         reaction_data["reactants"] = component_data[:-1]
@@ -837,28 +837,31 @@ class MolThermDataProcessor:
                     smiles = smiles.group(1)
                 else:
                     smiles = None
-                name = re.search(r"CHEM\s+:\s+([A-Za-z0-9_]+\.mol)", entry)
+                name = re.search(r"CHEM\s+:\s+(/Users/ewcspottesmith/data/[/_a-z0-9\n\s]+)\s+:\s+([A-Za-z0-9]+)", entry)
                 if name:
-                    name = name.group(1)
+                    dir_name = name.group(1)
+                    mol_id = name.group(2)
                 else:
-                    name = None
+                    dir_name = None
+                    mol_id = None
                 bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
                 if bp:
-                    bp = bp.group(1)
+                    bp = float(bp.group(1))
                 else:
                     bp = None
                 mp = re.search(r"\s+Melting Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Mean or Weighted MP\)", entry)
                 if mp:
-                    mp = mp.group(1)
+                    mp = float(mp.group(1))
                 else:
                     mp = None
                 solubility = re.search(r"\s+Water Solubility at 25 deg C \(mg/L\):\s+([e0-9\+\-\.]+)", entry)
                 if solubility:
-                    solubility = solubility.group(1)
+                    solubility = float(solubility.group(1))
                 else:
                     solubility = None
 
-                parsed_results.append({"name": name,
+                parsed_results.append({"mol_id": mol_id,
+                                       "dir_name": dir_name.replace("\n         ", ""),
                                        "smiles": smiles,
                                        "bp": bp,
                                        "mp": mp,
@@ -983,9 +986,9 @@ class MolThermAnalyzer:
                 if rct not in all_molecules:
                     all_molecules.append(rct)
 
-        new_dset["molecules"]["ids"] = np.array([m["id"] for m in all_molecules])
+        new_dset["molecules"]["ids"] = np.array([m["mol_id"] for m in all_molecules])
         new_dset["reactions"]["ids"] = np.array([p["mol_ids"] for p in dataset])
-        new_dset["reactions"]["dirs"] = np.array([p["directory"] for p in dataset])
+        new_dset["reactions"]["dirs"] = np.array([p["dir_name"] for p in dataset])
 
         num_molecules = len(all_molecules)
 
@@ -1216,7 +1219,7 @@ class MolThermAnalyzer:
                              "directory name.")
 
         delta_h = self.dataset["reactions"]["enthalpy"][index]
-        delta_s = self.dataset["reactoins"]["entropy"][index]
+        delta_s = self.dataset["reactions"]["entropy"][index]
 
         fig, ax = plt.subplots()
         ax.set(xlabel='T (°C)', ylabel='C (J/g·K)', title='Specific heat')
@@ -1278,7 +1281,7 @@ class MolThermAnalyzer:
                              "directory name.")
 
         delta_h = self.dataset["reactions"]["enthalpy"][index]
-        delta_s = self.dataset["reactoins"]["entropy"][index]
+        delta_s = self.dataset["reactions"]["entropy"][index]
 
         fig, ax = plt.subplots()
         ax.set(xlabel='T (°C)', ylabel='Energy density (MJ/kg)',
