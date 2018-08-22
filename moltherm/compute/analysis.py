@@ -837,10 +837,10 @@ class MolThermDataProcessor:
                     smiles = smiles.group(1)
                 else:
                     smiles = None
-                name = re.search(r"CHEM\s+:\s+(/Users/ewcspottesmith/data/[/_a-z0-9\n\s]+)\s+:\s+([A-Za-z0-9]+)", entry)
+                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+\n*\s*[A-Za-z0-9]+)", entry)
                 if name:
                     dir_name = name.group(1)
-                    mol_id = name.group(2)
+                    mol_id = name.group(2).replace("\n         ", "").replace("\nMOL", "")
                 else:
                     dir_name = None
                     mol_id = None

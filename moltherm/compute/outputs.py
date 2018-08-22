@@ -499,7 +499,6 @@ class QCOutput(MSONable):
         else:
             self.data['final_energy_sp'] = float(temp_dict.get('final_energy')[-1][0])
 
-
     def _read_pcm_information(self):
         """
         Parses information from PCM solvent calculations.

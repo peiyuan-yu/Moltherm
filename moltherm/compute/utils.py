@@ -140,13 +140,14 @@ def find_common_solvents(base_dir):
     return sorted(solvent_occurrence.items(), key=operator.itemgetter(1))
 
 
-def get_reactions_common_solvent(base_dir, outdir, solvent):
+def get_reactions_common_solvent(base_dir, solvents, outdir=None):
     """
     Identify all reactions from a set of reactions which share a solvent.
 
     :param base_dir: Directory to begin search in.
-    :param outdir: Directory to put all reactions with the common solvent
-    :param solvent: Solvent of interest
+    :param solvents: list of strings representing solvents
+    :param outdir: Directory to put all reactions with the common solvent. If
+        None, do not copy relevant files.
     :return:
     """
 
@@ -162,19 +163,33 @@ def get_reactions_common_solvent(base_dir, outdir, solvent):
         with open(join(base_dir, rct_dir, "meta.xml"), "r") as file:
             parsed = BeautifulSoup(file.read(), "lxml-xml")
 
-            solvents = parsed.find("solvents").text.split(",")
-            solvents = [s.lower() for s in solvents]
+            this_solv = parsed.find("solvents").text.split(",")
+            this_solv = [s.lower() for s in this_solv]
 
-            if solvent.lower() in solvents:
-                common_solvent.append(rct_dir)
+            for solvent in solvents:
 
+                if solvent.lower() in this_solv and rct_dir not in [d['dir'] for d in common_solvent]:
+                    rct_names = [d.text for d in parsed.find_all('rctname')]
+                    rct_ids = [d.text for d in parsed.find_all('rctid')]
+                    pro_name = [d.text for d in parsed.find_all('proname')]
+                    pro_ids = [d.text for d in parsed.find_all('proid')]
 
-    num_copied = 0
-    for rct_dir in common_solvent:
-        shutil.copytree(join(base_dir, rct_dir), join(outdir, rct_dir))
-        num_copied += 1
+                    common_solvent.append({'dir': rct_dir,
+                                           'rct_names': rct_names,
+                                           'rct_ids': rct_ids,
+                                           'pro_name': pro_name,
+                                           'pro_ids': pro_ids})
 
-    print("{} reactions with solvent {}".format(str(num_copied), solvent))
+    if outdir is not None:
+        num_copied = 0
+        for rct_dir in common_solvent:
+            shutil.copytree(join(base_dir, rct_dir), join(outdir, rct_dir))
+            num_copied += 1
+
+        print("{} reactions with solvents {}".format(str(num_copied), solvents))
+
+    else:
+        return common_solvent
 
 
 def associate_qchem_to_mol(base_dir, directory):
