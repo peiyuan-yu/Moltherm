@@ -12,10 +12,6 @@ from pymatgen.io.babel import BabelMolAdaptor
 from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 
-"""
-TODO list:
-    - Add docstrings to util files
-"""
 
 def get_molecule(molfile):
     """

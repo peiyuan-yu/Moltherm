@@ -210,7 +210,7 @@ class MolThermWorkflow:
 
         # Only set up a workflow if it is worthwhile (the reaction actually
         # proceeds as written, and all atoms add up)
-        appropriate_dirs = self.quick_check(dirs)
+        appropriate_dirs = self.check_appropriate_dirs(dirs)
 
         if self.db is not None:
             all_fws = self.db.collection.find()
