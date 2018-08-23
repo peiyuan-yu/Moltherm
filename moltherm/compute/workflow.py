@@ -10,11 +10,13 @@ from atomate.qchem.database import QChemCalcDb
 from pymatgen.core.structure import Molecule, FunctionalGroups
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
+from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
 
 from moltherm.compute.fireworks import OptFreqSPFW, SinglePointFW
 from moltherm.compute.inputs import QCInput
 from moltherm.compute.outputs import QCOutput
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
+from moltherm.compute.jobs import perturb_coordinates
 
 import networkx as nx
 import networkx.algorithms.isomorphism as iso
@@ -509,6 +511,67 @@ class MolThermWorkflow:
                                    db_file=self.db_file))
 
         return Workflow(fws)
+
+    def get_redo_workflow(self, qchem_input_params, sp_params):
+        """
+        Identifies molecules which need to be re-run (for now, based only on
+        presence of negative frequencies) and then performs a frequency
+        flattening workflow on those molecules.
+
+        This is a hack. In the future, a frequency flattening workflow should be
+        used from the beginning.
+
+        :return: Workflow
+        """
+
+        if self.db is None:
+            raise RuntimeError("Cannot access database to determine what"
+                               "molecules need to be re-calculated.")
+
+        collection = self.db.db["molecules"]
+
+        for mol in collection.find({}):
+            frequencies = mol["output"]["frequencies"]
+
+            if any([True if x < 0 else False for x in frequencies]):
+                min_molecule_perturb_scale = 0.1
+                max_molecule_perturb_scale = 0.3
+                scale_grid = 10
+                perturb_scale_grid = (max_molecule_perturb_scale -
+                                      min_molecule_perturb_scale) / scale_grid
+                msc = MoleculeStructureComparator()
+
+                for calc in mol["calcs_reversed"]:
+                    if calc["task"]["type"] in ["freq", "frequency"]:
+                        negative_freq_vecs = calc.get("frequency_mode_vectors")[0]
+                        old_coords = calc.get("initial_geometry")
+                        old_molecule = calc.get("initial_molecule")
+
+                structure_successfully_perturbed = False
+
+                for molecule_perturb_scale in np.arange(
+                        max_molecule_perturb_scale, min_molecule_perturb_scale,
+                        -perturb_scale_grid):
+                    new_coords = perturb_coordinates(
+                        old_coords=old_coords,
+                        negative_freq_vecs=negative_freq_vecs,
+                        molecule_perturb_scale=molecule_perturb_scale,
+                        reversed_direction=False)
+                    new_molecule = Molecule(
+                        species=old_molecule.species,
+                        coords=new_coords,
+                        charge=old_molecule.charge,
+                        spin_multiplicity=old_molecule.spin_multiplicity)
+                    if msc.are_equal(old_molecule, new_molecule):
+                        structure_successfully_perturbed = True
+                        break
+                if not structure_successfully_perturbed:
+                    raise Exception(
+                        "Unable to perturb coordinates to remove negative frequency without changing the bonding structure"
+                    )
+
+
+
 
     @staticmethod
     def add_workflow(workflow):

@@ -205,7 +205,7 @@ class QCJob(Job):
                 sp_input = QCInput(
                     molecule=opt_outdata.get(
                         "molecule_from_optimized_geometry"),
-                    rem=sp_params.get("rem", {"method": "m06-2x",
+                    rem=sp_params.get("rem", {"method": "wb97x-d",
                                               "basis": "6-311++g(d,p)"}),
                     opt=sp_params.get("opt", None),
                     pcm=sp_params.get("pcm", None),
