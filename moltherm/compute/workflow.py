@@ -528,6 +528,8 @@ class MolThermWorkflow:
             raise RuntimeError("Cannot access database to determine what"
                                "molecules need to be re-calculated.")
 
+        fws = []
+
         collection = self.db.db["molecules"]
 
         for mol in collection.find({}):
@@ -570,8 +572,31 @@ class MolThermWorkflow:
                         "Unable to perturb coordinates to remove negative frequency without changing the bonding structure"
                     )
 
+                mol_id = mol["mol_id"]
+                dir_name = mol["dir_name"].split("/")[-1]
 
+                fws.append(OptFreqSPFW(molecule=new_molecule,
+                                       name="Flattening: {}/{}".format(mol_id,
+                                                                       dir_name),
+                                       qchem_cmd="qchem -slurm",
+                                       input_file=join(self.base_dir,
+                                                       dir_name,
+                                                       mol_id + ".qin"),
+                                       output_file=join(self.base_dir,
+                                                        dir_name,
+                                                        mol_id + ".qout"),
+                                       qclog_file=join(self.base_dir,
+                                                        dir_name,
+                                                        mol_id + ".qclog"),
+                                       max_cores=24,
+                                       qchem_input_params=qchem_input_params,
+                                       sp_params=sp_params,
+                                       db_file=self.db_file))
 
+        if len(fws) == 0:
+            return None
+        else:
+            return Workflow(fws)
 
     @staticmethod
     def add_workflow(workflow):
