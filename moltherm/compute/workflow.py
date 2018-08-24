@@ -549,7 +549,7 @@ class MolThermWorkflow:
                     if calc["task"]["type"] in ["freq", "frequency"]:
                         negative_freq_vecs = calc.get("frequency_mode_vectors")[0]
                         old_coords = calc.get("initial_geometry")
-                        old_molecule = calc.get("initial_molecule")
+                        old_molecule = Molecule.from_dict(calc.get("initial_molecule"))
 
                 structure_successfully_perturbed = False
 
