@@ -14,7 +14,7 @@ from fireworks import Firework
 from fireworks.utilities.fw_serializers import DATETIME_HANDLER
 
 from custodian import Custodian
-from custodian.qchem.new_handlers import QChemErrorHandler
+from custodian.qchem.handlers import QChemErrorHandler
 
 from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.inputs import QCInput
