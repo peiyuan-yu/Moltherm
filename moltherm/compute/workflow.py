@@ -3,6 +3,8 @@ from os import listdir
 from os.path import join, isfile, isdir
 import shutil
 
+import numpy as np
+
 from fireworks import Workflow, LaunchPad
 
 from atomate.qchem.database import QChemCalcDb
