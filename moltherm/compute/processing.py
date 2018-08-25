@@ -434,8 +434,10 @@ class MolThermDataProcessor:
         collection = self.db.db["thermo"]
 
         if use_db:
-            collection.insert_one(self.extract_reaction_thermo_db(directory, opt=opt,
-                                                         freq=freq, sp=sp))
+            collection.insert_one(self.extract_reaction_thermo_db(directory,
+                                                                  opt=opt,
+                                                                  freq=freq,
+                                                                  sp=sp))
         elif use_files:
             collection.insert_one(self.extract_reaction_thermo_files(directory))
         else:
@@ -491,7 +493,62 @@ class MolThermDataProcessor:
             file.write("Single-Point Input: {}\n".format(data.get("sp", "")))
             file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
-            file.write("Critical/Switching Temperature: {}\n".format(data["thermo"]["t_critical"]))
+            file.write("Turning Temperature: {}\n".format(data["thermo"]["t_critical"]))
+
+    def populate_collections(self, thermo=False, overwrite=False):
+        """
+        Mass insert into db collections using above data extraction and
+        recording methods.
+
+        :param thermo: If True (default False), insert into thermo collection
+        in addition to molecules collection.
+        :param overwrite: If True (default False), overwrite molecules that are
+        already included in the db.
+        :return:
+        """
+
+        if self.db is None:
+            raise RuntimeError("Cannot connect to database. Check configuration"
+                               " file and try again.")
+
+        mol_coll = self.db.db["molecules"]
+        completed_mols = self.get_completed_molecules(extra=True)
+        mols_in_db = [mol for mol in mol_coll.find()]
+
+        for mol_id, d, molfile in completed_mols:
+            molfile = molfile.replace(".mol", "")
+            if mol_id not in [m["mol_id"] for m in mols_in_db]:
+                self.record_molecule_data_db(mol_id, join(self.base_dir, d),
+                                             molfile+".in", molfile+".out")
+            elif overwrite:
+                drone = MolThermDrone()
+
+                task_doc = drone.assimilate(
+                    path=join(self.base_dir, d),
+                    input_file=molfile+".in",
+                    output_file=molfile+".out",
+                    multirun=False)
+
+                task_doc["mol_id"] = mol_id
+
+                mol_coll.update_one({"mol_id": mol_id},
+                                    {"$set": task_doc})
+
+        if thermo:
+            thermo_coll = self.db.db["thermo"]
+            completed_rxns = self.get_completed_reactions()
+            rxns_in_db = [rxn for rxn in thermo_coll.find()]
+
+            for rxn in completed_rxns:
+                if rxn not in [r["dir_name"].split("/")[-1]
+                               for r in rxns_in_db]:
+                    self.record_reaction_data_db(rxn, use_files=False,
+                                                 use_db=True)
+
+                elif overwrite:
+                    thermo_coll.update_one({"dir_name": join(self.base_dir, rxn)},
+                                           {"$set": self.extract_reaction_thermo_db(rxn)})
+
 
     def copy_outputs_across_directories(self):
         """
@@ -643,7 +700,7 @@ class MolThermDataProcessor:
                         # Currently will catch iefpcm or smd
                         if completion:
                             if extra:
-                                completed.add((d, molfile, mol_id))
+                                completed.add((mol_id, d, molfile))
                             else:
                                 completed.add(mol_id)
 
