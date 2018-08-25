@@ -577,16 +577,19 @@ class MolThermWorkflow:
                 mol_id = mol["mol_id"]
                 dir_name = mol["dir_name"].split("/")[-1]
 
+                if dir_name not in listdir(self.base_dir):
+                    os.mkdir(join(self.base_dir, dir_name))
+
                 fws.append(OptFreqSPFW(molecule=new_molecule,
                                        name="Flattening: {}/{}".format(mol_id,
                                                                        dir_name),
                                        qchem_cmd="qchem -slurm",
                                        input_file=join(self.base_dir,
                                                        dir_name,
-                                                       mol_id + ".qin"),
+                                                       mol_id + ".in"),
                                        output_file=join(self.base_dir,
                                                         dir_name,
-                                                        mol_id + ".qout"),
+                                                        mol_id + ".out"),
                                        qclog_file=join(self.base_dir,
                                                         dir_name,
                                                         mol_id + ".qclog"),
