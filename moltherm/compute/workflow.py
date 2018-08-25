@@ -591,6 +591,7 @@ class MolThermWorkflow:
                                                         dir_name,
                                                         mol_id + ".qclog"),
                                        max_cores=24,
+                                       max_iterations=3,
                                        qchem_input_params=qchem_input_params,
                                        sp_params=sp_params,
                                        db_file=self.db_file))
