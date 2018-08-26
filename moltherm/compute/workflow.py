@@ -514,7 +514,7 @@ class MolThermWorkflow:
 
         return Workflow(fws)
 
-    def get_redo_workflow(self, qchem_input_params, sp_params):
+    def get_redo_workflow(self, qchem_input_params, sp_params, max_iterations=3):
         """
         Identifies molecules which need to be re-run (for now, based only on
         presence of negative frequencies) and then performs a frequency
@@ -522,6 +522,13 @@ class MolThermWorkflow:
 
         This is a hack. In the future, a frequency flattening workflow should be
         used from the beginning.
+
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
+        :param max_iterations: Maximum number of iterations for frequency
+            flattening. Default is 3.
 
         :return: Workflow
         """
@@ -594,7 +601,7 @@ class MolThermWorkflow:
                                                         dir_name,
                                                         mol_id + ".qclog"),
                                        max_cores=24,
-                                       max_iterations=3,
+                                       max_iterations=max_iterations,
                                        qchem_input_params=qchem_input_params,
                                        sp_params=sp_params,
                                        db_file=self.db_file))
