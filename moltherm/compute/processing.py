@@ -603,9 +603,7 @@ class MolThermDataProcessor:
 
                 calcs_reversed = new_calc["calcs_reversed"] + old_calc["calcs_reversed"]
 
-                calc_final = calcs_reversed[0]
-                output = {"initial_molecule": calc_final["initial_molecule"],
-                          "job_type": calc_final["input"]["rem"]["job_type"]}
+                output = new_calc["output"]
 
                 walltime = new_calc["walltime"] + old_calc["walltime"]
                 cputime = new_calc["cputime"] + old_calc["cputime"]
@@ -623,7 +621,7 @@ class MolThermDataProcessor:
                 new_thermo = self.extract_reaction_thermo_db(calc_dir)
 
                 thermo_coll.update_one({"dir_name": calc_dir},
-                                       {"$set": {"thermo": new_thermo}})    
+                                       {"$set": {"thermo": new_thermo}})
 
     def copy_outputs_across_directories(self):
         """
