@@ -221,16 +221,25 @@ class MolThermDataProcessor:
         # Note: After all sp jobs are finished, it should be unnecessary to use
         # energy_opt
         def get_thermo(job):
-            enthalpy = 0
-            entropy = 0
-            energy_sp = 0
+            enthalpy = None
+            entropy = None
+            energy_sp = None
 
             for calc in job["calcs_reversed"]:
-                if calc["task"]["type"] == "freq" or calc["task"]["type"] == "frequency":
+                if (calc["task"]["type"] == "freq"
+                        or calc["task"]["type"] == "frequency")\
+                        and (enthalpy is None or entropy is None):
                     enthalpy = calc["enthalpy"]
                     entropy = calc["entropy"]
-                if calc["task"]["type"] == "sp":
+                if calc["task"]["type"] == "sp" and energy_sp is None:
                     energy_sp = calc["final_energy_sp"]
+
+            if enthalpy is None:
+                enthalpy = 0.0
+            if entropy is None:
+                entropy = 0.0
+            if energy_sp is None:
+                energy_sp = 0.0
 
             return {"enthalpy": enthalpy,
                     "entropy": entropy,
@@ -549,6 +558,72 @@ class MolThermDataProcessor:
                     thermo_coll.update_one({"dir_name": join(self.base_dir, rxn)},
                                            {"$set": self.extract_reaction_thermo_db(rxn)})
 
+    def update_database(self, thermo=True):
+        """
+        Update molecules and potentially thermo collections with data from the
+        subdirectories in self.base_dir
+
+        :param thermo: If True (default True), update thermo collection in
+        addition to molecules collection
+
+        :return:
+        """
+
+        if self.db is None:
+            raise RuntimeError("Cannot access database. Check configuration"
+                               " settings and try again.")
+
+        dirs = [d for d in listdir(self.base_dir) if
+                isdir(join(self.base_dir, d)) and not d.startswith("block")]
+
+        drone = MolThermDrone()
+        mol_coll = self.db.db["molecules"]
+
+        if thermo:
+            thermo_coll = self.db.db["thermo"]
+
+        for d in dirs:
+            calc_dir = join(self.base_dir, d)
+
+            files = [f for f in listdir(calc_dir) if isfile(join(calc_dir, f))]
+
+            mol_names = set()
+
+            for file in files:
+                mol_names.add(file.split(".")[0])
+
+            for mol_name in mol_names:
+
+                new_calc = drone.assimilate(path=calc_dir,
+                                            input_file=mol_name+".in",
+                                            output_file=mol_name+".out",
+                                            multirun=False)
+
+                old_calc = mol_coll.find_one({"mol_id": mol_name})
+
+                calcs_reversed = new_calc["calcs_reversed"] + old_calc["calcs_reversed"]
+
+                calc_final = calcs_reversed[0]
+                output = {"initial_molecule": calc_final["initial_molecule"],
+                          "job_type": calc_final["input"]["rem"]["job_type"]}
+
+                walltime = new_calc["walltime"] + old_calc["walltime"]
+                cputime = new_calc["cputime"] + old_calc["cputime"]
+
+                mol_coll.update_one({"mol_id": mol_name},
+                                    {"$set": {"calcs_reversed": calcs_reversed,
+                                              "output": output,
+                                              "walltime": walltime,
+                                              "cputime": cputime}})
+
+        if thermo:
+            for d in dirs:
+                calc_dir = join(self.base_dir, d)
+
+                new_thermo = self.extract_reaction_thermo_db(calc_dir)
+
+                thermo_coll.update_one({"dir_name": calc_dir},
+                                       {"$set": {"thermo": new_thermo}})    
 
     def copy_outputs_across_directories(self):
         """
@@ -564,7 +639,8 @@ class MolThermDataProcessor:
 
         files_copied = 0
 
-        dirs = [d for d in listdir(self.base_dir) if isdir(join(self.base_dir, d)) and not d.startswith("block")]
+        dirs = [d for d in listdir(self.base_dir) if
+                isdir(join(self.base_dir, d)) and not d.startswith("block")]
         print("Number of directories: {}".format(len(dirs)))
 
         for start_d in dirs:
