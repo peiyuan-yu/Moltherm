@@ -552,8 +552,10 @@ class MolThermWorkflow:
                                       min_molecule_perturb_scale) / scale_grid
                 msc = MoleculeStructureComparator()
 
+                old_molecule = None
+
                 for calc in mol["calcs_reversed"]:
-                    if calc["task"]["type"] in ["freq", "frequency"]:
+                    if calc["task"]["type"] in ["freq", "frequency"] and old_molecule is None:
                         negative_freq_vecs = calc.get("frequency_mode_vectors")[0]
                         old_coords = calc.get("initial_geometry")
                         old_molecule = Molecule.from_dict(calc.get("initial_molecule"))
