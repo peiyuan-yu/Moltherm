@@ -183,8 +183,8 @@ class MolThermDrone(AbstractDrone):
                     d["output"]["entropy"] = d["output"].get("entropy", entropy)
 
                 elif c["input"]["rem"]["job_type"] == "sp":
-                    energy = c["final_energy_sp"]
-                    d["output"]["final_energy_sp"] = d["output"].get("final_energy_sp", energy)
+                    energy = c["final_energy"]
+                    d["output"]["final_energy"] = d["output"].get("final_energy", energy)
 
             if "special_run_type" in d:
                 if d["special_run_type"] == "frequency_flattener":

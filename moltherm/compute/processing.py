@@ -124,7 +124,7 @@ class MolThermDataProcessor:
                 elif "opt" in out:
                     energy_opt = qcout.data.get("final_energy", 0) or 0
                 elif "sp" in out:
-                    energy_sp = qcout.data.get("final_energy_sp", 0) or 0
+                    energy_sp = qcout.data.get("final_energy", 0) or 0
 
             if energy_sp == 0:
                 rct_thermo["energy"] += energy_opt
@@ -153,7 +153,7 @@ class MolThermDataProcessor:
                 elif "opt" in out:
                     energy_opt = qcout.data.get("final_energy", 0) or 0
                 elif "sp" in out:
-                    energy_sp = qcout.data.get("final_energy_sp", 0) or 0
+                    energy_sp = qcout.data.get("final_energy", 0) or 0
 
             # Enthalpy calculation should actually be enthalpy - energy_sp
             # But currently, not all calculations have sp
@@ -232,7 +232,7 @@ class MolThermDataProcessor:
                     enthalpy = calc["enthalpy"]
                     entropy = calc["entropy"]
                 if calc["task"]["type"] == "sp" and energy_sp is None:
-                    energy_sp = calc["final_energy_sp"]
+                    energy_sp = calc["final_energy"]
 
             if enthalpy is None:
                 enthalpy = 0.0
@@ -840,7 +840,7 @@ class MolThermDataProcessor:
                 mol_data["enthalpy"] = calc["enthalpy"] * 4.184 * 1000
                 mol_data["entropy"] = calc["entropy"] * 4.184
             if calc["task"]["name"] == "sp":
-                mol_data["energy"] = calc["final_energy_sp"] * 627.509 * 4.184 * 1000
+                mol_data["energy"] = calc["final_energy"] * 627.509 * 4.184 * 1000
             if calc["task"]["name"] in ["opt", "optimization"]:
                 mol_dict = calc["molecule_from_optimized_geometry"]
                 mol_data["molecule"] = Molecule.from_dict(mol_dict)
