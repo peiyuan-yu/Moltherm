@@ -9,7 +9,7 @@ from fireworks import Workflow, LaunchPad
 
 from atomate.qchem.database import QChemCalcDb
 
-from pymatgen.core.structure import Molecule, FunctionalGroups
+from pymatgen.core.structure import Molecule
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.analysis.graphs import MoleculeGraph
@@ -20,7 +20,6 @@ from moltherm.compute.fireworks import OptFreqSPFW, SinglePointFW
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 from moltherm.compute.jobs import perturb_coordinates
 
-import networkx as nx
 import networkx.algorithms.isomorphism as iso
 
 __author__ = "Evan Spotte-Smith"
@@ -29,12 +28,6 @@ __maintainer__ = "Evan Spotte-Smith"
 __email__ = "espottesmith@gmail.com"
 __status__ = "Alpha"
 __date__ = "June 2018"
-
-
-"""
-TODO list:
-    - Figure out how to query with pymatgen-db and pymongo
-"""
 
 
 class MolThermWorkflow:

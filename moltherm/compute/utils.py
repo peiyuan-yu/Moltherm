@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from pymatgen.core.structure import Molecule
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
-from pymatgen.io.qchem.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
 
 
@@ -31,82 +30,6 @@ def get_molecule(molfile):
     obmol.localopt()
 
     return obmol.pymatgen_mol
-
-
-def generate_opt_input(molfile, qinfile, basis_set="6-311++G*",
-                       pcm_dielectric=None, overwrite_inputs=None):
-    """
-    Generates a QChem input file from Molecule after conformer search.
-
-    :param molfile: Absolute path to the input file (.mol, .sdf, etc.)
-    :param qinfile: Absolute path to the output file (.in)
-    :param basis_set: To overwrite default basis.
-    :param pcm_dielectric: To use solvent
-    :param overwrite_inputs: To overwrite any set defaults
-    :return:
-
-    """
-    mol = get_molecule(molfile)
-
-    qcinput = OptSet(mol, basis_set=basis_set, pcm_dielectric=pcm_dielectric,
-                     overwrite_inputs=overwrite_inputs)
-
-    qcinput.write_file(qinfile)
-
-
-def generate_freq_input(qoutfile, qinfile, basis_set="6-311++G*",
-                       pcm_dielectric=None, overwrite_inputs=None):
-    """
-    Parses a QChem output file for ideal structure and then returns a QChem
-    input file for frequency calculations (to determine enthalpy and entropy).
-
-    :param qoutfile: Absolute path to the QChem output file (.out)
-    :param qinfile: Absolute path to the QChem input file (.in)
-    :return:
-    """
-
-    output = QCOutput(qoutfile)
-
-    if len(output.data.get("molecule_from_optimized_geometry", [])) > 0:
-        mol = output.data["molecule_from_optimized_geometry"]
-    else:
-        try:
-            mol = output.data["molecule_from_last_geometry"]
-        except KeyError:
-            raise RuntimeError("No molecule to use as input")
-
-    qcinput = FreqSet(mol, basis_set=basis_set, pcm_dielectric=pcm_dielectric,
-                      overwrite_inputs=overwrite_inputs)
-
-    qcinput.write_file(qinfile)
-
-
-def generate_single_point_input(qoutfile, qinfile, basis_set="6-311++G*",
-                       pcm_dielectric=None, overwrite_inputs=None):
-    """
-    Parse QChem output file for ideal structure and then returns a QChem
-    input file for single-point calculations.
-
-    :param qoutfile:
-    :param qinfile:
-    :return:
-    """
-
-    output = QCOutput(qoutfile)
-
-    if len(output.data.get("molecule_from_optimized_geometry", [])) > 0:
-        mol = output.data["molecule_from_optimized_geometry"]
-    else:
-        try:
-            mol = output.data["molecule_from_last_geometry"]
-        except KeyError:
-            raise RuntimeError("No molecule to use as input")
-
-    qcinput = SinglePointSet(mol, basis_set=basis_set,
-                             pcm_dielectric=pcm_dielectric,
-                             overwrite_inputs=overwrite_inputs)
-
-    qcinput.write_file(qinfile)
 
 
 def find_common_solvents(base_dir):
