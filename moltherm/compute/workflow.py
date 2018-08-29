@@ -10,13 +10,13 @@ from fireworks import Workflow, LaunchPad
 from atomate.qchem.database import QChemCalcDb
 
 from pymatgen.core.structure import Molecule, FunctionalGroups
+from pymatgen.io.qchem.inputs import QCInput
+from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
 
 from moltherm.compute.fireworks import OptFreqSPFW, SinglePointFW
-from moltherm.compute.inputs import QCInput
-from moltherm.compute.outputs import QCOutput
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 from moltherm.compute.jobs import perturb_coordinates
 

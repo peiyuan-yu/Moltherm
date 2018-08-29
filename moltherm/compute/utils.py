@@ -6,11 +6,10 @@ import shutil
 from bs4 import BeautifulSoup
 
 from pymatgen.core.structure import Molecule
+from pymatgen.io.qchem.inputs import QCInput
+from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.io.qchem.sets import OptSet, FreqSet, SinglePointSet
 from pymatgen.io.babel import BabelMolAdaptor
-
-from moltherm.compute.inputs import QCInput
-from moltherm.compute.outputs import QCOutput
 
 
 def get_molecule(molfile):

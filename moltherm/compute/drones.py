@@ -12,8 +12,8 @@ import traceback
 
 from monty.io import zopen
 from monty.json import jsanitize
-from moltherm.compute.outputs import QCOutput
-from moltherm.compute.inputs import QCInput
+from pymatgen.io.qchem.outputs import QCOutput
+from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.apps.borg.hive import AbstractDrone
 from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.symmetry.analyzer import PointGroupAnalyzer

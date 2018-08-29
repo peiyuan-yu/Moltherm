@@ -12,11 +12,11 @@ import subprocess
 import numpy as np
 
 from pymatgen.core import Molecule
+from pymatgen.io.qchem.inputs import QCInput
+from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.analysis.graphs import build_MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 
-from moltherm.compute.inputs import QCInput
-from moltherm.compute.outputs import QCOutput
 from custodian.custodian import Job
 
 __author__ = "Samuel Blau, Brandon Woods, Shyam Dwaraknath"

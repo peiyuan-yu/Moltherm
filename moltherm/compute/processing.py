@@ -9,11 +9,11 @@ import networkx as nx
 from pymatgen.core.structure import Molecule
 from pymatgen.analysis.functional_groups import FunctionalGroupExtractor
 from pymatgen.io.babel import BabelMolAdaptor
+from pymatgen.io.qchem.outputs import QCOutput
 
 from atomate.qchem.database import QChemCalcDb
 
 from moltherm.compute.drones import MolThermDrone
-from moltherm.compute.outputs import QCOutput
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 
 __author__ = "Evan Spotte-Smith"

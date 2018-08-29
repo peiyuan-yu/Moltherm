@@ -17,7 +17,7 @@ from custodian import Custodian
 from custodian.qchem.handlers import QChemErrorHandler
 
 from moltherm.compute.drones import MolThermDrone
-from moltherm.compute.inputs import QCInput
+from pymatgen.io.qchem.inputs import QCInput
 from moltherm.compute.jobs import QCJob
 
 logger = get_logger(__name__)
