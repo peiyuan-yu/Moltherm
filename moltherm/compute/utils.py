@@ -126,7 +126,7 @@ def associate_qchem_to_mol(base_dir, directory):
     base_path = join(base_dir, directory)
 
     mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and f.endswith(".mol")]
+                 and f.endswith(".mol") and not f.startswith(".")]
     # Note: This will catch .in and .out files for incomplete computations
     # TODO: What's the best way to filter these out?
     in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))

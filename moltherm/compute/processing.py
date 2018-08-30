@@ -223,27 +223,26 @@ class MolThermDataProcessor:
         def get_thermo(job):
             enthalpy = None
             entropy = None
-            energy_sp = None
+            energy = None
 
-            for calc in job["calcs_reversed"]:
-                if (calc["task"]["type"] == "freq"
-                        or calc["task"]["type"] == "frequency")\
-                        and (enthalpy is None or entropy is None):
-                    enthalpy = calc["enthalpy"]
-                    entropy = calc["entropy"]
-                if calc["task"]["type"] == "sp" and energy_sp is None:
-                    energy_sp = calc["final_energy"]
+            enthalpy = job["output"]["enthalpy"]
+            entropy = job["output"]["entropy"]
+
+            try:
+                energy = job["output"]["final_energy_sp"]
+            except KeyError:
+                energy = job["output"]["final_energy"]
 
             if enthalpy is None:
                 enthalpy = 0.0
             if entropy is None:
                 entropy = 0.0
-            if energy_sp is None:
-                energy_sp = 0.0
+            if energy is None:
+                energy = 0.0
 
             return {"enthalpy": enthalpy,
                     "entropy": entropy,
-                    "energy": energy_sp}
+                    "energy": energy}
 
         if abspath(directory) != directory:
             directory = join(self.base_dir, directory)
@@ -265,7 +264,7 @@ class MolThermDataProcessor:
         for i, record in enumerate(records):
             filename = mol_files[i]
             if opt is None:
-                for calc in record["calcs_reversed"]:
+                for calc in record["calcs_reversed"][::-1]:
                     if calc["task"]["type"] == "opt" or \
                             calc["task"]["type"] == "optimization":
                         method = calc["input"]["rem"]["method"]
@@ -288,7 +287,7 @@ class MolThermDataProcessor:
                                "solvent": solvent}
                         break
             if freq is None:
-                for calc in record["calcs_reversed"]:
+                for calc in record["calcs_reversed"][::-1]:
                     if calc["task"]["type"] == "freq" or \
                             calc["task"]["type"] == "frequency":
                         method = calc["input"]["rem"]["method"]
@@ -311,7 +310,7 @@ class MolThermDataProcessor:
                                 "solvent": solvent}
                         break
             if sp is None:
-                for calc in record["calcs_reversed"]:
+                for calc in record["calcs_reversed"][::-1]:
                     if calc["task"]["type"] == "sp":
                         method = calc["input"]["rem"]["method"]
                         basis = calc["input"]["rem"]["basis"]
@@ -558,13 +557,10 @@ class MolThermDataProcessor:
                     thermo_coll.update_one({"dir_name": join(self.base_dir, rxn)},
                                            {"$set": self.extract_reaction_thermo_db(rxn)})
 
-    def update_database(self, thermo=True):
+    def update_molecules(self):
         """
-        Update molecules and potentially thermo collections with data from the
-        subdirectories in self.base_dir
-
-        :param thermo: If True (default True), update thermo collection in
-        addition to molecules collection
+        Update molecules collection with data from the subdirectories in
+        self.base_dir.
 
         :return:
         """
@@ -578,9 +574,6 @@ class MolThermDataProcessor:
 
         drone = MolThermDrone()
         mol_coll = self.db.db["molecules"]
-
-        if thermo:
-            thermo_coll = self.db.db["thermo"]
 
         for d in dirs:
             calc_dir = join(self.base_dir, d)
@@ -614,14 +607,58 @@ class MolThermDataProcessor:
                                               "walltime": walltime,
                                               "cputime": cputime}})
 
-        if thermo:
-            for d in dirs:
-                calc_dir = join(self.base_dir, d)
+    def update_thermo(self):
+        """
+        Update thermo collection with data from the subdirectories in
+        self.base_dir.
 
-                new_thermo = self.extract_reaction_thermo_db(calc_dir)
+        :return:
+        """
 
-                thermo_coll.update_one({"dir_name": calc_dir},
-                                       {"$set": {"thermo": new_thermo}})
+        if self.db is None:
+            raise RuntimeError("Cannot access database. Check configuration"
+                               " settings and try again.")
+
+        dirs = [d for d in listdir(self.base_dir) if
+                isdir(join(self.base_dir, d)) and not d.startswith("block")]
+
+        thermo_coll = self.db.db["thermo"]
+
+        to_update = []
+
+        all_rxns = [r for r in thermo_coll.find()]
+
+        for d in dirs:
+            for rxn in all_rxns:
+                if rxn["dir_name"].split("/")[-1] == d:
+                    old_data = rxn
+                    break
+
+            pro_thermo = [self.get_molecule_data(m) for m in old_data["product_ids"]]
+            rct_thermo = [self.get_molecule_data(m) for m in old_data["reactant_ids"]]
+
+            # Compile reaction thermo from reactant and product thermos
+            delta_e = sum(p["energy"] for p in pro_thermo) - sum(
+                r["energy"] for r in rct_thermo)
+            delta_h = sum(p["enthalpy"] for p in pro_thermo) - sum(
+                r["enthalpy"] for r in rct_thermo) + delta_e
+            delta_s = sum(p["entropy"] for p in pro_thermo) - sum(
+                r["entropy"] for r in rct_thermo)
+            thermo = {
+                "enthalpy": delta_h,
+                "entropy": delta_s
+            }
+
+            try:
+                thermo["t_star"] = delta_h / delta_s
+            except ZeroDivisionError:
+                thermo["t_star"] = 0
+
+            to_update.append((rxn["dir_name"], thermo))
+
+        for update in to_update:
+            thermo_coll.update_one({"dir_name": update[0]},
+                                   {"$set": {"thermo": update[1]}})
 
     def copy_outputs_across_directories(self):
         """
@@ -835,16 +872,18 @@ class MolThermDataProcessor:
 
         mol_entry = collection.find_one({"mol_id": mol_id})
 
-        for calc in mol_entry["calcs_reversed"]:
-            if calc["task"]["name"] in ["freq", "frequency"]:
-                mol_data["enthalpy"] = calc["enthalpy"] * 4.184 * 1000
-                mol_data["entropy"] = calc["entropy"] * 4.184
-            if calc["task"]["name"] == "sp":
-                mol_data["energy"] = calc["final_energy"] * 627.509 * 4.184 * 1000
-            if calc["task"]["name"] in ["opt", "optimization"]:
-                mol_dict = calc["molecule_from_optimized_geometry"]
-                mol_data["molecule"] = Molecule.from_dict(mol_dict)
+        mol_data["enthalpy"] = mol_entry["output"]["enthalpy"] * 4.184 * 1000
+        mol_data["entropy"]  = mol_entry["output"]["entropy"] * 4.184
 
+        try:
+            final_energy = mol_entry["output"]["final_energy_sp"]
+        except KeyError:
+            final_energy = mol_entry["output"]["final_energy"]
+
+        mol_data["energy"] = final_energy * 627.509 * 4.184 * 1000
+
+        mol_dict = mol_entry["output"]["optimized_molecule"]
+        mol_data["molecule"] = Molecule.from_dict(mol_dict)
 
         adaptor = BabelMolAdaptor(mol_data["molecule"])
         pbmol = adaptor.pybel_mol
@@ -855,9 +894,9 @@ class MolThermDataProcessor:
 
         extractor = FunctionalGroupExtractor(mol_data["molecule"])
         molgraph = extractor.molgraph
-        func_grps = extractor.get_all_functional_groups()
-
-        mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
+        # func_grps = extractor.get_all_functional_groups()
+        #
+        # mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
 
         weights = nx.get_edge_attributes(molgraph.graph, "weight")
         bonds_checked = set()
