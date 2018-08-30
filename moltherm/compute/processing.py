@@ -894,9 +894,9 @@ class MolThermDataProcessor:
 
         extractor = FunctionalGroupExtractor(mol_data["molecule"])
         molgraph = extractor.molgraph
-        # func_grps = extractor.get_all_functional_groups()
-        #
-        # mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
+        func_grps = extractor.get_all_functional_groups()
+
+        mol_data["functional_groups"] = extractor.categorize_functional_groups(func_grps)
 
         weights = nx.get_edge_attributes(molgraph.graph, "weight")
         bonds_checked = set()

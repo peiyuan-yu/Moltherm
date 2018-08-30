@@ -51,8 +51,7 @@ class MolThermAnalyzer:
             if setup:
                 self.species = self._setup_species(dataset)
             else:
-                self.species = ["C", "H", "O", "N", "S", "P", "F", "Cl", "Br",
-                                "I"]
+                self.species = ["C", "H", "O", "N", "S"]
 
         if func_groups is None:
             if setup:
