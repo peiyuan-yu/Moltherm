@@ -12,6 +12,7 @@ from pymatgen.io.babel import BabelMolAdaptor
 from pymatgen.io.qchem.outputs import QCOutput
 
 from atomate.qchem.database import QChemCalcDb
+from atomate.qchem.drones import QChemDrone
 
 from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
@@ -80,93 +81,56 @@ class MolThermDataProcessor:
 
         return add_up
 
-    def extract_reaction_thermo_files(self, path):
+    def extract_reaction_thermo_files(self, path, runs_pattern=None):
         """
         Naively scrape thermo data from QChem output files.
 
         :param path: Path to a subdirectory.
+        :param runs_pattern: QChem drone assimilation requires a template for
+            what calculations have completed. This should be represented by a
+            link. Default None
 
         :return: dict {prop: value}, where properties are enthalpy, entropy.
         """
 
         base_path = join(self.base_dir, path)
 
-        rct_ids = [extract_id(f) for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.reactant_pre)]
+        rct_files = [f for f in listdir(base_path) if f.endswith(".mol") and
+                     f.startswith(self.reactant_pre)]
+        pro_files = [f for f in listdir(base_path) if f.endswith(".mol") and
+                     f.startswith(self.product_pre)]
 
-        pro_ids = [extract_id(f) for f in listdir(base_path) if
-                   f.endswith(".mol") and f.startswith(self.product_pre)]
+        rct_ids = [extract_id(f) for f in rct_files]
+        pro_ids = [extract_id(f) for f in pro_files]
 
-        rct_map = {m: [f for f in listdir(base_path) if
-                       f.startswith(self.reactant_pre) and m in f
-                       and ".out" in f and not f.endswith("_copy")]
-                   for m in rct_ids}
-        pro_map = {m: [f for f in listdir(base_path)
-                       if f.startswith(self.product_pre) and m in f
-                       and ".out" in f] for m in pro_ids}
+        rct_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0}
+        pro_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0}
 
-        rct_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
-        pro_thermo = {"enthalpy": 0, "entropy": 0, "energy": 0, "has_sp": {}}
+        drone = QChemDrone(runs=runs_pattern)
 
-        for mol in rct_map.keys():
-            enthalpy = 0
-            entropy = 0
-            energy_opt = 0
-            energy_sp = 0
+        for mol in rct_files:
+            prefix = mol.replace(".mol", "")
 
-            for out in rct_map[mol]:
-                qcout = QCOutput(join(base_path, out))
+            calc_doc = drone.assimilate(path=base_path,
+                                        input_file=prefix + ".in",
+                                        output_file=prefix + ".out",
+                                        multirun=False)
 
-                # Catch potential for Nonetype entries
-                if "freq" in out:
-                    enthalpy = qcout.data.get("enthalpy", 0) or 0
-                    entropy = qcout.data.get("entropy", 0) or 0
-                elif "opt" in out:
-                    energy_opt = qcout.data.get("final_energy", 0) or 0
-                elif "sp" in out:
-                    energy_sp = qcout.data.get("final_energy", 0) or 0
+            rct_thermo["entropy"] += calc_doc["output"]["entropy"]
+            rct_thermo["enthalpy"] += calc_doc["output"]["enthalpy"]
+            rct_thermo["energy"] += calc_doc["output"]["final_energy"]
 
-            if energy_sp == 0:
-                rct_thermo["energy"] += energy_opt
-                rct_thermo["has_sp"][self.reactant_pre + str(mol)] = False
-            else:
-                rct_thermo["energy"] += energy_sp
-                rct_thermo["has_sp"][self.reactant_pre + str(mol)] = True
+        for mol in pro_files:
+            prefix = mol.replace(".mol", "")
 
-            rct_thermo["enthalpy"] += enthalpy
-            rct_thermo["entropy"] += entropy
-            print(path, mol, enthalpy, energy_sp)
+            calc_doc = drone.assimilate(path=base_path,
+                                        input_file=prefix + ".in",
+                                        output_file=prefix + ".out",
+                                        multirun=False)
 
-        for mol in pro_map.keys():
-            enthalpy = 0
-            entropy = 0
-            energy_opt = 0
-            energy_sp = 0
-
-            for out in pro_map[mol]:
-                qcout = QCOutput(join(base_path, out))
-
-                # Catch potential for Nonetype entries
-                if "freq" in out:
-                    enthalpy = qcout.data.get("enthalpy", 0) or 0
-                    entropy = qcout.data.get("entropy", 0) or 0
-                elif "opt" in out:
-                    energy_opt = qcout.data.get("final_energy", 0) or 0
-                elif "sp" in out:
-                    energy_sp = qcout.data.get("final_energy", 0) or 0
-
-            # Enthalpy calculation should actually be enthalpy - energy_sp
-            # But currently, not all calculations have sp
-            if int(energy_sp) == 0:
-                pro_thermo["energy"] += energy_opt
-                pro_thermo["has_sp"][self.product_pre + str(mol)] = False
-            else:
-                pro_thermo["energy"] += energy_sp
-                pro_thermo["has_sp"][self.product_pre + str(mol)] = True
-
-            pro_thermo["enthalpy"] += enthalpy
-            pro_thermo["entropy"] += entropy
-            print(path, mol, enthalpy, energy_sp)
+            pro_thermo["entropy"] += calc_doc["output"]["entropy"]
+            pro_thermo["enthalpy"] += calc_doc["output"]["enthalpy"]
+            pro_thermo["energy"] += calc_doc["output"]["final_energy"]
 
         thermo_data = {}
 
@@ -182,8 +146,6 @@ class MolThermDataProcessor:
             thermo_data["t_critical"] = thermo_data["enthalpy"] / thermo_data["entropy"]
         except ZeroDivisionError:
             thermo_data["t_critical"] = None
-        # Combine dicts from pro_thermo and rct_thermo
-        thermo_data["has_sp"] = {**pro_thermo["has_sp"], **rct_thermo["has_sp"]}
 
         result = {"thermo": thermo_data,
                   "directory": path,
