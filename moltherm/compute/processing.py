@@ -967,8 +967,16 @@ class MolThermDataProcessor:
                     dir_name = name.group(1)
                     mol_id = name.group(2).replace("\n         ", "").replace("\nMOL", "")
                 else:
-                    dir_name = None
-                    mol_id = None
+                    name = re.search(
+                        r"CHEM\s+:\s+([A-Z/_a-z0-9]+\n\s+[A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+)",
+                        entry)
+                    if name:
+                        dir_name = name.group(1).replace("\n         ", "")
+                        mol_id = name.group(2)
+                    else:
+                        print(entry)
+                        dir_name = None
+                        mol_id = None
                 bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
                 if bp:
                     bp = float(bp.group(1))
@@ -985,8 +993,11 @@ class MolThermDataProcessor:
                 else:
                     solubility = None
 
+                if dir_name is not None:
+                    dir_name.replace("\n         ", "")
+
                 parsed_results.append({"mol_id": mol_id,
-                                       "dir_name": dir_name.replace("\n         ", ""),
+                                       "dir_name": dir_name,
                                        "smiles": smiles,
                                        "bp": bp,
                                        "mp": mp,
