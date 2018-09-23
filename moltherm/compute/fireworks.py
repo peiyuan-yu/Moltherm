@@ -122,6 +122,7 @@ class FrequencyFW(Firework):
                  output_file="mol.qout",
                  qclog_file="mol.qclog",
                  max_cores=24,
+                 qchem_input_params=None,
                  reversed_direction=False,
                  parents=None,
                  db_file=None,
