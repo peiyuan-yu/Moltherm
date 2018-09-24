@@ -154,7 +154,8 @@ class MolThermDataProcessor:
 
         return result
 
-    def extract_reaction_thermo_db(self, directory, opt=None, freq=None, sp=None):
+    def extract_reaction_thermo_db(self, directory, collection="molecules",
+                                   opt=None, freq=None, sp=None):
         """
         Gathers all relevant reaction parameters, including references to
         each job performed.
@@ -162,6 +163,8 @@ class MolThermDataProcessor:
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
             future, more sophisticated searching should be used.
+        :param collection: Database collection from which thermo data should be
+            extracted. Default is "molecules".
         :param opt: dict containing information about the optimization jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
@@ -213,11 +216,11 @@ class MolThermDataProcessor:
 
         dir_ids = [extract_id(f) for f in mol_files]
 
-        collection = self.db.db["molecules"]
+        db_collection = self.db.db[collection]
         records = []
 
         for mol_id in dir_ids:
-            record = collection.find_one({"mol_id": str(mol_id)})
+            record = db_collection.find_one({"mol_id": str(mol_id)})
             records.append(record)
 
         # Sort files for if they are reactants or products
@@ -338,7 +341,8 @@ class MolThermDataProcessor:
 
         return result
 
-    def record_molecule_data_db(self, mol_id, calc_dir, input_file, output_file):
+    def record_molecule_data_db(self, mol_id, calc_dir, input_file, output_file,
+                                collection="molecules"):
         """
         Compile calculation information for a single molecule and record it in
         the molecules collection.
@@ -351,6 +355,8 @@ class MolThermDataProcessor:
         :param output_file: Basic format for output files. The Drone which
             compiles the molecule information will use this to pattern-match
             files.
+        :param collection: Collection in which to store molecule information.
+            Default is "molecules".
         :return:
         """
 
@@ -368,18 +374,21 @@ class MolThermDataProcessor:
             raise RuntimeError("Cannot record data to db without valid database"
                                " connection!")
 
-        collection = self.db.db["molecules"]
+        db_collection = self.db.db[collection]
 
-        collection.insert_one(task_doc)
+        db_collection.insert_one(task_doc)
 
-    def record_reaction_data_db(self, directory, use_files=True, use_db=False,
-                                opt=None, freq=None, sp=None):
+    def record_reaction_data_db(self, directory, collection="thermo",
+                                use_files=True, use_db=False, opt=None,
+                                freq=None, sp=None):
         """
         Record thermo data in thermo collection.
 
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
             future, more sophisticated searching should be used.
+        :param collection: Database collection in which to store thermo data.
+            Default is "thermo".
         :param use_files: If set to True (default True), use
             get_reaction_thermo_files to gather data
         :param use_db: If set to True (default False), use
@@ -401,15 +410,15 @@ class MolThermDataProcessor:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
-        collection = self.db.db["thermo"]
+        db_collection = self.db.db[collection]
 
         if use_db:
-            collection.insert_one(self.extract_reaction_thermo_db(directory,
+            db_collection.insert_one(self.extract_reaction_thermo_db(directory,
                                                                   opt=opt,
                                                                   freq=freq,
                                                                   sp=sp))
         elif use_files:
-            collection.insert_one(self.extract_reaction_thermo_files(directory))
+            db_collection.insert_one(self.extract_reaction_thermo_files(directory))
         else:
             raise RuntimeError("Either database or files must be used to "
                                "extract thermo data.")
@@ -465,13 +474,15 @@ class MolThermDataProcessor:
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
             file.write("Turning Temperature: {}\n".format(data["thermo"]["t_critical"]))
 
-    def populate_collections(self, thermo=False, overwrite=False):
+    def populate_collections(self, molecules="molecules", thermo=None, overwrite=False):
         """
         Mass insert into db collections using above data extraction and
         recording methods.
 
-        :param thermo: If True (default False), insert into thermo collection
-        in addition to molecules collection.
+        :param molecules: Database collection in which to store molecule data.
+            Default is "molecules".
+        :param thermo: Database collection in which to store thermo data.
+            Default is None, meaning that no thermo data will be stored.
         :param overwrite: If True (default False), overwrite molecules that are
         already included in the db.
         :return:
@@ -481,7 +492,7 @@ class MolThermDataProcessor:
             raise RuntimeError("Cannot connect to database. Check configuration"
                                " file and try again.")
 
-        mol_coll = self.db.db["molecules"]
+        mol_coll = self.db.db[molecules]
         completed_mols = self.get_completed_molecules(extra=True)
         mols_in_db = [mol for mol in mol_coll.find()]
 
@@ -489,7 +500,8 @@ class MolThermDataProcessor:
             molfile = molfile.replace(".mol", "")
             if mol_id not in [m["mol_id"] for m in mols_in_db]:
                 self.record_molecule_data_db(mol_id, join(self.base_dir, d),
-                                             molfile+".in", molfile+".out")
+                                             molfile+".in", molfile+".out",
+                                             collection=molecules)
             elif overwrite:
                 drone = MolThermDrone()
 
@@ -504,25 +516,28 @@ class MolThermDataProcessor:
                 mol_coll.update_one({"mol_id": mol_id},
                                     {"$set": task_doc})
 
-        if thermo:
-            thermo_coll = self.db.db["thermo"]
+        if thermo is not None:
+            thermo_coll = self.db.db[thermo]
             completed_rxns = self.get_completed_reactions()
             rxns_in_db = [rxn for rxn in thermo_coll.find()]
 
             for rxn in completed_rxns:
                 if rxn not in [r["dir_name"].split("/")[-1]
                                for r in rxns_in_db]:
-                    self.record_reaction_data_db(rxn, use_files=False,
-                                                 use_db=True)
+                    self.record_reaction_data_db(rxn, collection=thermo,
+                                                 use_files=False, use_db=True)
 
                 elif overwrite:
                     thermo_coll.update_one({"dir_name": join(self.base_dir, rxn)},
                                            {"$set": self.extract_reaction_thermo_db(rxn)})
 
-    def update_molecules(self):
+    def update_molecules(self, collection="molecules"):
         """
         Update molecules collection with data from the subdirectories in
         self.base_dir.
+
+        :param collection: Database collection in which to store molecule data.
+            Default is "molecules".
 
         :return:
         """
@@ -535,7 +550,7 @@ class MolThermDataProcessor:
                 isdir(join(self.base_dir, d)) and not d.startswith("block")]
 
         drone = MolThermDrone()
-        mol_coll = self.db.db["molecules"]
+        mol_coll = self.db.db[collection]
 
         for d in dirs:
             calc_dir = join(self.base_dir, d)
@@ -569,10 +584,13 @@ class MolThermDataProcessor:
                                               "walltime": walltime,
                                               "cputime": cputime}})
 
-    def update_thermo(self):
+    def update_thermo(self, collection="thermo"):
         """
         Update thermo collection with data from the subdirectories in
         self.base_dir.
+
+        :param collection: Database collection in which to store thermo data.
+            Default is "thermo".
 
         :return:
         """
@@ -584,7 +602,7 @@ class MolThermDataProcessor:
         dirs = [d for d in listdir(self.base_dir) if
                 isdir(join(self.base_dir, d)) and not d.startswith("block")]
 
-        thermo_coll = self.db.db["thermo"]
+        thermo_coll = self.db.db[collection]
 
         to_update = []
 
