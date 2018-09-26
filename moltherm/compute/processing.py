@@ -360,7 +360,7 @@ class MolThermDataProcessor:
         :return:
         """
 
-        drone = MolThermDrone()
+        drone = QChemDrone()
 
         task_doc = drone.assimilate(
             path=calc_dir,
@@ -378,16 +378,18 @@ class MolThermDataProcessor:
 
         db_collection.insert_one(task_doc)
 
-    def record_reaction_data_db(self, directory, collection="thermo",
-                                use_files=True, use_db=False, opt=None,
-                                freq=None, sp=None):
+    def record_reaction_data_db(self, directory, molecules="molecules",
+                                thermo="thermo", use_files=True, use_db=False,
+                                opt=None, freq=None, sp=None):
         """
         Record thermo data in thermo collection.
 
         :param directory: Directory name where the reaction is stored. Right
             now, this is the easiest way to identify the reaction. In the
             future, more sophisticated searching should be used.
-        :param collection: Database collection in which to store thermo data.
+        :param molecules: Database collection from which to extract molecule
+            data. Default is "molecules".
+        :param thermo: Database collection in which to store thermo data.
             Default is "thermo".
         :param use_files: If set to True (default True), use
             get_reaction_thermo_files to gather data
@@ -410,13 +412,14 @@ class MolThermDataProcessor:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
-        db_collection = self.db.db[collection]
+        db_collection = self.db.db[thermo]
 
         if use_db:
             db_collection.insert_one(self.extract_reaction_thermo_db(directory,
-                                                                  opt=opt,
-                                                                  freq=freq,
-                                                                  sp=sp))
+                                                                     collection=molecules,
+                                                                     opt=opt,
+                                                                     freq=freq,
+                                                                     sp=sp))
         elif use_files:
             db_collection.insert_one(self.extract_reaction_thermo_files(directory))
         else:
@@ -474,7 +477,8 @@ class MolThermDataProcessor:
             file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
             file.write("Turning Temperature: {}\n".format(data["thermo"]["t_critical"]))
 
-    def populate_collections(self, molecules="molecules", thermo=None, overwrite=False):
+    def populate_collections(self, molecules="molecules", thermo=None,
+                             overwrite=False, sp_job=True):
         """
         Mass insert into db collections using above data extraction and
         recording methods.
@@ -484,7 +488,9 @@ class MolThermDataProcessor:
         :param thermo: Database collection in which to store thermo data.
             Default is None, meaning that no thermo data will be stored.
         :param overwrite: If True (default False), overwrite molecules that are
-        already included in the db.
+            already included in the db.
+        :param sp_job: If True (default), then ensure that all completed
+            molecules have a sp output file.
         :return:
         """
 
@@ -493,7 +499,7 @@ class MolThermDataProcessor:
                                " file and try again.")
 
         mol_coll = self.db.db[molecules]
-        completed_mols = self.get_completed_molecules(extra=True)
+        completed_mols = self.get_completed_molecules(extra=True, sp_job=sp_job)
         mols_in_db = [mol for mol in mol_coll.find()]
 
         for mol_id, d, molfile in completed_mols:
@@ -503,7 +509,7 @@ class MolThermDataProcessor:
                                              molfile+".in", molfile+".out",
                                              collection=molecules)
             elif overwrite:
-                drone = MolThermDrone()
+                drone = QChemDrone()
 
                 task_doc = drone.assimilate(
                     path=join(self.base_dir, d),
@@ -518,14 +524,19 @@ class MolThermDataProcessor:
 
         if thermo is not None:
             thermo_coll = self.db.db[thermo]
-            completed_rxns = self.get_completed_reactions()
+            completed_rxns = self.get_completed_reactions(molecules=molecules)
             rxns_in_db = [rxn for rxn in thermo_coll.find()]
 
             for rxn in completed_rxns:
                 if rxn not in [r["dir_name"].split("/")[-1]
                                for r in rxns_in_db]:
-                    self.record_reaction_data_db(rxn, collection=thermo,
-                                                 use_files=False, use_db=True)
+                    try:
+                        self.record_reaction_data_db(rxn, molecules=molecules,
+                                                     thermo=thermo,
+                                                     use_files=False,
+                                                     use_db=True)
+                    except:
+                        print(rxn)
 
                 elif overwrite:
                     thermo_coll.update_one({"dir_name": join(self.base_dir, rxn)},
@@ -756,7 +767,7 @@ class MolThermDataProcessor:
 
         return mapping
 
-    def get_completed_molecules(self, dirs=None, extra=False):
+    def get_completed_molecules(self, dirs=None, extra=False, sp_job=True):
         """
         Returns a list of molecules with completed opt, freq, and sp output
         files.
@@ -783,24 +794,39 @@ class MolThermDataProcessor:
                 mol_id = extract_id(molfile)
 
                 for outfile in qcfiles["out"]:
-                    if "sp" in outfile:
-                        spfile = QCOutput(join(path, outfile))
+                    if sp_job:
+                        if "sp" in outfile:
+                            spfile = QCOutput(join(path, outfile))
 
-                        completion = spfile.data.get("completion", False)
+                            completion = spfile.data.get("completion", False)
 
-                        # Currently will catch iefpcm or smd
-                        if completion:
-                            if extra:
-                                completed.add((mol_id, d, molfile))
-                            else:
-                                completed.add(mol_id)
+                            # Currently will catch iefpcm or smd
+                            if completion:
+                                if extra:
+                                    completed.add((mol_id, d, molfile))
+                                else:
+                                    completed.add(mol_id)
+                    else:
+                        if "freq" in outfile:
+                            freqfile = QCOutput(join(path, outfile))
+
+                            completion = freqfile.data.get("completion", False)
+
+                            if completion:
+                                if extra:
+                                    completed.add((mol_id, d, molfile))
+                                else:
+                                    completed.add(mol_id)
 
         return completed
 
-    def get_completed_reactions(self):
+    def get_completed_reactions(self, molecules="molecules"):
         """
         Returns a list of directories (reactions) where all molecules are
         completed.
+
+        :param molecules: Database collection in which to store molecule data.
+            Default is "molecules".
 
         :return: list of directories with complete information.
         """
@@ -809,7 +835,7 @@ class MolThermDataProcessor:
             raise RuntimeError("Could not connect to database. Check db_file"
                                "and try again later.")
 
-        collection = self.db.db["molecules"]
+        collection = self.db.db[molecules]
 
         completed_molecules = [x["mol_id"] for x in collection.find()]
 
@@ -829,7 +855,7 @@ class MolThermDataProcessor:
 
         return completed_reactions
 
-    def get_molecule_data(self, mol_id):
+    def get_molecule_data(self, mol_id, collection="molecules"):
         """
         Compile all useful molecular data for analysis, including molecule size
         (number of atoms), molecular weight, enthalpy, entropy, and functional
@@ -839,6 +865,8 @@ class MolThermDataProcessor:
         into SI units (J/mol and J/mol*K)
 
         :param mol_id: Unique ID associated with the molecule.
+        :param collection: Collection from which to extract molecule
+            information. Default is "molecules".
         :return: dict of relevant molecule data.
         """
 
@@ -848,9 +876,9 @@ class MolThermDataProcessor:
             raise RuntimeError("Cannot query database; connection is invalid."
                                " Try to connect again.")
 
-        collection = self.db.db["molecules"]
+        db_collection = self.db.db[collection]
 
-        mol_entry = collection.find_one({"mol_id": mol_id})
+        mol_entry = db_collection.find_one({"mol_id": mol_id})
 
         mol_data["enthalpy"] = mol_entry["output"]["enthalpy"] * 4.184 * 1000
         mol_data["entropy"]  = mol_entry["output"]["entropy"] * 4.184
