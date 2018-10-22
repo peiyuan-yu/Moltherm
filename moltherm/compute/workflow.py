@@ -30,7 +30,7 @@ __status__ = "Alpha"
 __date__ = "June 2018"
 
 
-class MolThermWorkflow:
+class MolThermWorkflowOld:
     """
     This class contains all functionality needed to perform Atomate
     workflows on molecular data.

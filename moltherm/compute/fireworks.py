@@ -1,22 +1,17 @@
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import os
-import json
 
 from atomate.qchem.firetasks.parse_outputs import QChemToDb
 
-from atomate.utils.utils import env_chk, get_logger, load_class
-from atomate.common.firetasks.glue_tasks import get_calc_loc
-from atomate.qchem.database import QChemCalcDb
+from atomate.utils.utils import env_chk, get_logger
 
-from fireworks import FiretaskBase, FWAction, explicit_serialize
+from fireworks import FiretaskBase, explicit_serialize
 from fireworks import Firework
-from fireworks.utilities.fw_serializers import DATETIME_HANDLER
 
 from custodian import Custodian
 from custodian.qchem.handlers import QChemErrorHandler
 
-from moltherm.compute.drones import MolThermDrone
 from pymatgen.io.qchem.inputs import QCInput
 from moltherm.compute.jobs import QCJob
 
@@ -107,160 +102,6 @@ class OptFreqSPFW(Firework):
                     "special_run_type": "opt_freq_sp"
                 }))
         super(OptFreqSPFW, self).__init__(
-            t,
-            parents=parents,
-            name=name,
-            **kwargs)
-
-
-class FrequencyFW(Firework):
-    def __init__(self, molecule=None,
-                 name="frequency",
-                 qchem_cmd="qchem",
-                 multimode="openmp",
-                 input_file="mol.qin",
-                 output_file="mol.qout",
-                 qclog_file="mol.qclog",
-                 max_cores=24,
-                 qchem_input_params=None,
-                 reversed_direction=False,
-                 parents=None,
-                 db_file=None,
-                 **kwargs):
-        """
-        Performs a QChem workflow for a frequency calculation.
-
-        Args:
-            molecule (Molecule): Input molecule.
-            name (str): Name for the Firework.
-            qchem_cmd (str): Command to run QChem. Defaults to qchem.
-            multimode (str): Parallelization scheme, either openmp or mpi.
-            input_file (str): Name of the QChem input file. Defaults to mol.qin.
-            output_file (str): Name of the QChem output file. Defaults to mol.qout.
-            qclog_file (str): Name of the QChem log file. Defaults to mol.qclog.
-            max_cores (int): Maximum number of cores to parallelize over. Defaults to 24.
-            qchem_input_params (dict): Specify kwargs for instantiating the input set parameters.
-                                       For example, if you want to change the DFT_rung, you should
-                                       provide: {"DFT_rung": ...}. Defaults to None.
-            reversed_direction (bool): Whether to reverse the direction of the vibrational
-                                       frequency vectors. Defaults to False.
-            parents ([Firework]): Parents of this particular Firework.
-            db_file (str): Path to file specifying db credentials to place output parsing.
-            **kwargs: Other kwargs that are passed to Firework.__init__.
-        """
-
-        qchem_input_params = qchem_input_params or {}
-        t = []
-
-        t.append(
-            WriteCustomInput(molecule=molecule,
-                             rem=qchem_input_params.get("rem", {"job_type": "freq",
-                                                        "method": "wb97x-d",
-                                                        "basis": "6-311++g(d,p)",
-                                                        "max_scf_cycles": 200,
-                                                        "gen_scfman": True,
-                                                        "scf_algorithm": "diis",
-                                                        "solvent_method": "smd"}),
-                             smx=qchem_input_params.get("smx", {"solvent": "water"}),
-                             input_file=input_file))
-
-        t.append(
-            RunQChemCustodian(
-                qchem_cmd=qchem_cmd,
-                multimode=multimode,
-                input_file=input_file,
-                output_file=output_file,
-                qclog_file=qclog_file,
-                suffix=".freq",
-                max_cores=max_cores,
-                qchem_input_params=qchem_input_params,
-                job_type="normal",
-                gzipped_output=False,
-                handler_group="no_handler",
-                reversed_direction=reversed_direction
-            ))
-
-        calc_dir, input_file = os.path.split(input_file)
-        output_file = os.path.basename(output_file)
-
-        t.append(
-            QChemToDb(
-                db_file=db_file,
-                input_file=input_file,
-                output_file=output_file,
-                calc_dir=calc_dir))
-
-        super(FrequencyFW, self).__init__(
-            t,
-            parents=parents,
-            name=name,
-            **kwargs)
-
-
-class SinglePointFW(Firework):
-    def __init__(self, molecule=None,
-                 name="single_point",
-                 qchem_cmd="qchem",
-                 multimode="openmp",
-                 input_file="mol.qin",
-                 output_file="mol.qout",
-                 qclog_file="mol.qclog",
-                 max_cores=24,
-                 sp_params=None,
-                 reversed_direction=False,
-                 parents=None,
-                 **kwargs):
-        """
-        Performs a QChem workflow for a single-point calculation.
-
-        Args:
-            molecule (Molecule): Input molecule.
-            name (str): Name for the Firework.
-            qchem_cmd (str): Command to run QChem. Defaults to qchem.
-            multimode (str): Parallelization scheme, either openmp or mpi.
-            input_file (str): Name of the QChem input file. Defaults to mol.qin.
-            output_file (str): Name of the QChem output file. Defaults to mol.qout.
-            qclog_file (str): Name of the QChem log file. Defaults to mol.qclog.
-            max_cores (int): Maximum number of cores to parallelize over. Defaults to 24.
-            sp_params (dict): Specify inputs for single-point calculation.
-            reversed_direction (bool): Whether to reverse the direction of the vibrational
-                                       frequency vectors. Defaults to False.
-            parents ([Firework]): Parents of this particular Firework.
-            **kwargs: Other kwargs that are passed to Firework.__init__.
-        """
-        sp_params = sp_params or {}
-        t = []
-
-        t.append(
-            WriteCustomInput(molecule=molecule,
-                             rem=sp_params.get("rem", {"job_type": "sp",
-                                                       "method": "wb97x-d",
-                                                       "basis": "6-311++g(d,p)",
-                                                       "max_scf_cycles": 200,
-                                                       "gen_scfman": True,
-                                                       "scf_algorithm": "diis",
-                                                       "solvent_method": "pcm"}),
-                             pcm=sp_params.get("pcm", {"theory": "iefpcm"}),
-                             solvent=sp_params.get("solvent", {"dielectric": 80.4}),
-                             input_file=input_file))
-
-        t.append(
-            RunQChemCustodian(
-                qchem_cmd=qchem_cmd,
-                multimode=multimode,
-                input_file=input_file,
-                output_file=output_file,
-                qclog_file=qclog_file,
-                suffix=".sp",
-                max_cores=max_cores,
-                sp_params=sp_params,
-                job_type="normal",
-                gzipped_output=False,
-                handler_group="no_handler",
-                reversed_direction=reversed_direction
-            ))
-
-        super(SinglePointFW, self).__init__(
             t,
             parents=parents,
             name=name,
@@ -377,20 +218,6 @@ class RunQChemCustodian(FiretaskBase):
                 save_name=save_name,
                 max_cores=max_cores)
 
-        elif job_type == "opt_freq_sp":
-            jobs = QCJob.opt_with_freq_sp(
-                qchem_command=qchem_cmd,
-                multimode=multimode,
-                input_file=input_file,
-                output_file=output_file,
-                qclog_file=qclog_file,
-                sp_params=sp_params,
-                max_cores=max_cores,
-                scratch_dir=scratch_dir,
-                save_scratch=save_scratch,
-                save_name=save_name)
-
-
         else:
             raise ValueError("Unsupported job type: {}".format(job_type))
 
@@ -404,111 +231,6 @@ class RunQChemCustodian(FiretaskBase):
             gzipped_output=gzipped_output)
 
         c.run()
-
-
-@explicit_serialize
-class QChemToDb(FiretaskBase):
-    """
-    Enter a QChem run into the database. Uses current directory unless you
-    specify calc_dir or calc_loc.
-
-    Optional params:
-        calc_dir (str): path to dir (on current filesystem) that contains QChem
-            input and output files. Default: use current working directory.
-        calc_loc (str OR bool): if True will set most recent calc_loc. If str
-            search for the most recent calc_loc with the matching name
-        input_file (str): name of the QChem input file
-        output_file (str): name of the QChem output file
-        additional_fields (dict): dict of additional fields to add
-        db_file (str): path to file containing the database credentials.
-            Supports env_chk. Default: write data to JSON file.
-        fw_spec_field (str): if set, will update the task doc with the contents
-            of this key in the fw_spec.
-        multirun (bool): Whether the job to parse includes multiple
-            calculations in one input / output pair.
-    """
-    optional_params = [
-        "calc_dir", "calc_loc", "input_file", "output_file",
-        "additional_fields", "db_file", "fw_spec_field", "multirun"
-    ]
-
-    def run_task(self, fw_spec):
-        # get the directory that contains the QChem dir to parse
-        print("Starting to put in DB.")
-        calc_dir = os.getcwd()
-        if "calc_dir" in self:
-            calc_dir = self["calc_dir"]
-        elif self.get("calc_loc"):
-            calc_dir = get_calc_loc(self["calc_loc"],
-                                    fw_spec["calc_locs"])["path"]
-        input_file = "mol.qin"
-        output_file = "mol.qout"
-        if "input_file" in self:
-            input_file = self["input_file"]
-        if "output_file" in self:
-            output_file = self["output_file"]
-
-        multirun = False
-        if "multirun" in self:
-            multirun = self["multirun"]
-
-        # parse the QChem directory
-        logger.info("PARSING DIRECTORY: {}".format(calc_dir))
-
-        drone = MolThermDrone(additional_fields=self.get("additional_fields"))
-
-        # assimilate (i.e., parse)
-        task_doc = drone.assimilate(
-            path=calc_dir,
-            input_file=input_file,
-            output_file=output_file,
-            multirun=multirun)
-
-        logger.info("Finished assimilation.")
-
-        # Check for additional keys to set based on the fw_spec
-        if self.get("fw_spec_field"):
-            task_doc.update(fw_spec[self.get("fw_spec_field")])
-
-        # Update fw_spec with final/optimized structure
-        update_spec = {}
-        if task_doc.get("output").get("optimized_molecule"):
-            update_spec["prev_calc_molecule"] = task_doc["output"][
-                "optimized_molecule"]
-
-        # get the database connection
-        db_file = env_chk(self.get("db_file"), fw_spec)
-
-        # db insertion or taskdoc dump
-        if not db_file:
-            with open(os.path.join(calc_dir, "task.json"), "w") as f:
-                f.write(json.dumps(task_doc, default=DATETIME_HANDLER))
-        else:
-            mmdb = QChemCalcDb.from_db_file(db_file, admin=True)
-            t_id = mmdb.insert(task_doc, update_duplicates=False)
-            logger.info("Finished parsing with task_id: {}".format(t_id))
-
-        defuse_children = False
-        if task_doc["state"] != "successful":
-            defuse_unsuccessful = self.get("defuse_unsuccessful",
-                                           "DEFUSE_UNSUCCESSFUL")
-            if defuse_unsuccessful is True:
-                defuse_children = True
-            elif defuse_unsuccessful is False:
-                pass
-            elif defuse_unsuccessful == "fizzle":
-                raise RuntimeError(
-                    "QChemToDb indicates that job is not successful "
-                    "(perhaps your job did not converge within the "
-                    "limit of electronic iterations)!")
-            else:
-                raise RuntimeError("Unknown option for defuse_unsuccessful: "
-                                   "{}".format(defuse_unsuccessful))
-
-        return FWAction(
-            stored_data={"task_id": task_doc.get("task_id", None)},
-            defuse_children=defuse_children,
-            update_spec=update_spec)
 
 
 @explicit_serialize

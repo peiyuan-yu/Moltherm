@@ -10,7 +10,6 @@ import pubchempy as pcp
 
 from bs4 import BeautifulSoup
 
-from monty.json import jsanitize
 from pymongo import MongoClient
 
 from matgendb.dbconfig import DBConfig
@@ -761,7 +760,7 @@ class ReaxysScraper:
 
     @staticmethod
     def store_reaxys_reactions_db(reactions, dbfile="db.json",
-                                  collection="reactions"):
+                                  collection="reaxys"):
         """
         Insert reaction information into a MongoDB database.
 
