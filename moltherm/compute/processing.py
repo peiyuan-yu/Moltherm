@@ -14,7 +14,6 @@ from pymatgen.io.qchem.outputs import QCOutput
 from atomate.qchem.database import QChemCalcDb
 from atomate.qchem.drones import QChemDrone
 
-from moltherm.compute.drones import MolThermDrone
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 
 __author__ = "Evan Spotte-Smith"
