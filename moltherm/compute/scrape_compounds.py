@@ -103,20 +103,23 @@ class ReaxysScraper:
 
                 rxn = {"rcts": rcts, "pros": pros, "meta": meta}
 
-                pro_atoms = []
-                for pro in rxn["pros"]:
-                    ad = BabelMolAdaptor.from_string(pro, file_format="mol")
-                    for site in ad.pymatgen_mol:
-                        pro_atoms.append(str(site.specie))
+                try:
+                    pro_atoms = []
+                    for pro in rxn["pros"]:
+                        ad = BabelMolAdaptor.from_string(pro, file_format="mol")
+                        for site in ad.pymatgen_mol:
+                            pro_atoms.append(str(site.specie))
 
-                rct_atoms = []
-                for rct in rxn["rcts"]:
-                    ad = BabelMolAdaptor.from_string(rct, file_format="mol")
-                    for site in ad.pymatgen_mol:
-                        rct_atoms.append(str(site.specie))
+                    rct_atoms = []
+                    for rct in rxn["rcts"]:
+                        ad = BabelMolAdaptor.from_string(rct, file_format="mol")
+                        for site in ad.pymatgen_mol:
+                            rct_atoms.append(str(site.specie))
 
-                if sorted(pro_atoms) == sorted(rct_atoms):
-                    results.append(rxn)
+                    if sorted(pro_atoms) == sorted(rct_atoms):
+                        results.append(rxn)
+                except:
+                    continue
 
         return results
 
@@ -186,7 +189,7 @@ class ReaxysScraper:
             for i, e in enumerate(reactants):
                 rct_path = os.path.join(path, str(e[0]))
                 if not os.path.exists(rct_path):
-                    os.makedirs(pro_path)
+                    os.makedirs(rct_path)
                 filename = str(e[0]) + ".mol"
                 with open(os.path.join(rct_path, filename), 'w') as file:
                     file.write(reaction["rcts"][i])

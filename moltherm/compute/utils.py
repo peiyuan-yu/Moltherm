@@ -1,4 +1,4 @@
-from os import listdir, remove, rename
+from os import listdir
 from os.path import join, isfile, isdir
 import operator
 import shutil
@@ -41,19 +41,15 @@ def find_common_solvents(base_dir):
     :return: dict {solvent: occurrence}
     """
 
-    rct_dirs = [d for d in listdir(base_dir) if isdir(join(base_dir, d))]
+    meta = [f for f in listdir(base_dir) if isfile(join(base_dir, f)) and f.endswith(".xml")]
 
     solvent_occurrence = {}
 
-    for rct_dir in rct_dirs:
-        if "meta.xml" not in listdir(join(base_dir, rct_dir)):
-            # If metadata has not been recorded, solvent cannot be determined
-            continue
-
-        with open(join(base_dir, rct_dir, "meta.xml"), "r") as file:
+    for f in meta:
+        with open(join(base_dir, f), "r") as file:
             parsed = BeautifulSoup(file.read(), "lxml-xml")
 
-            solvents = parsed.find("solvents").text.split(",")
+            solvents = parsed.find("solvents").text.split(" || ")
 
             for solvent in solvents:
                 current_value = solvent_occurrence.get(solvent, 0)
@@ -73,30 +69,28 @@ def get_reactions_common_solvent(base_dir, solvents, outdir=None):
     :return:
     """
 
-    rct_dirs = [d for d in listdir(base_dir) if isdir(join(base_dir, d))]
+    meta = [f for f in listdir(base_dir) if
+            isfile(join(base_dir, f)) and f.endswith(".xml")]
 
     common_solvent = []
 
-    for rct_dir in rct_dirs:
-        if "meta.xml" not in listdir(join(base_dir, rct_dir)):
-            # If metadata has not been recorded, solvent cannot be determined
-            continue
-
-        with open(join(base_dir, rct_dir, "meta.xml"), "r") as file:
+    for f in meta:
+        with open(join(base_dir, f), "r") as file:
+            rxn_id = f.replace(".xml", "")
             parsed = BeautifulSoup(file.read(), "lxml-xml")
 
-            this_solv = parsed.find("solvents").text.split(",")
+            this_solv = parsed.find("solvents").text.split(" || ")
             this_solv = [s.lower() for s in this_solv]
 
             for solvent in solvents:
 
-                if solvent.lower() in this_solv and rct_dir not in [d['dir'] for d in common_solvent]:
+                if solvent.lower() in this_solv and rxn_id not in common_solvent:
                     rct_names = [d.text for d in parsed.find_all('rctname')]
                     rct_ids = [d.text for d in parsed.find_all('rctid')]
                     pro_name = [d.text for d in parsed.find_all('proname')]
                     pro_ids = [d.text for d in parsed.find_all('proid')]
 
-                    common_solvent.append({'dir': rct_dir,
+                    common_solvent.append({'rxn_id':rxn_id,
                                            'rct_names': rct_names,
                                            'rct_ids': rct_ids,
                                            'pro_name': pro_name,
