@@ -7,8 +7,6 @@ import numpy as np
 
 from fireworks import Workflow, LaunchPad
 
-from atomate.qchem.database import QChemCalcDb
-
 from pymatgen.core.structure import Molecule
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
@@ -16,7 +14,10 @@ from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
 
-from moltherm.compute.fireworks import OptFreqSPFW, SinglePointFW
+from atomate.qchem.database import QChemCalcDb
+from atomate.qchem.fireworks.core import SinglePointFW, FrequencyFlatteningOptimizeFW
+
+from moltherm.compute.fireworks import OptFreqSPFW
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 from moltherm.compute.jobs import perturb_coordinates
 
@@ -76,6 +77,89 @@ class MolThermWorkflow:
 
         launchpad = LaunchPad.auto_load()
         launchpad.add_wf(workflow)
+
+    def get_molecule_workflow(self, path, mol_id, name_pre="molecule_opt_freq",
+                              qchem_cmd="qchem -slurm", max_cores=24,
+                              qchem_input_params=None):
+        """
+        Generates a Fireworks Workflow to optimize a molecular geometry and
+        perform a vibrational analysis (frequency calculation) in Q-Chem.
+
+        :param path: Specified (sub)path in which to run the reaction. By
+        default, this is None, and the Fireworks will run in self.base_dir
+        :param mol_id: str representing the unique molecule identifier
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param qchem_cmd: str indicating how the Q-Chem code should be called.
+        Default is "qchem -slurm", for a SLURM-based system.
+        :param max_cores: int specifying how many cores the workflow should be
+        split over. Default is 24.
+        :param qchem_input_params: dict listing all parameters differing from
+        default values.
+        :return: Workflow
+        """
+
+        fws = []
+
+        base_path = join(self.base_dir, path)
+
+        files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                 and f.startswith(mol_id) and f.endswith(".mol")]
+
+        if len(files) > 1:
+            print("Multiple valid molecule files found.")
+            print("Generating workflows for all valid files found.")
+
+            for i, file in enumerate(files):
+                path = join(base_path, file.replace(".mol", "") + "_" + str(i))
+
+                try:
+                    os.mkdir(path)
+                except FileExistsError:
+                    "Numbered directory already exists."
+
+                mol = get_molecule(join(base_path, file))
+
+                os.chdir(path)
+
+                fw = FrequencyFlatteningOptimizeFW(molecule=mol,
+                                                   name=name_pre,
+                                                   qchem_cmd=qchem_cmd,
+                                                   qchem_input_params=qchem_input_params,
+                                                   max_cores=max_cores,
+                                                   max_iterations=3,
+                                                   db_file=self.db_file)
+
+                fws.append(fw)
+
+        elif len(files) == 0:
+            raise RuntimeError("No valid files found.")
+
+        else:
+            file = files[0]
+
+            path = join(base_path, file.replace(".mol", "") + "_" + str(i))
+
+            try:
+                os.mkdir(path)
+            except FileExistsError:
+                "Numbered directory already exists."
+
+            mol = get_molecule(join(base_path, file))
+
+            os.chdir(path)
+
+            fw = FrequencyFlatteningOptimizeFW(molecule=mol,
+                                               name=name_pre,
+                                               qchem_cmd=qchem_cmd,
+                                               qchem_input_params=qchem_input_params,
+                                               max_cores=max_cores,
+                                               max_iterations=3,
+                                               db_file=self.db_file)
+
+            fws.append(fw)
+
+        return Workflow(fws)
 
 
 class MolThermWorkflowOld:

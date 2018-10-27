@@ -230,13 +230,17 @@ class ReaxysParser:
 
         for reaction in reactions:
             # Reorganize for database insertion
-            reaction["rxn_id"] = reaction["meta"]["rxn_id"]
-            del(reaction["meta"]["rxn_id"])
-            reaction["meta"]["solvents"] = list(reaction["meta"]["solvents"])
+            rxn = {}
+            rxn["rxn_id"] = str(reaction["meta"]["rxn_id"])
+            rxn["pro_ids"] = [p[0] for p in reaction["meta"]["pro_meta"]]
+            rxn["pro_names"] = [p[1] for p in reaction["meta"]["pro_meta"]]
+            rxn["rct_ids"] = [r[0] for r in reaction["meta"]["rct_meta"]]
+            rxn["rct_names"] = [r[1] for r in reaction["meta"]["rct_meta"]]
+            rxn["solvents"] = list(reaction["meta"]["solvents"])
 
             try:
-                collection.insert_one(reaction)
-                just_added.append(reaction["rxn_id"])
+                collection.insert_one(rxn)
+                just_added.append(rxn["rxn_id"])
             except DuplicateKeyError:
                 continue
 
