@@ -6,24 +6,26 @@ from bs4 import BeautifulSoup
 
 import pubchempy as pcp
 
+from pymongo.errors import DuplicateKeyError
+
 from pymatgen.io.babel import BabelMolAdaptor
 
 from atomate.qchem.database import QChemCalcDb
 
 __author__ = "Evan Spotte-Smith"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Evan Spotte-Smith"
 __email__ = "espottesmith@gmail.com"
-__status__ = "Alpha"
+__status__ = "Beta"
 __date__ = "June 2018"
 
 
-class ReaxysScraper:
+class ReaxysParser:
     """
-    Not so much a scraper as a parser (for now). Takes results from Reaxys
-    query. Can convert to Reaction namedtuple, which includes important
-    metadata and CTAB data. Can also turn that CTAB data into CTAB files. This
-    allows easy interoperability with OpenBabel and pymatgen.
+    Parser for reaction data from the Reaxys reaction database. This class can
+    extract important reaction metadata from an exported XML file, restore that
+    pertinent information, including molecule structure files (*.mol), and
+    interact with a database for additional storage.
     """
 
     def __init__(self, base_dir):
@@ -220,19 +222,22 @@ class ReaxysScraper:
             raise RuntimeError("Cannot connect to database. Please check your"
                                " configuration and try again.")
 
-        collection = db[collection_name]
+        collection = db.db[collection_name]
 
         just_added = []
 
-        if "rxn_id" not in collection.index_information():
-            collection.create_index("rxn_id", unique=True)
+        collection.create_index("rxn_id", unique=True)
 
         for reaction in reactions:
+            # Reorganize for database insertion
+            reaction["rxn_id"] = reaction["meta"]["rxn_id"]
+            del(reaction["meta"]["rxn_id"])
+            reaction["meta"]["solvents"] = list(reaction["meta"]["solvents"])
+
             try:
-                reaction["rxn_id"] = reaction["meta"]["rxn_id"]
                 collection.insert_one(reaction)
                 just_added.append(reaction["rxn_id"])
-            except:
+            except DuplicateKeyError:
                 continue
 
         return just_added
@@ -480,7 +485,7 @@ class ChemSpiderScraper:
             raise RuntimeError("Cannot connect to database. Please check your"
                                " configuration and try again")
 
-        self.collection = self.db[collection_name]
+        self.collection = self.db.db[collection_name]
 
     def get_chemspider_ids(self, molecules, max_attempts=100):
         """
