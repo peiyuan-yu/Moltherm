@@ -145,9 +145,98 @@ class MolThermWorkflow:
             except FileExistsError:
                 "Numbered directory already exists."
 
-            mol = get_molecule(join(base_path, file))
+            result = self.molecules.find_one({"mol_id": mol_id})
+
+            if result is None:
+                mol = get_molecule(join(base_path, file))
+            else:
+                entry = result["output"].get('optimized_molecule',
+                                          result["output"].get('initial_molecule'))
+                mol = Molecule.from_dict(entry)
 
             os.chdir(path)
+
+            fw = FrequencyFlatteningOptimizeFW(molecule=mol,
+                                               name=name_pre,
+                                               qchem_cmd=qchem_cmd,
+                                               qchem_input_params=qchem_input_params,
+                                               max_cores=max_cores,
+                                               max_iterations=3,
+                                               db_file=self.db_file)
+
+            fws.append(fw)
+
+        return Workflow(fws)
+
+    def get_reaction_workflow(self, rxn_id, mol_dir=None,
+                              name_pre="reaction_opt_freq",
+                              qchem_cmd="qchem -slurm", max_cores=24,
+                              qchem_input_params=None):
+        """
+        Generates a Fireworks Workflow to perform geometry optimizations and
+        vibrational analyses on all of the molecules involved in a chemical
+        reaction.
+
+        :param rxn_id: str representing unique reaction identifier.
+        :param mol_dir: str indicating a subdirectory (from self.base_dir)
+        where molecule calculations should be stored. Default is None,
+        indicating that all calculations should be done within self.base_dir.
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param qchem_cmd: str indicating how the Q-Chem code should be called.
+        Default is "qchem -slurm", for a SLURM-based system.
+        :param max_cores: int specifying how many cores the workflow should be
+        split over. Default is 24.
+        :param qchem_input_params: dict listing all parameters differing from
+        default values.
+        :return: Workflow
+        """
+
+        fws = []
+
+        if mol_dir is not None:
+            base_path = join(self.base_dir, mol_dir)
+        else:
+            base_path = self.base_dir
+
+        mol_dirs = [d for d in listdir(base_path) if isdir(join(base_path, d))
+                    and not ("atomate" in d)]
+
+        rxn = self.reactions.find_one({"rxn_id": rxn_id})
+
+        if rxn is None:
+            raise RuntimeError("No reaction with id {} found in database.".format(rxn_id))
+
+        mol_ids = [str(i) for i in rxn["pro_ids"] + rxn["rct_ids"]]
+
+        for mol_id in mol_ids:
+            mol_path = join(base_path, mol_id)
+            if mol_id not in mol_dirs:
+                os.mkdir(mol_path)
+
+            os.chdir(mol_path)
+
+            # Search for molecule in previous calculations
+            result = self.molecules.find_one({"mol_id": mol_id})
+
+            if result is None:
+                mol_files = [f for f in listdir(mol_path) if
+                             isfile(join(mol_path, f))
+                             and f.endswith(".mol")]
+
+                if len(mol_files) == 0:
+                    raise RuntimeError("Molecule not found in database or file"
+                                       " system.")
+                elif len(mol_files) > 1:
+                    print("More than one valid *.mol file available.")
+                    print("Selecting one for analysis.")
+
+                mol = get_molecule(join(base_path, mol_files[0]))
+
+            else:
+                entry = result["output"].get('optimized_molecule',
+                                          result["output"].get('initial_molecule'))
+                mol = Molecule.from_dict(entry)
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                name=name_pre,

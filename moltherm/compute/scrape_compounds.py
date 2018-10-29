@@ -232,9 +232,9 @@ class ReaxysParser:
             # Reorganize for database insertion
             rxn = {}
             rxn["rxn_id"] = str(reaction["meta"]["rxn_id"])
-            rxn["pro_ids"] = [p[0] for p in reaction["meta"]["pro_meta"]]
+            rxn["pro_ids"] = [str(p[0]) for p in reaction["meta"]["pro_meta"]]
             rxn["pro_names"] = [p[1] for p in reaction["meta"]["pro_meta"]]
-            rxn["rct_ids"] = [r[0] for r in reaction["meta"]["rct_meta"]]
+            rxn["rct_ids"] = [str(r[0]) for r in reaction["meta"]["rct_meta"]]
             rxn["rct_names"] = [r[1] for r in reaction["meta"]["rct_meta"]]
             rxn["solvents"] = list(reaction["meta"]["solvents"])
 
