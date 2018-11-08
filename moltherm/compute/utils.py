@@ -58,14 +58,12 @@ def find_common_solvents(base_dir):
     return sorted(solvent_occurrence.items(), key=operator.itemgetter(1))
 
 
-def get_reactions_common_solvent(base_dir, solvents, outdir=None):
+def get_reactions_common_solvent(base_dir, solvents):
     """
     Identify all reactions from a set of reactions which share a solvent.
 
     :param base_dir: Directory to begin search in.
     :param solvents: list of strings representing solvents
-    :param outdir: Directory to put all reactions with the common solvent. If
-        None, do not copy relevant files.
     :return:
     """
 
@@ -96,16 +94,7 @@ def get_reactions_common_solvent(base_dir, solvents, outdir=None):
                                            'pro_name': pro_name,
                                            'pro_ids': pro_ids})
 
-    if outdir is not None:
-        num_copied = 0
-        for rct_dir in common_solvent:
-            shutil.copytree(join(base_dir, rct_dir), join(outdir, rct_dir))
-            num_copied += 1
-
-        print("{} reactions with solvents {}".format(str(num_copied), solvents))
-
-    else:
-        return common_solvent
+    return common_solvent
 
 
 def associate_qchem_to_mol(base_dir, directory):
