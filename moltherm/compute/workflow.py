@@ -231,7 +231,7 @@ class MolThermWorkflow:
                     print("More than one valid *.mol file available.")
                     print("Selecting one for analysis.")
 
-                mol = get_molecule(join(base_path, mol_files[0]))
+                mol = get_molecule(join(mol_path, mol_files[0]))
 
             else:
                 entry = result["output"].get('optimized_molecule',
