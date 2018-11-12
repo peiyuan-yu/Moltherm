@@ -157,7 +157,7 @@ class MolThermWorkflow:
             os.chdir(path)
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                               name=name_pre,
+                                               name=name_pre+"_{}".format(mol_id),
                                                qchem_cmd=qchem_cmd,
                                                qchem_input_params=qchem_input_params,
                                                max_cores=max_cores,
@@ -239,7 +239,7 @@ class MolThermWorkflow:
                 mol = Molecule.from_dict(entry)
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                               name=name_pre,
+                                               name=name_pre+"_{}".format(mol_id),
                                                qchem_cmd=qchem_cmd,
                                                qchem_input_params=qchem_input_params,
                                                max_cores=max_cores,
