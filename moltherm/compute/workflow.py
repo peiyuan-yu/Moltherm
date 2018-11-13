@@ -15,9 +15,9 @@ from pymatgen.analysis.local_env import OpenBabelNN
 from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
 
 from atomate.qchem.database import QChemCalcDb
-from atomate.qchem.fireworks.core import SinglePointFW, FrequencyFlatteningOptimizeFW
+from atomate.qchem.fireworks.core import SinglePointFW
 
-from moltherm.compute.fireworks import OptFreqSPFW
+from moltherm.compute.fireworks import OptFreqSPFW, FrequencyFlatteningOptimizeFW
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 from moltherm.compute.jobs import perturb_coordinates
 
@@ -126,7 +126,9 @@ class MolThermWorkflow:
                                                    name=name_pre,
                                                    qchem_cmd=qchem_cmd,
                                                    qchem_input_params=qchem_input_params,
+                                                   multimode="openmp",
                                                    max_cores=max_cores,
+                                                   directory=base_path,
                                                    max_iterations=3,
                                                    db_file=self.db_file)
 
@@ -160,7 +162,9 @@ class MolThermWorkflow:
                                                name=name_pre+"_{}".format(mol_id),
                                                qchem_cmd=qchem_cmd,
                                                qchem_input_params=qchem_input_params,
+                                               multimode="openmp",
                                                max_cores=max_cores,
+                                               directory=base_path,
                                                max_iterations=3,
                                                db_file=self.db_file)
 
@@ -242,7 +246,9 @@ class MolThermWorkflow:
                                                name=name_pre+"_{}".format(mol_id),
                                                qchem_cmd=qchem_cmd,
                                                qchem_input_params=qchem_input_params,
+                                               multimode="openmp",
                                                max_cores=max_cores,
+                                               directory=mol_path,
                                                max_iterations=3,
                                                db_file=self.db_file)
 
