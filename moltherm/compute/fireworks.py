@@ -13,6 +13,9 @@ from custodian import Custodian
 from custodian.qchem.handlers import QChemErrorHandler
 
 from pymatgen.io.qchem.inputs import QCInput
+
+import atomate.qchem.firetasks as tasks
+
 from moltherm.compute.jobs import QCJob
 
 logger = get_logger(__name__)
@@ -172,13 +175,13 @@ class FrequencyFlatteningOptimizeFW(Firework):
             output_file = os.path.join(directory, "mol.qout")
         t = []
         t.append(
-            WriteInputFromIOSet(
+            tasks.write_inputs.WriteInputFromIOSet(
                 molecule=molecule,
                 qchem_input_set="OptSet",
                 input_file=input_file,
                 qchem_input_params=qchem_input_params))
         t.append(
-            RunQChemCustodian(
+            tasks.run_calc.RunQChemCustodian(
                 qchem_cmd=qchem_cmd,
                 multimode=multimode,
                 input_file=input_file,
@@ -189,7 +192,7 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 max_molecule_perturb_scale=max_molecule_perturb_scale,
                 reversed_direction=reversed_direction))
         t.append(
-            QChemToDb(
+            tasks.parse_outputs.QChemToDb(
                 db_file=db_file,
                 input_file=input_file,
                 output_file=output_file,
