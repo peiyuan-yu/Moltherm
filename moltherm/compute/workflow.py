@@ -111,16 +111,7 @@ class MolThermWorkflow:
             print("Generating workflows for all valid files found.")
 
             for i, file in enumerate(files):
-                path = join(base_path, file.replace(".mol", "") + "_" + str(i))
-
-                try:
-                    os.mkdir(path)
-                except FileExistsError:
-                    "Numbered directory already exists."
-
                 mol = get_molecule(join(base_path, file))
-
-                os.chdir(path)
 
                 fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                    name=name_pre+"_{}".format(mol_id),
@@ -139,13 +130,6 @@ class MolThermWorkflow:
 
         else:
             file = files[0]
-
-            path = join(base_path, file.replace(".mol", "") + "_" + str(i))
-
-            try:
-                os.mkdir(path)
-            except FileExistsError:
-                "Numbered directory already exists."
 
             result = self.molecules.find_one({"mol_id": mol_id})
 
