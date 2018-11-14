@@ -170,9 +170,11 @@ class FrequencyFlatteningOptimizeFW(Firework):
         if directory is None:
             input_file = "mol.qin"
             output_file = "mol.qout"
+            qclog_file = "mol.qclog"
         else:
             input_file = os.path.join(directory, "mol.qin")
             output_file = os.path.join(directory, "mol.qout")
+            qclog_file = os.path.join(directory, "mol.qclog")
         t = []
         t.append(
             tasks.write_inputs.WriteInputFromIOSet(
@@ -186,6 +188,7 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 multimode=multimode,
                 input_file=input_file,
                 output_file=output_file,
+                qclog_file=qclog_file,
                 max_cores=max_cores,
                 job_type="opt_with_frequency_flattener",
                 max_iterations=max_iterations,
