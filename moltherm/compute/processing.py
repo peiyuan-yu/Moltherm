@@ -1,6 +1,5 @@
 from os import listdir
 from os.path import join, isfile, isdir, abspath
-import shutil
 from collections import Counter
 
 import networkx as nx

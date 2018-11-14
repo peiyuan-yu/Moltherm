@@ -101,7 +101,7 @@ class MolThermWorkflow:
 
         fws = []
 
-        base_path = join(self.base_dir, path)
+        base_path = join(self.base_dir, path, mol_id)
 
         files = [f for f in listdir(base_path) if isfile(join(base_path, f))
                  and f.startswith(mol_id) and f.endswith(".mol")]
@@ -123,7 +123,7 @@ class MolThermWorkflow:
                 os.chdir(path)
 
                 fw = FrequencyFlatteningOptimizeFW(molecule=mol,
-                                                   name=name_pre,
+                                                   name=name_pre+"_{}".format(mol_id),
                                                    qchem_cmd=qchem_cmd,
                                                    qchem_input_params=qchem_input_params,
                                                    multimode="openmp",
@@ -155,8 +155,6 @@ class MolThermWorkflow:
                 entry = result["output"].get('optimized_molecule',
                                           result["output"].get('initial_molecule'))
                 mol = Molecule.from_dict(entry)
-
-            os.chdir(path)
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                name=name_pre+"_{}".format(mol_id),
