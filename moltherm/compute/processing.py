@@ -2,7 +2,6 @@ from os import listdir
 from os.path import join, isfile, isdir, abspath
 import shutil
 from collections import Counter
-import re
 
 import networkx as nx
 
@@ -31,18 +30,20 @@ class MolThermDataProcessor:
     boiling and melting points.
     """
 
-    def __init__(self, base_dir, reactant_pre="rct_", product_pre="pro_",
+    def __init__(self, base_dir, mol_dir="molecules", rxn_dir="reactions",
                  db_file="db.json"):
         """
-        :param base_dir: Directory where input and output data should be stored.
-        :param reactant_pre: Prefix for reactant files.
-        :param product_pre: Prefix for product files.
+        :param base_dir: Directory where all data should be stored.
+        :param mol_dir: Subdirectory where molecule files and calculations are
+        stored. Default is "molecules".
+        :param rxn_dir: Subdirectory where reaction metadata files (and
+        potentially calculations) are stored. Default is "reactions".
         :param db_file: Path to database config file.
         """
 
         self.base_dir = base_dir
-        self.reactant_pre = reactant_pre
-        self.product_pre = product_pre
+        self.mol_dir = join(self.base_dir, mol_dir)
+        self.rxn_dir = join(self.base_dir, rxn_dir)
         self.db_file = db_file
 
         try:
@@ -182,13 +183,7 @@ class MolThermDataProcessor:
                                "and try again later.")
 
         # To extract enthalpy and entropy from calculation results
-        # Note: After all sp jobs are finished, it should be unnecessary to use
-        # energy_opt
         def get_thermo(job):
-            enthalpy = None
-            entropy = None
-            energy = None
-
             enthalpy = job["output"]["enthalpy"]
             entropy = job["output"]["entropy"]
 
@@ -425,57 +420,6 @@ class MolThermDataProcessor:
             raise RuntimeError("Either database or files must be used to "
                                "extract thermo data.")
 
-    def record_reaction_data_file(self, directory, filename="thermo.txt",
-                                  use_files=True, use_db=False, opt=None,
-                                  freq=None, sp=None):
-        """
-        Record thermo data in thermo.txt file.
-
-        Note: This function does NOT store the reactant and product IDs
-
-        :param directory: Directory name where the reaction is stored. Right
-            now, this is the easiest way to identify the reaction. In the
-            future, more sophisticated searching should be used.
-        :param filename: File (within directory) where data should be stored.
-            By default, it will be stored in thermo.txt.
-        :param use_files: If set to True (default True), use
-            get_reaction_thermo_files to gather data
-        :param use_db: If set to True (default False), use
-            extract_reaction_data to gather data
-        :param opt: dict containing information about the optimization jobs. By
-            default, this is None, and that information will be obtained by
-            querying the self.db.tasks collection.
-        :param freq: dict containing information about the frequency jobs. By
-            default, this is None, and that information will be obtained by
-            querying the self.db.tasks collection.
-        :param sp: dict containing information about the single-point jobs. By
-            default, this is None, and that information will be obtained by
-            querying the self.db.tasks collection.
-
-        :return:
-        """
-
-        if abspath(directory) != directory:
-            directory = join(self.base_dir, directory)
-
-        with open(join(directory, filename), "w+") as file:
-            if use_db:
-                data = self.extract_reaction_data(directory, opt=opt, freq=freq,
-                                                  sp=sp)
-            elif use_files:
-                data = self.get_reaction_thermo_files(directory)
-            else:
-                raise RuntimeError("Either database or files must be used to "
-                                   "extract thermo data.")
-
-            file.write("Directory: {}\n".format(data["dir_name"]))
-            file.write("Optimization Input: {}\n".format(data.get("opt", "")))
-            file.write("Frequency Input: {}\n".format(data.get("freq", "")))
-            file.write("Single-Point Input: {}\n".format(data.get("sp", "")))
-            file.write("Reaction Enthalpy: {}\n".format(data["thermo"]["enthalpy"]))
-            file.write("Reaction Entropy: {}\n".format(data["thermo"]["entropy"]))
-            file.write("Turning Temperature: {}\n".format(data["thermo"]["t_critical"]))
-
     def populate_collections(self, molecules="molecules", thermo=None,
                              overwrite=False, sp_job=True):
         """
@@ -559,7 +503,7 @@ class MolThermDataProcessor:
         dirs = [d for d in listdir(self.base_dir) if
                 isdir(join(self.base_dir, d)) and not d.startswith("block")]
 
-        drone = MolThermDrone()
+        drone = QChemDrone()
         mol_coll = self.db.db[collection]
 
         for d in dirs:
@@ -650,94 +594,33 @@ class MolThermDataProcessor:
             thermo_coll.update_one({"dir_name": update[0]},
                                    {"$set": {"thermo": update[1]}})
 
-    def copy_outputs_across_directories(self):
+    def find_reactions_common_reactant(self, mol_id, collection="reaxys"):
         """
-        Copy output files between subdirectories to ensure that all reaction
-        directories that need outputs of a given molecule will have them.
+        Queries reactions to identify all those that share a common reactant or
+        product.
 
-        Note: This function should not be used unless necessary. It was written
-        because for each directory, only a single database entry was being made
-        (because db entries were being overwritten by default.
-
-        :return:
+        :param mol_id: ID (str) of reactant molecule to be searched.
+        :param collection: Database collection to search for reactions. Default
+        is "reaxys".
+        :return: list of dicts representing reaction metadata.
         """
 
-        files_copied = 0
+        # Should return all reactions where mol_id is in rct_ids or pro_ids
+        res_rct = self.db.db[collection].find({"rct_ids": mol_id})
+        res_pro = self.db.db[collection].find({"pro_ids": mol_id})
 
-        dirs = [d for d in listdir(self.base_dir) if
-                isdir(join(self.base_dir, d)) and not d.startswith("block")]
-        print("Number of directories: {}".format(len(dirs)))
-
-        for start_d in dirs:
-            start_p = join(self.base_dir, start_d)
-            mol_files = [f for f in listdir(start_p) if isfile(join(start_p, f)) and f.endswith(".mol")]
-            out_files = [f for f in listdir(start_p) if isfile(join(start_p, f)) and ".out" in f]
-
-            for mf in mol_files:
-                is_covered = False
-                mol_id = extract_id(mf)
-
-                mol_obj = get_molecule(join(start_p, mf))
-
-                for out in out_files:
-                    qcout = QCOutput(join(start_p, out))
-                    if sorted(qcout.data["initial_molecule"].species) == sorted(mol_obj.species):
-                        # If there is already output, do not copy any files
-                        is_covered = True
-
-                if is_covered:
-                    continue
-
-                for other_d in dirs:
-                    if other_d == start_d:
-                        continue
-                    if is_covered:
-                        break
-
-                    other_p = join(self.base_dir, other_d)
-                    # Check if this id is present
-                    other_mol_files = [f for f in listdir(other_p) if isfile(join(other_p, f)) and f.endswith(".mol") and mol_id in f]
-                    other_out_files = [f for f in listdir(other_p) if isfile(join(other_p, f)) and ".out" in f]
-                    to_copy = []
-                    for other_mol in other_mol_files:
-                        if other_mol.startswith(self.product_pre):
-                            to_copy = [f for f in other_out_files if
-                                       f.startswith(self.product_pre)]
-                        elif other_mol.startswith(self.reactant_pre):
-                            to_check = [f for f in other_out_files if f.startswith(self.reactant_pre)]
-                            to_copy = []
-                            for file in to_check:
-                                qcout = QCOutput(join(other_p, file))
-                                if qcout.data["initial_molecule"].species == mol_obj.species:
-                                    to_copy.append(file)
-                        else:
-                            to_copy = []
-                    for file in to_copy:
-                        shutil.copyfile(join(other_p, file), join(start_p, file + "_copy"))
-                        files_copied += 1
-
-                    if files_copied > 0:
-                        is_covered = True
-        print("Number of files copied: {}".format(files_copied))
-
-    def find_common_reactants(self, rct_id):
-        """
-        Searches all subdirectories for those that have reactant .mol files with
-        unique id rct_id.
-
-        :param rct_id: String representing unique identifier for Reaxys
-            molecules.
-        :return: List of reaction directories containing the given reactant.
-        """
         results = []
-        for d in listdir(self.base_dir):
-            if isdir(join(self.base_dir, d)) and not d.startswith("block"):
-                for f in listdir(join(self.base_dir, d)):
-                    if rct_id in f:
-                        results.append(d)
+
+        if res_rct is not None:
+            for res in res_rct:
+                results.append(res["rxn_id"])
+        if res_pro is not None:
+            for res in res_pro:
+                results.append(res["rxn_id"])
+
         return results
 
-    def map_reactants_to_reactions(self):
+    def map_reactants_to_reactions(self, collection="reaxys"):
         """
         Construct a dict showing which directories share each reactant.
 
@@ -745,24 +628,22 @@ class MolThermDataProcessor:
         "source" of a given reactant (in which directory the calculation
         actually took place).
 
-        :return:
+        :param collection: Database collection to search for reactions. Default
+        is "reaxys".
+        :return: dict mapping molecule IDs to lists of reaction IDs.
         """
 
-        mapping = {}
-        dirs = [d for d in listdir(self.base_dir)
-                if isdir(join(self.base_dir, d)) and not d.startswith("block")]
+        molecules = [d for d in listdir(self.mol_dir)
+                     if isdir(join(self.mol_dir, d))]
 
-        for d in dirs:
-            if isdir(join(self.base_dir, d)) and not d.startswith("block"):
-                molfiles = [f for f in listdir(join(self.base_dir, d))
-                            if f.endswith(".mol")
-                            and f.startswith(self.reactant_pre)]
-                for file in molfiles:
-                    f_id = extract_id(file)
-                    if f_id in mapping:
-                        mapping[f_id].append(d)
-                    else:
-                        mapping[f_id] = [d]
+        mapping = {}
+
+        for mol_id in molecules:
+            res = self.find_reactions_common_reactant(mol_id,
+                                                      collection=collection)
+
+            if len(res) != 0:
+                mapping[mol_id] = res
 
         return mapping
 
@@ -982,69 +863,3 @@ class MolThermDataProcessor:
                 reaction_data["thermo"]["t_star"] = 0
 
         return reaction_data
-
-    @staticmethod
-    def parse_epi_suite_data(file):
-        """
-        Parse predicted data from the US EPA's EPI Suite batch mode.
-
-        Currently, this function only extracts the predicted boiling point,
-        melting point, and solubility.
-
-        :param file: Path to EPI Suite output file.
-        :return: list of dicts with predicted molecular data
-        """
-
-        parsed_results = []
-
-        with open(file, 'r') as file:
-            entries = file.read().split("\n\n========================\n\n")[1:-1]
-
-            for entry in entries:
-                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+)",
-                                   entry)
-                if smiles:
-                    smiles = smiles.group(1)
-                else:
-                    smiles = None
-                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+\n*\s*[A-Za-z0-9]+)", entry)
-                if name:
-                    dir_name = name.group(1)
-                    mol_id = name.group(2).replace("\n         ", "").replace("\nMOL", "")
-                else:
-                    name = re.search(
-                        r"CHEM\s+:\s+([A-Z/_a-z0-9]+\n\s+[A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+)",
-                        entry)
-                    if name:
-                        dir_name = name.group(1).replace("\n         ", "")
-                        mol_id = name.group(2)
-                    else:
-                        print(entry)
-                        dir_name = None
-                        mol_id = None
-                bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
-                if bp:
-                    bp = float(bp.group(1))
-                else:
-                    bp = None
-                mp = re.search(r"\s+Melting Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Mean or Weighted MP\)", entry)
-                if mp:
-                    mp = float(mp.group(1))
-                else:
-                    mp = None
-                solubility = re.search(r"\s+Water Solubility at 25 deg C \(mg/L\):\s+([e0-9\+\-\.]+)", entry)
-                if solubility:
-                    solubility = float(solubility.group(1))
-                else:
-                    solubility = None
-
-                if dir_name is not None:
-                    dir_name.replace("\n         ", "")
-
-                parsed_results.append({"mol_id": mol_id,
-                                       "dir_name": dir_name,
-                                       "smiles": smiles,
-                                       "bp": bp,
-                                       "mp": mp,
-                                       "solubility": solubility})
-        return parsed_results

@@ -2,6 +2,7 @@
 
 import os
 import requests
+import re
 from bs4 import BeautifulSoup
 
 import pubchempy as pcp
@@ -212,7 +213,8 @@ class ReaxysParser:
         reactions will be inserted.
         :param collection_name: Collection within the database in which to store
         the reactions.
-        :return: List of rxn_ids that were
+        :return: List of rxn_ids that were added to collection collection_name
+        as a result of this method call
         """
 
         # Set up MongoDB database with pymatgen-db and pymongo
@@ -241,6 +243,117 @@ class ReaxysParser:
             try:
                 collection.insert_one(rxn)
                 just_added.append(rxn["rxn_id"])
+            except DuplicateKeyError:
+                continue
+
+        return just_added
+
+
+class EPISuiteParser:
+    """
+    This class processes outputs from the Environmental Protection Agency's
+    EPI Suite. It can also interface with a MongoDB database in order to store
+    this data.
+
+    """
+
+    def __init__(self, db_file="db.json"):
+        """
+        :param db_file: Path to database config file.
+        """
+
+        self.db_file = db_file
+
+        try:
+            self.db = QChemCalcDb.from_db_file(self.db_file)
+        except:
+            self.db = None
+
+    @staticmethod
+    def parse_epi_suite_data(file):
+        """
+        Parse predicted data from the US EPA's EPI Suite batch mode.
+
+        Currently, this function only extracts the predicted boiling point,
+        melting point, and solubility.
+
+        :param file: Path to EPI Suite output file.
+        :return: list of dicts with predicted molecular data
+        """
+
+        parsed_results = []
+
+        with open(file, 'r') as file:
+            entries = file.read().split("\n\n========================\n\n")[1:-1]
+
+            for entry in entries:
+                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+)",
+                                   entry)
+                if smiles:
+                    smiles = smiles.group(1)
+                else:
+                    smiles = None
+                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+\n*\s*[A-Za-z0-9]+)", entry)
+                if name:
+                    dir_name = name.group(1)
+                    mol_id = name.group(2).replace("\n         ", "").replace("\nMOL", "")
+                else:
+                    name = re.search(
+                        r"CHEM\s+:\s+([A-Z/_a-z0-9]+\n\s+[A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+)",
+                        entry)
+                    if name:
+                        dir_name = name.group(1).replace("\n         ", "")
+                        mol_id = name.group(2)
+                    else:
+                        print(entry)
+                        dir_name = None
+                        mol_id = None
+                bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
+                if bp:
+                    bp = float(bp.group(1))
+                else:
+                    bp = None
+                mp = re.search(r"\s+Melting Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Mean or Weighted MP\)", entry)
+                if mp:
+                    mp = float(mp.group(1))
+                else:
+                    mp = None
+                solubility = re.search(r"\s+Water Solubility at 25 deg C \(mg/L\):\s+([e0-9\+\-\.]+)", entry)
+                if solubility:
+                    solubility = float(solubility.group(1))
+                else:
+                    solubility = None
+
+                if dir_name is not None:
+                    dir_name.replace("\n         ", "")
+
+                parsed_results.append({"mol_id": mol_id,
+                                       "smiles": smiles,
+                                       "bp": bp,
+                                       "mp": mp,
+                                       "solubility": solubility})
+        return parsed_results
+
+    def store_epi_suite_db(self, entries, collection="episuite"):
+        """
+        :param entries: List of dictionaries, with each entry representing the
+        EPI Suite output data for a molecule.
+        :param collection: Database collection for EPI Suite data. Default is
+        "episuite".
+        :return: list of mol_ids corresponding to all entries just added to
+        collection.
+        """
+
+        collection = self.db.db[collection]
+
+        collection.create_index("mol_id", unique=True)
+
+        just_added = []
+
+        for entry in entries:
+            try:
+                collection.insert_one(entry)
+                just_added.append(entry["mol_id"])
             except DuplicateKeyError:
                 continue
 
