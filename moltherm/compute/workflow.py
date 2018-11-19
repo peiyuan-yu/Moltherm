@@ -301,6 +301,59 @@ class MolThermWorkflowOld:
 
         return add_up
 
+    def get_single_molecule_workflow(self, mol_id, name_pre="opt_freq_sp",
+                                     path=None, max_cores=24,
+                                     qchem_input_params=None,
+                                     sp_params=None):
+        """
+        Generates a Fireworks Workflow to find the structures and energies of
+        the reactants and products of a single reaction.
+
+        :param mol_id: ID string for molecule to be analyzed
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param path: str indicating subdirectory where calculation should take
+        place
+        :param max_cores: int specifying number of processes/threads that can
+        be used for this workflow.
+        :param qchem_input_params: dict
+        :param sp_params: For OptFreqSPFW, single-point calculations can be
+        treated differently from Opt and Freq. In this case, another dict
+        for sp must be used.
+        :return: Workflow
+        """
+
+        fws = []
+
+        if self.subdirs:
+            base_path = join(self.base_dir, path)
+        else:
+            base_path = self.base_dir
+
+        # Assume that every file in the directory is part of the reaction
+        file = [f for f in listdir(base_path) if isfile(join(base_path, f))
+                and f.startswith(mol_id) and f.endswith(".mol")]
+
+        mol = get_molecule(join(base_path, file))
+
+        infile = join(base_path, + ".qin")
+        outfile = join(base_path, + ".qout")
+
+        fw = OptFreqSPFW(molecule=mol,
+                         name="{}: {}/{}".format(name_pre, path, file),
+                         qchem_cmd="qchem -slurm",
+                         input_file=infile,
+                         output_file=outfile,
+                         qclog_file=join(base_path + ".qclog"),
+                         max_cores=max_cores,
+                         qchem_input_params=qchem_input_params,
+                         sp_params=sp_params,
+                         db_file=self.db_file)
+
+        fws.append(fw)
+
+        return Workflow(fws)
+
     def get_single_reaction_workflow(self, name_pre="opt_freq_sp", path=None,
                                      filenames=None, max_cores=64,
                                      qchem_input_params=None,
