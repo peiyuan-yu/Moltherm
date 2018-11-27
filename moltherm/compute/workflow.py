@@ -302,7 +302,7 @@ class MolThermWorkflowOld:
         return add_up
 
     def get_single_molecule_workflow(self, mol_id, name_pre="opt_freq_sp",
-                                     path=None, max_cores=24,
+                                     path=None, max_cores=24, max_iterations=1,
                                      qchem_input_params=None,
                                      sp_params=None):
         """
@@ -316,6 +316,10 @@ class MolThermWorkflowOld:
         place
         :param max_cores: int specifying number of processes/threads that can
         be used for this workflow.
+        :param max_iterations: For opt-freq-sp workflow, multiple iteractions
+        can be performed in case of negative frequencies. By default, no such
+        "frequency flattening" is allowed (max_iterations=1); in general, 3
+        is recommended.
         :param qchem_input_params: dict
         :param sp_params: For OptFreqSPFW, single-point calculations can be
         treated differently from Opt and Freq. In this case, another dict
@@ -346,6 +350,7 @@ class MolThermWorkflowOld:
                          output_file=outfile,
                          qclog_file=join(base_path + ".qclog"),
                          max_cores=max_cores,
+                         max_iterations=max_iterations,
                          qchem_input_params=qchem_input_params,
                          sp_params=sp_params,
                          db_file=self.db_file)
