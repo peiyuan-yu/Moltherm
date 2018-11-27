@@ -332,19 +332,19 @@ class MolThermWorkflowOld:
 
         # Assume that every file in the directory is part of the reaction
         file = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                and f.startswith(mol_id) and f.endswith(".mol")]
+                and f.startswith(mol_id) and f.endswith(".mol")][0]
 
         mol = get_molecule(join(base_path, file))
 
-        infile = join(base_path, + ".qin")
-        outfile = join(base_path, + ".qout")
+        infile = join(base_path, mol_id + ".qin")
+        outfile = join(base_path, mol_id + ".qout")
 
         fw = OptFreqSPFW(molecule=mol,
                          name="{}: {}/{}".format(name_pre, path, file),
                          qchem_cmd="qchem -slurm",
                          input_file=infile,
                          output_file=outfile,
-                         qclog_file=join(base_path + ".qclog"),
+                         qclog_file=join(base_path, mol_id + ".qclog"),
                          max_cores=max_cores,
                          qchem_input_params=qchem_input_params,
                          sp_params=sp_params,
