@@ -293,45 +293,51 @@ class EPISuiteParser:
                     smiles = smiles.group(1)
                 else:
                     smiles = None
-                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+\n*\s*[A-Za-z0-9]+)", entry)
+
+                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s*", entry)
                 if name:
-                    dir_name = name.group(1)
-                    mol_id = name.group(2).replace("\n         ", "").replace("\nMOL", "")
+                    mol_id = name.group(1)
                 else:
-                    name = re.search(
-                        r"CHEM\s+:\s+([A-Z/_a-z0-9]+\n\s+[A-Z/_a-z0-9]+)\s+:\s+([A-Za-z0-9]+)",
-                        entry)
-                    if name:
-                        dir_name = name.group(1).replace("\n         ", "")
-                        mol_id = name.group(2)
-                    else:
-                        print(entry)
-                        dir_name = None
-                        mol_id = None
+                    print(entry)
+                    mol_id = None
+
                 bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
                 if bp:
                     bp = float(bp.group(1))
                 else:
                     bp = None
+
                 mp = re.search(r"\s+Melting Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Mean or Weighted MP\)", entry)
                 if mp:
                     mp = float(mp.group(1))
                 else:
                     mp = None
+
+                vp = re.search(r"\s+VP \(Pa, 25 deg C\)\s+:\s+([0-9]+\.[0-9]+)\s+\(Mean VP of Antoine & Grain methods\)", entry)
+                if vp:
+                    vp = float(vp.group(1))
+                else:
+                    vp = None
+
                 solubility = re.search(r"\s+Water Solubility at 25 deg C \(mg/L\):\s+([e0-9\+\-\.]+)", entry)
                 if solubility:
                     solubility = float(solubility.group(1))
                 else:
                     solubility = None
 
-                if dir_name is not None:
-                    dir_name.replace("\n         ", "")
+                log_kow = re.search(r"\s+log Kow used:\s+([0-9]+\.[0-9]+)\s+\(estimated\)", entry)
+                if log_kow:
+                    log_kow = float(log_kow.group(1))
+                else:
+                    log_kow = None
 
                 parsed_results.append({"mol_id": mol_id,
                                        "smiles": smiles,
                                        "bp": bp,
                                        "mp": mp,
-                                       "solubility": solubility})
+                                       "vp": vp,
+                                       "solubility": solubility,
+                                       "log_kow": log_kow})
         return parsed_results
 
     def store_epi_suite_db(self, entries, collection="episuite"):
