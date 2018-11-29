@@ -1,7 +1,6 @@
 from os import listdir
-from os.path import join, isfile, isdir
+from os.path import join, isfile
 import operator
-import shutil
 
 from bs4 import BeautifulSoup
 
@@ -161,3 +160,34 @@ def extract_id(string):
     """
 
     return string.split("/")[-1].replace(".mol", "").split("_")[-1]
+
+
+def get_smiles(base_path, molecules, extra=False):
+    """
+    Returns SMILES strings for a set of molecules
+
+    :param base_path: Directory to begin search in.
+    :param molecules: List of strings representing molecule IDs.
+    :param extra: If True (default False), give molecule ID with SMILES
+    :return: list of SMILES strings
+    """
+
+    smiles = []
+
+    if base_path is not None:
+        for mol in molecules:
+            path = join(base_path, mol)
+            molfile = join(path, "{}.mol".format(mol))
+
+            obmol = BabelMolAdaptor.from_file(molfile, file_format="mol")
+
+            smi = obmol.pybel_mol.write("smi").replace("\t\n", "")
+
+            if extra:
+                smiles.append((smi, mol))
+            else:
+                smiles.append(smi)
+
+        return smiles
+    else:
+        raise ValueError("No path given.")
