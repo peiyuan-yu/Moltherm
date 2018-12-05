@@ -270,7 +270,7 @@ class EPISuiteParser:
             self.db = None
 
     @staticmethod
-    def parse_epi_suite_data(file):
+    def parse_epi_suite_summary(file):
         """
         Parse predicted data from the US EPA's EPI Suite batch mode.
 
@@ -283,14 +283,14 @@ class EPISuiteParser:
 
         parsed_results = []
 
-        with open(file, 'r') as file:
-            entries = file.read().split("\n\n========================\n\n")[1:-1]
+        with open(file, 'r', encoding="ISO-8859-1") as file:
+            entries = file.read().split("\n\n========================\n\n")[0:-1]
 
             for entry in entries:
-                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+)",
+                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+\n?\s*[A-Za-z0-9=\(\)#\[\]\+\-@]*)",
                                    entry)
                 if smiles:
-                    smiles = smiles.group(1)
+                    smiles = smiles.group(1).replace("\n", "").replace(" ", "")
                 else:
                     smiles = None
 
@@ -326,6 +326,77 @@ class EPISuiteParser:
                     solubility = None
 
                 log_kow = re.search(r"\s+log Kow used:\s+([0-9]+\.[0-9]+)\s+\(estimated\)", entry)
+                if log_kow:
+                    log_kow = float(log_kow.group(1))
+                else:
+                    log_kow = None
+
+                parsed_results.append({"mol_id": mol_id,
+                                       "smiles": smiles,
+                                       "bp": bp,
+                                       "mp": mp,
+                                       "vp": vp,
+                                       "solubility": solubility,
+                                       "log_kow": log_kow})
+        return parsed_results
+
+    @staticmethod
+    def parse_epi_suite_complete(file):
+        """
+        Parse predicted data from the US EPA's EPI Suite batch mode.
+
+        Currently, this function only extracts the predicted boiling point,
+        melting point, and solubility.
+
+        :param file: Path to EPI Suite output file.
+        :return: list of dicts with predicted molecular data
+        """
+
+        parsed_results = []
+
+        with open(file, 'r', encoding="ISO-8859-1") as file:
+            entries = file.read().split("\n\n========================\n\n")[0:-1]
+
+            for entry in entries:
+                smiles = re.search(r"SMILES\s+:\s+([A-Za-z0-9=\(\)#\[\]\+\-@]+\n?\s*[A-Za-z0-9=\(\)#\[\]\+\-@]*)",
+                                   entry)
+                if smiles:
+                    smiles = smiles.group(1).replace("\n", "").replace(" ", "")
+                else:
+                    smiles = None
+
+                name = re.search(r"CHEM\s+:\s+([A-Z/_a-z0-9]+)\s*", entry)
+                if name:
+                    mol_id = name.group(1)
+                else:
+                    print(entry)
+                    mol_id = None
+
+                bp = re.search(r"\s+\(Using BP:\s+(\-?[0-9]+\.[0-9]+) deg C", entry)
+                if bp:
+                    bp = float(bp.group(1))
+                else:
+                    bp = None
+
+                mp = re.search(r"\s+Selected MP:\s+(\-?[0-9]+\.[0-9]+) deg C", entry)
+                if mp:
+                    mp = float(mp.group(1))
+                else:
+                    mp = None
+
+                vp = re.search(r"\s+Selected VP:\s+([Ee0-9\+\-\.]+) mm Hg", entry)
+                if vp:
+                    vp = float(vp.group(1)) * 133.322
+                else:
+                    vp = None
+
+                solubility = re.search(r"\s+Water Sol:\s+([Ee0-9\+\-\.]+) mg/L", entry)
+                if solubility:
+                    solubility = float(solubility.group(1))
+                else:
+                    solubility = None
+
+                log_kow = re.search(r"\s+Log Kow\s+=\s+(\-?[0-9]+\.[0-9]+)", entry)
                 if log_kow:
                     log_kow = float(log_kow.group(1))
                 else:
