@@ -123,6 +123,30 @@ class ReaxysParser:
 
         return results
 
+    def get_unique_reactions(self, files):
+        """
+        Parses a set of Reaxys XML files and filter out duplicates.
+
+        :param files: List of strings representing Reaxys XML files to be processed.
+        :return: unique_ids (list of strings representing Reaxys ids) and unique
+            (list of dicts representing unique reactions)
+        """
+
+        overall = []
+
+        for file in files:
+            res = self.parse_reaxys_xml(file)
+            overall += res
+
+        unique_ids = []
+        unique = []
+        for rxn in overall:
+            if rxn["meta"]["rxn_id"] not in unique_ids:
+                unique_ids.append(rxn["meta"]["rxn_id"])
+                unique.append(rxn)
+
+        return unique_ids, unique
+
     def store_reaxys_reactions_files(self, reactions, base_path=None):
         """
         Create CTAB (.mol) files and metadata XML files from parsed XML data.
