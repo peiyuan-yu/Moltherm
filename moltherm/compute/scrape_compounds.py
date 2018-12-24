@@ -105,12 +105,14 @@ class ReaxysParser:
                     pro_atoms = []
                     for pro in rxn["pros"]:
                         ad = BabelMolAdaptor.from_string(pro, file_format="mol")
+                        ad.add_hydrogen()
                         for site in ad.pymatgen_mol:
                             pro_atoms.append(str(site.specie))
 
                     rct_atoms = []
                     for rct in rxn["rcts"]:
                         ad = BabelMolAdaptor.from_string(rct, file_format="mol")
+                        ad.add_hydrogen()
                         for site in ad.pymatgen_mol:
                             rct_atoms.append(str(site.specie))
 
@@ -133,9 +135,6 @@ class ReaxysParser:
             rxn_id = reaction["meta"]["rxn_id"]
             index = reaction["meta"]["index"]
 
-            # Label directories by index and reaction id
-            file_string = str(reaction["meta"]["index"]) + "_" + \
-                          str(reaction["meta"]["rxn_id"])
 
             if base_path is None:
                 path = os.path.join(self.base_dir, "reactions")
@@ -298,7 +297,6 @@ class EPISuiteParser:
                 if name:
                     mol_id = name.group(1)
                 else:
-                    print(entry)
                     mol_id = None
 
                 bp = re.search(r"\s+Boiling Pt \(deg C\):\s+([0-9]+\.[0-9]+)\s+\(Adapted Stein & Brown method\)", entry)
@@ -369,7 +367,6 @@ class EPISuiteParser:
                 if name:
                     mol_id = name.group(1)
                 else:
-                    print(entry)
                     mol_id = None
 
                 bp = re.search(r"\s+\(Using BP:\s+(\-?[0-9]+\.[0-9]+) deg C", entry)
