@@ -70,6 +70,7 @@ def get_reactions_common_solvent(base_dir, solvents):
             isfile(join(base_dir, f)) and f.endswith(".xml")]
 
     common_solvent = []
+    common_ids = []
 
     for f in meta:
         with open(join(base_dir, f), "r") as file:
@@ -81,17 +82,19 @@ def get_reactions_common_solvent(base_dir, solvents):
 
             for solvent in solvents:
 
-                if solvent.lower() in this_solv and rxn_id not in common_solvent:
+                if solvent.lower() in this_solv and rxn_id not in common_ids:
                     rct_names = [d.text for d in parsed.find_all('rctname')]
                     rct_ids = [d.text for d in parsed.find_all('rctid')]
                     pro_name = [d.text for d in parsed.find_all('proname')]
                     pro_ids = [d.text for d in parsed.find_all('proid')]
 
-                    common_solvent.append({'rxn_id':rxn_id,
+                    common_solvent.append({'rxn_id': rxn_id,
                                            'rct_names': rct_names,
                                            'rct_ids': rct_ids,
                                            'pro_name': pro_name,
                                            'pro_ids': pro_ids})
+
+                    common_ids.append(rxn_id)
 
     return common_solvent
 

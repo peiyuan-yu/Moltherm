@@ -159,7 +159,6 @@ class ReaxysParser:
             rxn_id = reaction["meta"]["rxn_id"]
             index = reaction["meta"]["index"]
 
-
             if base_path is None:
                 path = os.path.join(self.base_dir, "reactions")
             else:
