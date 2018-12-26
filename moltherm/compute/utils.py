@@ -1,5 +1,5 @@
 from os import listdir
-from os.path import join, isfile
+from os.path import join, isfile, basename
 import operator
 
 from bs4 import BeautifulSoup
@@ -9,6 +9,12 @@ from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.io.babel import BabelMolAdaptor
 
+__author__ = "Evan Spotte-Smith"
+__version__ = "0.2"
+__maintainer__ = "Evan Spotte-Smith"
+__email__ = "espottesmith@gmail.com"
+__status__ = "Beta"
+__date__ = "July 2018"
 
 def get_molecule(molfile):
     """
@@ -63,7 +69,8 @@ def get_reactions_common_solvent(base_dir, solvents):
 
     :param base_dir: Directory to begin search in.
     :param solvents: list of strings representing solvents
-    :return:
+    :return: list of dicts with IDS and names for compounds in relevant
+        reactions.
     """
 
     meta = [f for f in listdir(base_dir) if
@@ -99,61 +106,6 @@ def get_reactions_common_solvent(base_dir, solvents):
     return common_solvent
 
 
-def associate_qchem_to_mol(base_dir, directory):
-    """
-    Assign all .in and .out files in a directory to one of the .mol files in that
-    directory, based on the non-H atoms in those molecules.
-
-    :param directory:
-    :return:
-    """
-
-    base_path = join(base_dir, directory)
-
-    mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and f.endswith(".mol") and not f.startswith(".")]
-    # Note: This will catch .in and .out files for incomplete computations
-    # TODO: What's the best way to filter these out?
-    in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                and ".in" in f and not f.startswith("atomate")]
-    out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and ".out" in f and not f.startswith("atomate")]
-
-    mapping = {mol: {"in": [], "out": []} for mol in mol_files}
-
-    for file in in_files:
-        qcin = QCInput.from_file(join(base_path, file))
-        file_mol = qcin.molecule
-        # Remove H because mol files may not begin with H included
-        file_species = [str(s) for s in file_mol.species if str(s) != "H"]
-
-        for mf in mol_files:
-            mol_mol = Molecule.from_file(join(base_path, mf))
-            mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
-            # Preserve initial order because that gives a better guarantee
-            # That the two are actually associated
-            if mol_species == file_species:
-                mapping[mf]["in"].append(file)
-                break
-
-    for file in out_files:
-        qcout = QCOutput(join(base_path, file))
-        file_mol = qcout.data["initial_molecule"]
-        file_species = [str(s) for s in file_mol.species if str(s) != "H"]
-
-        for mf in mol_files:
-            mol_mol = Molecule.from_file(join(base_path, mf))
-            mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
-
-            # Preserve initial order because that gives a better guarantee
-            # That the two are actually associated
-            if mol_species == file_species:
-                mapping[mf]["out"].append(file)
-                break
-
-    return mapping
-
-
 def extract_id(string):
     """
     Extract unique molecule ID from a filepath.
@@ -162,7 +114,7 @@ def extract_id(string):
     :return: str representing unique ID
     """
 
-    return string.split("/")[-1].replace(".mol", "").split("_")[-1]
+    return basename(string).replace(".mol", "").split("_")[-1]
 
 
 def get_smiles(base_path, molecules, extra=False):
@@ -194,3 +146,57 @@ def get_smiles(base_path, molecules, extra=False):
         return smiles
     else:
         raise ValueError("No path given.")
+
+# def associate_qchem_to_mol(base_dir, directory):
+#     """
+#     Assign all .in and .out files in a directory to one of the .mol files in that
+#     directory, based on the non-H atoms in those molecules.
+#
+#     :param base_dir: Directory to begin search in.
+#     :param directory: Subdirectory of interes
+#     :return:
+#     """
+#
+#     base_path = join(base_dir, directory)
+#
+#     mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+#                  and f.endswith(".mol") and not f.startswith(".")]
+#     # Note: This will catch .in and .out files for incomplete computations
+#     in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+#                 and ".in" in f and not f.startswith("atomate")]
+#     out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+#                  and ".out" in f and not f.startswith("atomate")]
+#
+#     mapping = {mol: {"in": [], "out": []} for mol in mol_files}
+#
+#     for file in in_files:
+#         qcin = QCInput.from_file(join(base_path, file))
+#         file_mol = qcin.molecule
+#         # Remove H because mol files may not begin with H included
+#         file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+#
+#         for mf in mol_files:
+#             mol_mol = Molecule.from_file(join(base_path, mf))
+#             mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+#             # Preserve initial order because that gives a better guarantee
+#             # That the two are actually associated
+#             if mol_species == file_species:
+#                 mapping[mf]["in"].append(file)
+#                 break
+#
+#     for file in out_files:
+#         qcout = QCOutput(join(base_path, file))
+#         file_mol = qcout.data["initial_molecule"]
+#         file_species = [str(s) for s in file_mol.species if str(s) != "H"]
+#
+#         for mf in mol_files:
+#             mol_mol = Molecule.from_file(join(base_path, mf))
+#             mol_species = [str(s) for s in mol_mol.species if str(s) != "H"]
+#
+#             # Preserve initial order because that gives a better guarantee
+#             # That the two are actually associated
+#             if mol_species == file_species:
+#                 mapping[mf]["out"].append(file)
+#                 break
+#
+#     return mapping
