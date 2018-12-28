@@ -1,10 +1,6 @@
 import numpy as np
 import pandas as pd
 
-# TODO: Do we/will we need these?
-# from pymatgen.core.structure import Molecule
-# from pymatgen.io.babel import BabelMolAdaptor
-
 from atomate.qchem.database import QChemCalcDb
 
 
@@ -162,7 +158,148 @@ class ReactionRanker:
 
     def heuristic_ranking(self, reactions=None, parameters=None,
                           by_worst=False):
-        pass
+        """
+        Rank using a custom (and somewhat arbitrary) weighting and scaling
+            scheme.
+
+        :param reactions: list of strings representing molecule IDs. By default
+            this is None, meaning that all reactions will be considered.
+        :param parameters: list of strings representing parameters to be
+            considered in the ranking. By default, this is None, meaning that
+            all parameters are considered
+        :param by_worst: If True (default False), then reactions should be
+            ranked by a single reactant which is ranked lowest, rather than by
+            the combination of all reactants.
+        :return: ranking, a sorted list of reaction IDs
+        """
+
+        if parameters is None:
+            parameters = ["bp", "log_kow", "mp", "vp", "solubility"]
+
+        if by_worst:
+            if reactions is None:
+                of_interest = self.reactions
+            else:
+                of_interest = [r for r in self.reactions if r["rxn_id"] in reactions]
+
+            scores = dict()
+
+            for rxn in of_interest:
+                rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
+
+                rct_scores = list()
+                for rct in rcts:
+                    score = 0
+                    if "bp" in parameters:
+                        if rct["bp"] >= self.goals["bp"]:
+                            score += 50
+                        else:
+                            score += rct["bp"] - self.goals["bp"]
+                    if "mp" in parameters:
+                        if rct["mp"] <= self.goals["mp"]:
+                            score += 25
+                        else:
+                            score += self.goals["mp"] - rct["mp"]
+                    if "vp" in parameters:
+                        score -= np.log10(rct["vp"])
+                    if "log_kow" in parameters:
+                        score += rct["log_kow"]
+                    if "solubility" in parameters:
+                        score -= np.log10(rct["solubility"] / 1000)
+
+                    rct_scores.append(score)
+
+                scores[rxn] = min(rct_scores)
+
+            ranking = sorted(scores.keys(), key=lambda x: scores[x])
+            return ranking
+
+        else:
+            if reactions is None:
+                of_interest = self.reactions
+            else:
+                of_interest = [r for r in self.reactions if r["rxn_id"] in reactions]
+
+            scores = dict()
+
+            for rxn in of_interest:
+                rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
+
+                score = 0
+                for rct in rcts:
+                    if "bp" in parameters:
+                        if rct["bp"] >= self.goals["bp"]:
+                            score += 50
+                        else:
+                            score += rct["bp"] - self.goals["bp"]
+                    if "mp" in parameters:
+                        if rct["mp"] <= self.goals["mp"]:
+                            score += 25
+                        else:
+                            score += self.goals["mp"] - rct["mp"]
+                    if "vp" in parameters:
+                        score -= np.log10(rct["vp"])
+                    if "log_kow" in parameters:
+                        score += rct["log_kow"]
+                    if "solubility" in parameters:
+                        score -= np.log10(rct["solubility"] / 1000)
+
+                scores[rxn] = score
+
+            ranking = sorted(scores.keys(), key=lambda x: scores[x])
+            return ranking
+
 
     def tiered_ranking(self, reactions=None, parameters=None, by_worst=False):
-        pass
+        """
+        Rank by several parameters in order (for instance, give preference to
+            boiling point, and in case of ties sort by melting point).
+
+        :param reactions: list of strings representing molecule IDs. By default
+            this is None, meaning that all reactions will be considered.
+        :param parameters: list of strings representing parameters to be
+            considered in the ranking. These should be in order of preference.
+            For instance, ["bp", "mp"] would mean that boiling point would be
+            the main factor of consideration, melting point would be the second
+            factor, and no other factor will be considered. By default, this is
+            None, meaning that all parameters are considered with a default
+            ranking
+        :param by_worst: If True (default False), then reactions should be
+            ranked by a single reactant which is ranked lowest, rather than by
+            the combination of all reactants.
+        :return: ranking, a sorted list of reaction IDs
+        """
+
+        if parameters is None:
+            parameters = ["bp", "log_kow", "mp", "vp", "solubility"]
+
+        if by_worst:
+            sorted_mols = self.molecules.sort_values(by=parameters,
+                                                     ascending=False)
+            sorted_ids = sorted_mols.index.tolist()
+
+            if reactions is None:
+                of_interest = self.reactions
+            else:
+                of_interest = [r for r in self.reactions if r["rxn_id"] in reactions]
+
+            highest_index = {}
+            for rxn in of_interest:
+                max_index = 0
+                for rct in rxn["rct_ids"]:
+                    index = sorted_ids.index(rct)
+                    if index > max_index:
+                        max_index = index
+                highest_index[rxn] = max_index
+
+            rxn_ids = [r["rxn_id"] for r in of_interest]
+            return sorted(rxn_ids, key=lambda r: highest_index[r])
+
+        else:
+            if reactions is not None:
+                of_interest = self.all_reactants.loc[self.all_reactants.index.isin(reactions)]
+            else:
+                of_interest = self.all_reactants
+            sorted = of_interest.sort_values(by=parameters, ascending=False)
+
+            return sorted.index.tolist()
