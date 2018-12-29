@@ -103,7 +103,7 @@ class ReactionRanker:
         mol_ids = [e["mol_id"] for e in self.molecules_raw]
 
         data = {key: [] for key in self.parameters}
-        for mol in molecules:
+        for mol in self.molecules_raw:
             for key in self.parameters:
                 val = mol[key]
                 if key in self.parameters_min:
@@ -124,10 +124,10 @@ class ReactionRanker:
 
         rxn_ids = np.array([e["rxn_id"] for e in self.reactions])
 
-        data = {key: [] for key in self.parameters}
+        data = {key: list() for key in self.parameters}
         for rxn in self.reactions:
             rcts = rxn["rct_ids"]
-            entries = [e for e in self.molecules_raw if e in rcts]
+            entries = [e for e in self.molecules_raw if e["mol_id"] in rcts]
 
             for key in self.parameters:
                 total = 0
@@ -149,6 +149,11 @@ class ReactionRanker:
             algorithm effectively creates "classes", rather than a true ranking
             (meaning that while the first and second rank will be
             indistinguishable, the first and the fiftieth may be.
+
+        NOTE: When using by_worst with this algorithm, the result is not
+            deterministic. If the multiple choices of reactants are equivalent
+            (in terms of their Pareto ranking), then one will randomly be
+            chosen.
 
         :param reactions: list of strings representing molecule IDs. By default
             this is None, meaning that all reactions will be considered.
@@ -186,7 +191,7 @@ class ReactionRanker:
                     rankings.append(sorting.index.get_loc(index))
                 mol_rankings[index] = np.array(rankings)
 
-            rxn_rankings = list()
+            rxn_rankings = dict()
             for rxn in of_interest:
                 rxn_id = rxn["rxn_id"]
                 rct_ids = rxn["rct_ids"]
@@ -245,9 +250,10 @@ class ReactionRanker:
             ranking = classes
         else:
             ranking = list()
-            classes_sorted = sorted(classes.items())
-            for class_list in classes_sorted:
-                ranking += class_list
+            classes_sorted = sorted(classes.keys())
+
+            for class_index in classes_sorted:
+                ranking += classes[class_index]
 
         return ranking
 

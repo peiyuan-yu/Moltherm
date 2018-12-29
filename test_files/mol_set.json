@@ -1,0 +1,92 @@
+[
+    {
+        "mol_id": "108550",
+        "smiles": "N1(C(=O)C=CC1(=O))C",
+        "bp": 311.41,
+        "mp": 106.25,
+        "vp": 0.0297,
+        "solubility": 90.96,
+        "log_kow": 0.09
+    },
+    {
+        "mol_id": "9932269",
+        "smiles": "C12c3c(CCC2CCCC1O[Si](C(C)(C)C)(C)C)cco3",
+        "bp": 331.05,
+        "mp": 101.37,
+        "vp": 0.00888,
+        "solubility": 2.374e-05,
+        "log_kow": 6.65
+    },
+    {
+        "mol_id": "4177450",
+        "smiles": "c1(C(C(C)C)OC=C)ccccc1",
+        "bp": 225.11,
+        "mp": -6.75,
+        "vp": 13.4,
+        "solubility": 0.06423000000000001,
+        "log_kow": 3.46
+    },
+    {
+        "mol_id": "1734635",
+        "smiles": "C(=C)(OC)C",
+        "bp": 37.94,
+        "mp": -111.66,
+        "vp": 70900.0,
+        "solubility": 20.02,
+        "log_kow": 0.97
+    },
+    {
+        "mol_id": "103221",
+        "smiles": "o1cccc1",
+        "bp": 59.3,
+        "mp": -87.06,
+        "vp": 79500.0,
+        "solubility": 9.751,
+        "log_kow": 1.36
+    },
+    {
+        "mol_id": "3612380",
+        "smiles": "S(=O)(=O)(C2C(=O)OC=CC=2)c1ccc(cc1)C",
+        "bp": 417.81,
+        "mp": 151.67,
+        "vp": 2.09e-05,
+        "solubility": 9.943,
+        "log_kow": 0.44
+    },
+    {
+        "mol_id": "2076444",
+        "smiles": "c1(CC(=C)C(=O))ccccc1",
+        "bp": 233.06,
+        "mp": 2.21,
+        "vp": 8.88,
+        "solubility": 0.645,
+        "log_kow": 2.44
+    },
+    {
+        "mol_id": "125098",
+        "smiles": "N1(c2ccccc2)C(=O)C=CC1(=O)",
+        "bp": 387.11,
+        "mp": 150.55,
+        "vp": 0.000532,
+        "solubility": 6.965,
+        "log_kow": 0.88
+    },
+    {
+        "mol_id": "3090515",
+        "smiles": "O=C(c1ccccc1)C(=C)C(=O)OCC",
+        "bp": 294.37,
+        "mp": 56.51,
+        "vp": 0.179,
+        "solubility": 0.6487999999999999,
+        "log_kow": 2.12
+    },
+    {
+        "mol_id": "471171",
+        "smiles": "C1C=CC=C1",
+        "bp": 69.17,
+        "mp": -91.83,
+        "vp": 57000.0,
+        "solubility": 0.4706,
+        "log_kow": 2.25
+    }
+]

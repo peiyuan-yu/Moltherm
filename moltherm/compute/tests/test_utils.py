@@ -20,6 +20,7 @@ __date__ = "December 2018"
 module_dir = join(dirname(abspath(__file__)))
 files_dir = join(module_dir, "..", "..", "..", "test_files")
 
+
 class TestUtils(unittest.TestCase):
 
     def setUp(self):
