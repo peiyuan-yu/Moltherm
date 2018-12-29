@@ -3,8 +3,6 @@ from random import choice
 import numpy as np
 import pandas as pd
 
-from atomate.qchem.database import QChemCalcDb
-
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.2"
@@ -29,13 +27,12 @@ class ReactionRanker:
     low_kow - octanol-water partition coefficient
     """
 
-    def __init__(self, reactions, db_file="db.json", collection="episuite",
-                 parameters_min=None, parameters_max=None, goals=None):
+    def __init__(self, reactions, molecules, parameters_min=None,
+                 parameters_max=None, goals=None):
         """
         :param reactions: list of dicts representing reactions to be ranked
-        :param db_file: str representing a path to a database config file
-        :param collection: Collection in database which contains molecule
-            information.
+        :param molecules: list of dicts representing the molecules relevant
+            to the reactions list
         :param parameters_min: list of strings, each representing a parameter
             which can be used in ranking. High-ranking reactions will minimize
              these paramaters. Default is None, which means that the full
@@ -50,17 +47,6 @@ class ReactionRanker:
             compared to 0. If within goals a particular paramter is not present,
             or is set to None, then this parameter will be set to 0.
         """
-
-        self.db_file = db_file
-        try:
-            #TODO: Make a custom database class, instead of relying on the
-            # atomate classes
-            self.db = QChemCalcDb.from_db_file(self.db_file)
-        except:
-            self.db = None
-
-        if self.db is not None:
-            self.collection = self.db.db[collection]
 
         if parameters_min is None:
             self.parameters_min = ["mp", "vp", "solubility"]
@@ -87,15 +73,18 @@ class ReactionRanker:
                 else:
                     self.goals[parameter] = 0
 
-        # Filter reactions to ensure that all molecules are in DB
+        # Filter reactions to ensure that all molecules are in molecule set
+        mol_ids = [e["mol_id"] for e in molecules]
         self.reactions = []
         for rxn in reactions:
             rcts = rxn["rct_ids"]
-            entries = [self.collection.find_one({"mol_id": r}) for r in rcts]
+            entries = [r if r in mol_ids else None for r in rcts]
             if all([e is not None for e in entries]):
                 self.reactions.append(rxn)
 
-        # Information about individual molecules
+        self.molecules_raw = molecules
+
+        # Information about all individual molecules
         self.molecules = self._construct_molecules()
         # Information about all reactants in a reaction
         self.all_reactants = self._construct_all_reactants()
@@ -105,19 +94,16 @@ class ReactionRanker:
         Uses data from database to construct pandas DataFrame with molecule
             data, relative to goal values.
 
-        Note: ALL molecule entries in the database (and the collection
-            self.collection, specifically) must have values for ALL keys in
+        Note: ALL molecule entries must have values for ALL keys in
             self.parameters.
 
         :return: molecules (pd.DataFrame)
         """
 
-        all_molecules = [e for e in self.collection.find()]
-
-        mol_ids = np.array([e["mol_id"] for e in all_molecules])
+        mol_ids = [e["mol_id"] for e in self.molecules_raw]
 
         data = {key: [] for key in self.parameters}
-        for mol in all_molecules:
+        for mol in molecules:
             for key in self.parameters:
                 val = mol[key]
                 if key in self.parameters_min:
@@ -141,7 +127,7 @@ class ReactionRanker:
         data = {key: [] for key in self.parameters}
         for rxn in self.reactions:
             rcts = rxn["rct_ids"]
-            entries = [self.collection.find_one({"mol_id": r}) for r in rcts]
+            entries = [e for e in self.molecules_raw if e in rcts]
 
             for key in self.parameters:
                 total = 0
@@ -295,7 +281,7 @@ class ReactionRanker:
 
         if by_worst:
             for rxn in of_interest:
-                rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
+                rcts = [e for e in self.molecules_raw if e in rxn["rct_ids"]]
 
                 rct_scores = list()
                 for rct in rcts:
@@ -323,7 +309,7 @@ class ReactionRanker:
 
         else:
             for rxn in of_interest:
-                rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
+                rcts = [e for e in self.molecules_raw if e in rxn["rct_ids"]]
 
                 score = 0
                 for rct in rcts:
