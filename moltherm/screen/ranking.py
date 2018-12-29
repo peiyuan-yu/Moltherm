@@ -1,3 +1,5 @@
+from random import choice
+
 import numpy as np
 import pandas as pd
 
@@ -153,8 +155,115 @@ class ReactionRanker:
 
         return pd.DataFrame(data=data, index=rxn_ids)
 
-    def pareto_ranking(self, reactions=None, parameters=None, by_worst=False):
-        pass
+    def pareto_ranking(self, reactions=None, parameters=None, by_worst=False,
+                       group_by_class=False):
+        """
+        Rank using a Pareto optimization scheme - that is, find all reactions
+            that cannot be beat in all categories by another reaction. This
+            algorithm effectively creates "classes", rather than a true ranking
+            (meaning that while the first and second rank will be
+            indistinguishable, the first and the fiftieth may be.
+
+        :param reactions: list of strings representing molecule IDs. By default
+            this is None, meaning that all reactions will be considered.
+        :param parameters: list of strings representing parameters to be
+            considered in the ranking. By default, this is None, meaning that
+            all parameters are considered
+        :param by_worst: If True (default False), then reactions should be
+            ranked by a single reactant which is ranked lowest, rather than by
+            the combination of all reactants.
+        :param group_by_class: Boolean value. If True (default False), return
+            a dict {class: [items]}, rather than a sorted list.
+        :return: ranking, either a sorted list of reaction IDs, or a dict
+            containing lists separated by Pareto class
+        """
+
+        if parameters is None:
+            parameters = ["bp", "log_kow", "mp", "vp", "solubility"]
+
+        if by_worst:
+            if reactions is None:
+                of_interest = self.reactions
+            else:
+                of_interest = [r for r in self.reactions if
+                               r["rxn_id"] in reactions]
+
+            sortings = list()
+            for parameter in parameters:
+                sortings.append(self.molecules.sort_values(by=parameter,
+                                                           ascending=False))
+
+            mol_rankings = dict()
+            for index, rxn in self.molecules.iterrows():
+                rankings = list()
+                for sorting in sortings:
+                    rankings.append(sorting.index.get_loc(index))
+                mol_rankings[index] = np.array(rankings)
+
+            rxn_rankings = list()
+            for rxn in of_interest:
+                rxn_id = rxn["rxn_id"]
+                rct_ids = rxn["rct_ids"]
+
+                choices = list()
+                for rct_1 in rct_ids:
+                    if all(rct_1 != rct_2
+                           and all(np.greater(mol_rankings[rct_1],
+                                              mol_rankings[rct_2]))
+                           for rct_2 in rct_ids):
+                        choices.append(rct_1)
+                if len(choices) == 1:
+                    rxn_rankings[rxn_id] = mol_rankings[choices[0]]
+                elif len(choices) == 0:
+                    rxn_rankings[rxn_id] = mol_rankings[choice(rct_ids)]
+                else:
+                    rxn_rankings[rxn_id] = mol_rankings[choice(choices)]
+
+        else:
+            if reactions is None:
+                of_interest = self.all_reactants
+            else:
+                of_interest = self.all_reactants.loc[self.all_reactants.index.isin(reactions)]
+
+            sortings = list()
+            for parameter in parameters:
+                sortings.append(of_interest.sort_values(by=parameter,
+                                                        ascending=False))
+
+            rxn_rankings = dict()
+            for index, rxn in of_interest.iterrows():
+                rankings = list()
+                for sorting in sortings:
+                    rankings.append(sorting.index.get_loc(index))
+                rxn_rankings[index] = np.array(rankings)
+
+        classes = dict()
+        class_num = 0
+        while len(rxn_rankings) != 0:
+            classes[class_num] = list()
+            for ii, ri in rxn_rankings.items():
+                superior = list()
+                for jj, rj in rxn_rankings.items():
+                    if jj != ii and all(np.greater(rj, ri)):
+                        superior.append(jj)
+
+                if len(superior) == 0:
+                    classes[class_num].append(ii)
+
+            for rxn in classes[class_num]:
+                del rxn_rankings[rxn]
+
+            class_num += 1
+
+        if group_by_class:
+            ranking = classes
+        else:
+            ranking = list()
+            classes_sorted = sorted(classes.items())
+            for class_list in classes_sorted:
+                ranking += class_list
+
+        return ranking
 
     def heuristic_ranking(self, reactions=None, parameters=None,
                           by_worst=False):
@@ -176,14 +285,15 @@ class ReactionRanker:
         if parameters is None:
             parameters = ["bp", "log_kow", "mp", "vp", "solubility"]
 
+        if reactions is None:
+            of_interest = self.reactions
+        else:
+            of_interest = [r for r in self.reactions if
+                           r["rxn_id"] in reactions]
+
+        scores = dict()
+
         if by_worst:
-            if reactions is None:
-                of_interest = self.reactions
-            else:
-                of_interest = [r for r in self.reactions if r["rxn_id"] in reactions]
-
-            scores = dict()
-
             for rxn in of_interest:
                 rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
 
@@ -211,17 +321,7 @@ class ReactionRanker:
 
                 scores[rxn] = min(rct_scores)
 
-            ranking = sorted(scores.keys(), key=lambda x: scores[x])
-            return ranking
-
         else:
-            if reactions is None:
-                of_interest = self.reactions
-            else:
-                of_interest = [r for r in self.reactions if r["rxn_id"] in reactions]
-
-            scores = dict()
-
             for rxn in of_interest:
                 rcts = [self.collection.find_one({"mol_id": rct}) for rct in rxn["rct_ids"]]
 
@@ -246,8 +346,8 @@ class ReactionRanker:
 
                 scores[rxn] = score
 
-            ranking = sorted(scores.keys(), key=lambda x: scores[x])
-            return ranking
+        ranking = sorted(scores.keys(), key=lambda x: scores[x])
+        return ranking
 
 
     def tiered_ranking(self, reactions=None, parameters=None, by_worst=False):
@@ -296,10 +396,11 @@ class ReactionRanker:
             return sorted(rxn_ids, key=lambda r: highest_index[r])
 
         else:
-            if reactions is not None:
-                of_interest = self.all_reactants.loc[self.all_reactants.index.isin(reactions)]
-            else:
+            if reactions is None:
                 of_interest = self.all_reactants
+            else:
+                of_interest = self.all_reactants.loc[self.all_reactants.index.isin(reactions)]
+
             sorted = of_interest.sort_values(by=parameters, ascending=False)
 
             return sorted.index.tolist()
