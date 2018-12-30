@@ -287,19 +287,19 @@ class ReactionRanker:
 
         if by_worst:
             for rxn in of_interest:
-                rcts = [e for e in self.molecules_raw if e in rxn["rct_ids"]]
+                rcts = [e for e in self.molecules_raw if e["mol_id"] in rxn["rct_ids"]]
 
                 rct_scores = list()
                 for rct in rcts:
                     score = 0
                     if "bp" in parameters:
                         if rct["bp"] >= self.goals["bp"]:
-                            score += 50
+                            score += 100
                         else:
                             score += rct["bp"] - self.goals["bp"]
                     if "mp" in parameters:
                         if rct["mp"] <= self.goals["mp"]:
-                            score += 25
+                            score += 50
                         else:
                             score += self.goals["mp"] - rct["mp"]
                     if "vp" in parameters:
@@ -311,22 +311,22 @@ class ReactionRanker:
 
                     rct_scores.append(score)
 
-                scores[rxn] = min(rct_scores)
+                scores[rxn["rxn_id"]] = min(rct_scores)
 
         else:
             for rxn in of_interest:
-                rcts = [e for e in self.molecules_raw if e in rxn["rct_ids"]]
+                rcts = [e for e in self.molecules_raw if e["mol_id"] in rxn["rct_ids"]]
 
                 score = 0
                 for rct in rcts:
                     if "bp" in parameters:
                         if rct["bp"] >= self.goals["bp"]:
-                            score += 50
+                            score += 100
                         else:
                             score += rct["bp"] - self.goals["bp"]
                     if "mp" in parameters:
                         if rct["mp"] <= self.goals["mp"]:
-                            score += 25
+                            score += 50
                         else:
                             score += self.goals["mp"] - rct["mp"]
                     if "vp" in parameters:
@@ -336,11 +336,10 @@ class ReactionRanker:
                     if "solubility" in parameters:
                         score -= np.log10(rct["solubility"] / 1000)
 
-                scores[rxn] = score
+                scores[rxn["rxn_id"]] = score
 
         ranking = sorted(scores.keys(), key=lambda x: scores[x])
-        return ranking
-
+        return ranking[::-1]
 
     def tiered_ranking(self, reactions=None, parameters=None, by_worst=False):
         """
@@ -382,7 +381,7 @@ class ReactionRanker:
                     index = sorted_ids.index(rct)
                     if index > max_index:
                         max_index = index
-                highest_index[rxn] = max_index
+                highest_index[rxn["rxn_id"]] = max_index
 
             rxn_ids = [r["rxn_id"] for r in of_interest]
             return sorted(rxn_ids, key=lambda r: highest_index[r])
@@ -393,6 +392,6 @@ class ReactionRanker:
             else:
                 of_interest = self.all_reactants.loc[self.all_reactants.index.isin(reactions)]
 
-            sorted = of_interest.sort_values(by=parameters, ascending=False)
+            sorted_values = of_interest.sort_values(by=parameters, ascending=False)
 
-            return sorted.index.tolist()
+            return sorted_values.index.tolist()

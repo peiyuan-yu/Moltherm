@@ -1,9 +1,6 @@
 from os.path import join, dirname, abspath
 import unittest
-import operator
 import json
-
-import numpy as np
 
 from moltherm.screen.ranking import ReactionRanker
 
@@ -70,7 +67,6 @@ class TestReactionRanker(unittest.TestCase):
         self.assertTrue("9765072" not in [r["rxn_id"] for r in ranker.reactions])
 
     def test_pareto_ranking(self):
-
         goals = {"bp": 257, "mp": 12, "log_kow": 5}
         ranker = ReactionRanker(self.reactions, self.molecules, goals=goals)
 
@@ -103,8 +99,69 @@ class TestReactionRanker(unittest.TestCase):
                                                    "2298180"])
         self.assertTrue("3942060" not in ranking)
 
+        # Check with invalid reactions
+        ranking = ranker.pareto_ranking(reactions=['lemon', 'cello'])
+        self.assertEqual(len(ranking), 0)
+
     def test_heuristic_ranking(self):
-        pass
+        goals = {"bp": 257, "mp": 12, "log_kow": 5}
+        ranker = ReactionRanker(self.reactions, self.molecules, goals=goals)
+
+        # Check defaults
+        ranking = ranker.heuristic_ranking()
+        self.assertEqual(ranking, ['9765072', '2298180', '28714022', '1918886',
+                                   '3942060'])
+
+        # Check by worst molecule
+        ranking = ranker.heuristic_ranking(by_worst=True)
+        self.assertEqual(ranking, ['9765072', '2298180', '28714022', '3942060',
+                                   '1918886'])
+
+        # Check with select reactions
+        ranking = ranker.heuristic_ranking(reactions=['9765072', '1918886'])
+        self.assertEqual(ranking, ['9765072', '1918886'])
+        self.assertTrue('2298180' not in ranking)
+        self.assertTrue('28714022' not in ranking)
+        self.assertTrue('3942060' not in ranking)
+
+        # Check with invalid reactions
+        ranking = ranker.heuristic_ranking(reactions=['lemon', 'cello'])
+        self.assertEqual(len(ranking), 0)
+
+        # Check with select parameters
+        ranking = ranker.heuristic_ranking(parameters=["log_kow", "solubility"])
+        self.assertTrue(ranking, ['9765072', '28714022', '2298180', '1918886',
+                                  '3942060'])
 
     def test_tiered_ranking(self):
-        pass
+        goals = {"bp": 257, "mp": 12, "log_kow": 5}
+        ranker = ReactionRanker(self.reactions, self.molecules, goals=goals)
+
+        # Check defaults
+        ranking = ranker.tiered_ranking()
+        self.assertEqual(ranking, ['2298180', '9765072', '3942060', '1918886',
+                                   '28714022'])
+
+        # Check with worst molecule
+        ranking = ranker.tiered_ranking(by_worst=True)
+        self.assertEqual(ranking, ['9765072', '2298180', '28714022', '3942060',
+                                   '1918886'])
+
+        # Check with select reactions
+        ranking = ranker.tiered_ranking(reactions=['9765072', '1918886'])
+        self.assertEqual(ranking, ['9765072', '1918886'])
+        self.assertTrue('2298180' not in ranking)
+        self.assertTrue('28714022' not in ranking)
+        self.assertTrue('3942060' not in ranking)
+
+        # Check with invalid reactions
+        ranking = ranker.tiered_ranking(reactions=['lemon', 'cello'])
+        self.assertEqual(len(ranking), 0)
+
+        # Check with select parameters (and different orderings
+        ranking = ranker.tiered_ranking(parameters=["log_kow", "solubility"])
+        self.assertTrue(ranking, ['9765072', '28714022', '2298180', '1918886',
+                                  '3942060'])
+        ranking = ranker.tiered_ranking(parameters=["solubility", "log_kow"])
+        self.assertTrue(ranking, ['28714022', '2298180', '3942060', '1918886',
+                                  '9765072'])
