@@ -14,7 +14,7 @@ import numpy as np
 from pymatgen.core import Molecule
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
-from pymatgen.analysis.graphs import build_MoleculeGraph
+from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.analysis.local_env import OpenBabelNN
 
 from custodian.custodian import Job
@@ -248,14 +248,14 @@ class QCJob(Job):
                             charge=outdata.get('charge'),
                             spin_multiplicity=outdata.get('multiplicity'))
                         if check_connectivity:
-                            old_molgraph = build_MoleculeGraph(outdata.get("initial_molecule"),
-                                                               strategy=OpenBabelNN,
-                                                               reorder=False,
-                                                               extend_structure=False)
-                            new_molgraph = build_MoleculeGraph(new_molecule,
-                                                               strategy=OpenBabelNN,
-                                                               reorder=False,
-                                                               extend_structure=False)
+                            old_molgraph = MoleculeGraph.with_local_env_strategy(outdata.get("initial_molecule"),
+                                                                                 OpenBabelNN(),
+                                                                                 reorder=False,
+                                                                                 extend_structure=False)
+                            new_molgraph = MoleculeGraph.with_local_env_strategy(new_molecule,
+                                                                                 OpenBabelNN(),
+                                                                                 reorder=False,
+                                                                                 extend_structure=False)
                             if old_molgraph.isomorphic_to(new_molgraph):
                                 structure_successfully_perturbed = True
                                 break
