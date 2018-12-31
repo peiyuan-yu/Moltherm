@@ -193,7 +193,8 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 job_type="opt_with_frequency_flattener",
                 max_iterations=max_iterations,
                 max_molecule_perturb_scale=max_molecule_perturb_scale,
-                reversed_direction=reversed_direction))
+                reversed_direction=reversed_direction,
+                gzipped_output=False))
         t.append(
             tasks.parse_outputs.QChemToDb(
                 db_file=db_file,
