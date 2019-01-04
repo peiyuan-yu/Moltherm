@@ -3,6 +3,426 @@
   <reactions>
     <reaction index="1">
       <RX>
+        <RX.ID>28100547</RX.ID>
+        <RX01>
+          <RX.RXRN>15815515</RX.RXRN>
+          <RX.RCT>C<sub>8</sub>H<sub>7</sub>IO<sub>3</sub></RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>471171</RX.RXRN>
+          <RX.RCT>cyclopenta-1,3-diene</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>15815519</RX.PXRN>
+          <RX.PRO>CCDC-763142</RX.PRO>
+        </RX02>
+        <RX.BLB>15815515</RX.BLB>
+        <RX.BLB>471171</RX.BLB>
+        <RX.BLB>15815519</RX.BLB>
+        <RX.BLC>15815515</RX.BLC>
+        <RX.BLC>471171</RX.BLC>
+        <RX.BLC>15815519</RX.BLC>
+        <RX.NVAR>4</RX.NVAR>
+        <RX03>
+          <RX.BCODE>259123750963135</RX.BCODE>
+          <RX.MCODE>411019117478848</RX.MCODE>
+          <RX.NCODE>420090144067812</RX.NCODE>
+        </RX03>
+        <RX.RXNFILE>eJxTCYrw4wICBQUDIOICABQdAi8=</RX.RXNFILE>
+        <RX.REG>4de896da0d2bee7d763f53f60e3ce7fc</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>97</RX.MYD>
+        <RX.SKW>nonmapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>5</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2018</RX.MAXPUB>
+        <RX.NUMREF>4</RX.NUMREF>
+        <RX.MAXPMW>344.149</RX.MAXPMW>
+        <RX.ED>2009/02/11</RX.ED>
+        <RX.UPD>2018/11/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>75211669</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>31</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>15815519</RXD.YXRN>
+          <RXD.YPRO>CCDC-763142</RXD.YPRO>
+          <RXD.YD>97 percent</RXD.YD>
+          <RXD.NYD>97</RXD.NYD>
+          <RXD.YDO>92 percent ee</RXD.YDO>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>10505292</RXD.RGTXRN>
+            <RXD.RGT>(S)-o-tol-Corey-Bakshi-Shibata catalyst</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.5</RXD.TIM>
+          <RXD.T>-78</RXD.T>
+          <RXD.RXDES>Scheme or table</RXD.RXDES>
+          <RXD.DED>2018/11/21</RXD.DED>
+          <RXD.COM>enantioselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="32">
+            <CNR>
+              <CNR.CNR>75211669</CNR.CNR>
+              <CNR.CED>2018/10/25</CNR.CED>
+              <CNR.CUPD>2018/11/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article in Press</CIT.DT>
+              <CIT.AU>Kim, Geon; Kim, Myungjo J.; Chung, Garam; Lee, Hee-Yoon; Han, Sunkyu</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2018</CIT.PREPY>
+              <CIT.PUI>624511936</CIT.PUI>
+              <CIT.PS>in press</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>ORLEF</CIT.CO>
+                <CIT.JT>Organic Letters</CIT.JT>
+                <CIT.JTS>Org. Lett.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>American Chemical Society</CIT.PUB>
+                <CIT.PY>2018</CIT.PY>
+                <CIT.DOI>10.1021/acs.orglett.8b03025</CIT.DOI>
+                <CIT.ISSN>1523-7060</CIT.ISSN>
+                <CIT.SCOPUS>85055174053</CIT.SCOPUS>
+                <CIT.CITBY>0</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8898582</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>15815519</RXD.YXRN>
+          <RXD.YPRO>CCDC-763142</RXD.YPRO>
+          <RXD.YD>95 percent</RXD.YD>
+          <RXD.NYD>95</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>10505292</RXD.RGTXRN>
+            <RXD.RGT>(S)-o-tol-Corey-Bakshi-Shibata catalyst</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.5</RXD.TIM>
+          <RXD.T>-78</RXD.T>
+          <RXD.COND>Inert atmosphere</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2010/08/19</RXD.DED>
+          <RXD.LCN>scheme or table</RXD.LCN>
+          <RXD.COM>optical yield given as percent ee</RXD.COM>
+          <RXD.COM>enantioselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="8">
+            <CNR>
+              <CNR.CNR>8898582</CNR.CNR>
+              <CNR.CED>2010/08/19</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Jin, Mng Yu; Hwang, Geum-Sook; Chae, Hee H; Jung, Sun Hee; Ryu, Do Hyun</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2010</CIT.PREPY>
+              <CIT.PUI>358747940</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>31</CIT.VL>
+                <CIT.NB>3</CIT.NB>
+                <CIT.PY>2010</CIT.PY>
+                <CIT.PAG>727 - 730</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2010.31.03.727</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>77951803504</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8933189</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>15815519</RXD.YXRN>
+          <RXD.YPRO>CCDC-763142</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>10505292</RXD.RGTXRN>
+            <RXD.RGT>(S)-o-tol-Corey-Bakshi-Shibata catalyst</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1</RXD.TIM>
+          <RXD.T>-78</RXD.T>
+          <RXD.COND>Inert atmosphere</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2010/11/17</RXD.DED>
+          <RXD.LCN>scheme or table</RXD.LCN>
+          <RXD.COM>optical yield given as percent ee</RXD.COM>
+          <RXD.COM>enantioselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="9">
+            <CNR>
+              <CNR.CNR>8933189</CNR.CNR>
+              <CNR.CED>2010/11/17</CNR.CED>
+              <CNR.CUPD>2013/10/29</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chae, Hee Il; Hwang, Geum-Sook; Jin, Ming Yu; Ryu, Do Hyun</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2010</CIT.PREPY>
+              <CIT.PUI>358770513</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>31</CIT.VL>
+                <CIT.NB>4</CIT.NB>
+                <CIT.PY>2010</CIT.PY>
+                <CIT.PAG>1047 - 1050</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2010.31.04.1047</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>77951941968</CIT.SCOPUS>
+                <CIT.CITBY>10</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8664841</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>45</RXD.SCO>
+        <RXD.LB>5</RXD.LB>
+        <RXD.TXT>Preparation Example 5&gt;; Preparation of (.R,4S,4aR,8aS)-l ,4,4a,8a-tetrahydro-7-iodo-spirol ,3-dioxolen- 2,5(8H)-[ 1 ,4]methanonaphthalen-8-one (3); &#x03B7;-3With a catalyst of oxazaborolidine (0.160 mmol) prepared in accordance with a reference ((S)-form, Ryu, D. H. et al J. Am. Chem. Soc, 2002, 124, 9992), CH<sub>2</sub>Cl<sub>2</sub> (1.5 mL) was stirred and trifluoromethanesulfonic acid (12 &#x03BC;l, 0.133 mmol) was slowly added thereto at -30 "C . Solid 2 (185 mg, 0.665 mmol) was dissolved in CH<sub>2</sub>Cl<sub>2</sub> (1.5 mL) and added thereto at -78 <sup>&#xB0;</sup>C. Cyclopentadiene (218 &#x03B2;i, 2.66 mmol) was slowly added and the mixture was stirred for 2 hours. Proceeding of reaction was observed through TLC. Et<sub>3</sub>N(20 &#x03BC;i) was added to complete the reaction. The resulting product was evaporated to remove solvents, and purified using silica gel chromatography (EtOAc: Hexane= 1:5). 220 mg (94percent) of title compound was obtained as slight yellow liquid.TLC Rf 0.34 (EtOAc: Hexane= 1 :3)FT-IR 2981, 2880, 2357, 1671, 1604, 1339 cm<sup>"1</sup>[(X]<sup>26</sup>D -492&#xB0; (c 0.5, CHCl<sub>3</sub>) HPLC (chiralcel OJ-H), 'PrOH/hexane (v/v=10:90), flow rate 1.0 mL min <sup>1</sup>) : t<sub>R</sub> =19.7 min(R-form major, 95 percent ee), t<sub>R</sub>= 22.5 min (S-form major, 97 percent ee)<sup>1</sup>H NMR (300 MHz, CDCl<sub>3</sub>) &#x03B4; 7.07 (d, IH, J= 1 Hz), 6.08 (dd, IH, J= 2.7, 5.4 Hz), 5.85 (dd, IH, J= 2.7, 5.7 Hz), 4.0 (m, 4H), 3.28 (m, 3H), 2.84 (ddd, IH, J= 3.6, 8.4, 12 Hz), 1.40 (m, 2H) <sup>13</sup>C NMR (75 MHz, CDCl<sub>3</sub>) &#x03B4; 202.2, 153.8, 135.9, 133.4, 105.4, 65.5, 64.5, 50.8,48.6, 46.6, 46.4, 34.9LRMS calcd for Ci<sub>3</sub>Hi<sub>3</sub>IO<sub>3</sub>: 343.99</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>15815519</RXD.YXRN>
+          <RXD.YPRO>CCDC-763142</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+          <RXD.YDO>97 percent ee</RXD.YDO>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>1812100</RXD.RGTXRN>
+            <RXD.RGT>trifluorormethanesulfonic acid</RXD.RGT>
+          </RXD03>
+          <RXD04>
+            <RXD.CAT>oxazaborolidine (S)-form</RXD.CAT>
+          </RXD04>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>2</RXD.TIM>
+          <RXD.T>-78 - -30</RXD.T>
+          <RXD.TYP highlight="true"><hi>Diels-Alder Reaction</hi></RXD.TYP>
+          <RXD.DED>2018/11/08</RXD.DED>
+          <RXD.LCN>Page/Page column 14; 28</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="6">
+            <CNR>
+              <CNR.CNR>8664841</CNR.CNR>
+              <CNR.CED>2009/01/20</CNR.CED>
+              <CNR.CUPD>2018/11/18</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Patent</CIT.DT>
+              <CIT.PA>FOOD SCIENCE CO., LTD.; KOREA BASIC SCIENCE INSTITUTE; KIM, Hwa-Jin</CIT.PA>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2008</CIT.PREPY>
+              <CIT.PUI>454682093</CIT.PUI>
+              <CIT.IS>manual</CIT.IS>
+              <CIT02>
+                <CIT.PCC>WO</CIT.PCC>
+                <CIT.PN>WO2008/140150</CIT.PN>
+                <CIT.PPY>2008</CIT.PPY>
+                <CIT.PK>A1</CIT.PK>
+                <CIT.PLA>English</CIT.PLA>
+              </CIT02>
+              <CIT.DOCQ>0.7</CIT.DOCQ>
+              <CIT.HASBIO>1</CIT.HASBIO>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="15815515">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 13 0 0 0 REGNO=15815515
+M  V30 BEGIN ATOM
+M  V30 1 C -12.2465 -1.1553 0 0
+M  V30 2 C -10.8809 -0.4059 0 0
+M  V30 3 C -13.5787 -0.3493 0 0
+M  V30 4 O -13.4502 -2.0577 0 0
+M  V30 5 O -11.0219 -2.0241 0 0
+M  V30 6 C -10.8472 1.1527 0 0
+M  V30 7 C -13.5436 1.2107 0 0
+M  V30 8 C -12.9655 -3.4787 0 0
+M  V30 9 C -11.4668 -3.457 0 0
+M  V30 10 C -12.1794 1.9601 0 0
+M  V30 11 I -9.5139 1.8593 0 0
+M  V30 12 O -12.1794 3.4787 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 1 5
+M  V30 5 2 2 6
+M  V30 6 2 3 7
+M  V30 7 1 4 8
+M  V30 8 1 5 9
+M  V30 9 1 6 10
+M  V30 10 1 6 11
+M  V30 11 1 7 10
+M  V30 12 1 8 9
+M  V30 13 2 10 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="471171">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 5 5 0 0 0 REGNO=471171
+M  V30 BEGIN ATOM
+M  V30 1 C -4.3176 1.0293 0 0
+M  V30 2 C -3.08 0.1297 0 0
+M  V30 3 C -5.5539 0.1297 0 0
+M  V30 4 C -3.5526 -1.3248 0 0
+M  V30 5 C -5.0826 -1.3248 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 2 2 4
+M  V30 4 2 3 5
+M  V30 5 1 4 5
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="15815519">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 21 24 0 0 1 REGNO=15815519
+M  V30 BEGIN ATOM
+M  V30 1 C 7.88 -1.1433 0 0
+M  V30 2 C 9.2322 -0.4014 0 0 CFG=1
+M  V30 3 C 6.5632 -0.3447 0 0
+M  V30 4 O 6.6903 -2.0332 0 0
+M  V30 5 O 9.0914 -1.9995 0 0
+M  V30 6 C 9.264 1.1387 0 0 CFG=2
+M  V30 7 C 10.5459 -1.2001 0 0 CFG=1
+M  V30 8 C 6.5987 1.1969 0 0
+M  V30 9 C 7.1702 -3.4389 0 0
+M  V30 10 C 8.6524 -3.4178 0 0
+M  V30 11 C 10.613 1.983 0 0 CFG=2
+M  V30 12 C 7.9472 1.937 0 0
+M  V30 13 C 9.6634 0.4074 0 0
+M  V30 14 C 11.8994 -0.4598 0 0
+M  V30 15 I 5.28 1.7794 0 0
+M  V30 16 C 11.9331 1.0789 0 0
+M  V30 17 O 7.9472 3.4389 0 0
+M  V30 18 H 9.5091 -1.6864 0 0
+M  V30 19 H 9.264 2.6527 0 0
+M  V30 20 H 10.5214 -2.5578 0 0
+M  V30 21 H 10.613 3.4113 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 1 5
+M  V30 5 1 2 6
+M  V30 6 1 2 7
+M  V30 7 1 2 18 CFG=3
+M  V30 8 2 3 8
+M  V30 9 1 4 9
+M  V30 10 1 5 10
+M  V30 11 1 6 11
+M  V30 12 1 6 12
+M  V30 13 1 6 19 CFG=3
+M  V30 14 1 7 13
+M  V30 15 1 7 14
+M  V30 16 1 7 20 CFG=3
+M  V30 17 1 8 12
+M  V30 18 1 8 15
+M  V30 19 1 9 10
+M  V30 20 1 11 13
+M  V30 21 1 11 16
+M  V30 22 1 11 21 CFG=3
+M  V30 23 2 12 17
+M  V30 24 2 14 16
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="2">
+      <RX>
         <RX.ID>28177052</RX.ID>
         <RX01>
           <RX.RXRN>110513</RX.RXRN>
@@ -31,7 +451,7 @@
         <RX04>
           <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0E10)|01D45(10)|01D42(0F11)|01D41(12)|01CE1()|01C62()|01C45()|01C41(12)|01C41()|</RX.TRANS>
           <RX.BIN>214537</RX.BIN>
-          <RX.BFREQ>214</RX.BFREQ>
+          <RX.BFREQ>226</RX.BFREQ>
           <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
           <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
           <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
@@ -83,7 +503,7 @@
           <RXD.DED>2013/02/23</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3311">
+          <citation index="15">
             <CNR>
               <CNR.CNR>35449447</CNR.CNR>
               <CNR.CED>2013/02/23</CNR.CED>
@@ -96,10 +516,12 @@
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Elsevier</CIT.PUB>
@@ -119,7 +541,7 @@
       <RXD>
         <RXD.L>9047362</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>21</RXD.SCO>
+        <RXD.SCO>20</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843502</RXD.YXRN>
@@ -145,7 +567,7 @@
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="2884">
+          <citation index="11">
             <CNR>
               <CNR.CNR>9047362</CNR.CNR>
               <CNR.CED>2011/06/27</CNR.CED>
@@ -155,13 +577,14 @@
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -182,7 +605,7 @@
       <RXD>
         <RXD.L>8706896</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>25</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843502</RXD.YXRN>
@@ -232,7 +655,7 @@
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="2286">
+          <citation index="7">
             <CNR>
               <CNR.CNR>8706896</CNR.CNR>
               <CNR.CED>2009/04/06</CNR.CED>
@@ -242,13 +665,14 @@
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2009</CIT.PREPY>
               <CIT.PUI>352812531</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -295,7 +719,7 @@
           <RXD.DED>2016/03/12</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3642">
+          <citation index="22">
             <CNR>
               <CNR.CNR>68258015</CNR.CNR>
               <CNR.CED>2016/02/23</CNR.CED>
@@ -308,10 +732,12 @@
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -357,7 +783,7 @@
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="3173">
+          <citation index="14">
             <CNR>
               <CNR.CNR>20131001</CNR.CNR>
               <CNR.CED>2012/06/01</CNR.CED>
@@ -370,10 +796,12 @@
               
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -503,7 +931,7 @@ M  END
 </RY.PRO>
       </RY>
     </reaction>
-    <reaction index="2">
+    <reaction index="3">
       <RX>
         <RX.ID>28177053</RX.ID>
         <RX01>
@@ -533,7 +961,7 @@ M  END
         <RX04>
           <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0F10)|01D45(10)|01D42(0E11)|01D41(12)|01C62()|01C61(13)|01C45()|01C41(12)|01C41()|01B41()|</RX.TRANS>
           <RX.BIN>214537</RX.BIN>
-          <RX.BFREQ>214</RX.BFREQ>
+          <RX.BFREQ>226</RX.BFREQ>
           <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
           <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
           <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
@@ -559,7 +987,7 @@ M  END
       <RXD>
         <RXD.L>8706896</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>25</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843501</RXD.YXRN>
@@ -609,7 +1037,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="2286">
+          <citation index="7">
             <CNR>
               <CNR.CNR>8706896</CNR.CNR>
               <CNR.CED>2009/04/06</CNR.CED>
@@ -619,13 +1047,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2009</CIT.PREPY>
               <CIT.PUI>352812531</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -672,7 +1101,7 @@ M  END
           <RXD.DED>2013/02/23</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3311">
+          <citation index="15">
             <CNR>
               <CNR.CNR>35449447</CNR.CNR>
               <CNR.CED>2013/02/23</CNR.CED>
@@ -685,10 +1114,12 @@ M  END
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Elsevier</CIT.PUB>
@@ -708,7 +1139,7 @@ M  END
       <RXD>
         <RXD.L>9047362</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>21</RXD.SCO>
+        <RXD.SCO>20</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843501</RXD.YXRN>
@@ -734,7 +1165,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="2884">
+          <citation index="11">
             <CNR>
               <CNR.CNR>9047362</CNR.CNR>
               <CNR.CED>2011/06/27</CNR.CED>
@@ -744,13 +1175,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -798,7 +1230,7 @@ M  END
           <RXD.COM>diastereospecific reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3348">
+          <citation index="16">
             <CNR>
               <CNR.CNR>35489695</CNR.CNR>
               <CNR.CED>2013/06/26</CNR.CED>
@@ -806,15 +1238,17 @@ M  END
             </CNR>
             <CIT>
               <CIT.DT>Article</CIT.DT>
-              <CIT.AU>Mercha&#769;n Arenas, Diego R.; Marti&#769;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.AU>Merch&#x00E1;n Arenas, Diego R.; Mart&#x00ED;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>368919151</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>OBCRA</CIT.CO>
                 <CIT.JT>Organic and Biomolecular Chemistry</CIT.JT>
-                <CIT.JTS>Organic and Biomolecular Chemistry</CIT.JTS>
+                <CIT.JTS>Org. Biomol. Chem.</CIT.JTS>
                 <CIT.CC>gbr</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
@@ -835,7 +1269,7 @@ M  END
       <RXD>
         <RXD.L>68847446</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>32</RXD.SCO>
+        <RXD.SCO>31</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843501</RXD.YXRN>
@@ -861,7 +1295,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3667">
+          <citation index="23">
             <CNR>
               <CNR.CNR>68847446</CNR.CNR>
               <CNR.CED>2016/05/19</CNR.CED>
@@ -869,15 +1303,17 @@ M  END
             </CNR>
             <CIT>
               <CIT.DT>Article</CIT.DT>
-              <CIT.AU>Mart&#237;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#233;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.AU>Mart&#x00ED;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#x00E9;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>610180713</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>RSCAC</CIT.CO>
                 <CIT.JT>RSC Advances</CIT.JT>
-                <CIT.JTS>RSC Advances</CIT.JTS>
+                <CIT.JTS>RSC Adv.</CIT.JTS>
                 <CIT.CC>gbr</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
@@ -888,7 +1324,7 @@ M  END
                 <CIT.DOI>10.1039/c6ra04325a</CIT.DOI>
                 <CIT.ISSN>2046-2069</CIT.ISSN>
                 <CIT.SCOPUS>84966318678</CIT.SCOPUS>
-                <CIT.CITBY>1</CIT.CITBY>
+                <CIT.CITBY>3</CIT.CITBY>
               </CIT01>
               <CIT.DOCQ>1</CIT.DOCQ>
             </CIT>
@@ -1011,7 +1447,7 @@ M  END
 </RY.PRO>
       </RY>
     </reaction>
-    <reaction index="3">
+    <reaction index="4">
       <RX>
         <RX.ID>28177054</RX.ID>
         <RX01>
@@ -1041,7 +1477,7 @@ M  END
         <RX04>
           <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0A)|01E45(0B)|01E41()|01D45(0F)|01D45(0F)|01D42(0E10)|01D41(11)|01C62()|01C45()|01C41(11)|01C41()|</RX.TRANS>
           <RX.BIN>214537</RX.BIN>
-          <RX.BFREQ>214</RX.BFREQ>
+          <RX.BFREQ>226</RX.BFREQ>
           <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
           <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
           <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
@@ -1062,7 +1498,7 @@ M  END
         <RX.NUMREF>10</RX.NUMREF>
         <RX.MAXPMW>230.31</RX.MAXPMW>
         <RX.ED>2009/04/06</RX.ED>
-        <RX.UPD>2017/03/04</RX.UPD>
+        <RX.UPD>2018/09/22</RX.UPD>
       </RX>
       <RXD>
         <RXD.L>64130665</RXD.L>
@@ -1091,11 +1527,11 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3497">
+          <citation index="18">
             <CNR>
               <CNR.CNR>64130665</CNR.CNR>
               <CNR.CED>2014/10/15</CNR.CED>
-              <CNR.CUPD>2016/06/27</CNR.CUPD>
+              <CNR.CUPD>2018/09/22</CNR.CUPD>
             </CNR>
             <CIT>
               <CIT.DT>Article</CIT.DT>
@@ -1104,13 +1540,15 @@ M  END
               
               <CIT.PREPY>2014</CIT.PREPY>
               <CIT.PUI>373852354</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
-                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.PUB>Elsevier B.V.</CIT.PUB>
                 <CIT.VL>57</CIT.VL>
                 <CIT.PY>2014</CIT.PY>
                 <CIT.PAG>94 - 98</CIT.PAG>
@@ -1153,7 +1591,7 @@ M  END
           <RXD.DED>2016/03/12</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3642">
+          <citation index="22">
             <CNR>
               <CNR.CNR>68258015</CNR.CNR>
               <CNR.CED>2016/02/23</CNR.CED>
@@ -1166,10 +1604,12 @@ M  END
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -1215,7 +1655,7 @@ M  END
           <RXD.COM>stereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3709">
+          <citation index="25">
             <CNR>
               <CNR.CNR>69825983</CNR.CNR>
               <CNR.CED>2016/10/25</CNR.CED>
@@ -1228,10 +1668,11 @@ M  END
               
               <CIT.PREPY>2014</CIT.PREPY>
               <CIT.PUI>600030711</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOAC</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.LA>English</CIT.LA>
                 <CIT.VL>57</CIT.VL>
                 <CIT.PY>2014</CIT.PY>
@@ -1275,7 +1716,7 @@ M  END
           <RXD.DED>2013/02/23</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3311">
+          <citation index="15">
             <CNR>
               <CNR.CNR>35449447</CNR.CNR>
               <CNR.CED>2013/02/23</CNR.CED>
@@ -1288,10 +1729,12 @@ M  END
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Elsevier</CIT.PUB>
@@ -1311,7 +1754,7 @@ M  END
       <RXD>
         <RXD.L>9047362</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>21</RXD.SCO>
+        <RXD.SCO>20</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>7252256</RXD.YXRN>
@@ -1337,7 +1780,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="2884">
+          <citation index="11">
             <CNR>
               <CNR.CNR>9047362</CNR.CNR>
               <CNR.CED>2011/06/27</CNR.CED>
@@ -1347,13 +1790,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -1374,7 +1818,7 @@ M  END
       <RXD>
         <RXD.L>8706896</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>25</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>7252256</RXD.YXRN>
@@ -1424,7 +1868,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="2286">
+          <citation index="7">
             <CNR>
               <CNR.CNR>8706896</CNR.CNR>
               <CNR.CED>2009/04/06</CNR.CED>
@@ -1434,13 +1878,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2009</CIT.PREPY>
               <CIT.PUI>352812531</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -1461,7 +1906,7 @@ M  END
       <RXD>
         <RXD.L>20056768</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>24</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>7252256</RXD.YXRN>
@@ -1486,7 +1931,7 @@ M  END
           <RXD.COM>diastereospecific reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3046">
+          <citation index="12">
             <CNR>
               <CNR.CNR>20056768</CNR.CNR>
               <CNR.CED>2012/01/06</CNR.CED>
@@ -1496,9 +1941,10 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Kouznetsov, Vladimir V.; Merchan Arenas, Diego R.; Ortiz Areniz, Cesar J.; Melendez Gomez, Carlos M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>51707892</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNTB</CIT.CO>
                 <CIT.JT>Synthesis</CIT.JT>
@@ -1548,7 +1994,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="3173">
+          <citation index="14">
             <CNR>
               <CNR.CNR>20131001</CNR.CNR>
               <CNR.CED>2012/06/01</CNR.CED>
@@ -1561,10 +2007,12 @@ M  END
               
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -1612,7 +2060,7 @@ M  END
           <RXD.COM>diastereospecific reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3348">
+          <citation index="16">
             <CNR>
               <CNR.CNR>35489695</CNR.CNR>
               <CNR.CED>2013/06/26</CNR.CED>
@@ -1620,15 +2068,17 @@ M  END
             </CNR>
             <CIT>
               <CIT.DT>Article</CIT.DT>
-              <CIT.AU>Mercha&#769;n Arenas, Diego R.; Marti&#769;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.AU>Merch&#x00E1;n Arenas, Diego R.; Mart&#x00ED;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>368919151</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>OBCRA</CIT.CO>
                 <CIT.JT>Organic and Biomolecular Chemistry</CIT.JT>
-                <CIT.JTS>Organic and Biomolecular Chemistry</CIT.JTS>
+                <CIT.JTS>Org. Biomol. Chem.</CIT.JTS>
                 <CIT.CC>gbr</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
@@ -1649,7 +2099,7 @@ M  END
       <RXD>
         <RXD.L>68847446</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>31</RXD.SCO>
+        <RXD.SCO>30</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>7252256</RXD.YXRN>
@@ -1675,7 +2125,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3667">
+          <citation index="23">
             <CNR>
               <CNR.CNR>68847446</CNR.CNR>
               <CNR.CED>2016/05/19</CNR.CED>
@@ -1683,15 +2133,17 @@ M  END
             </CNR>
             <CIT>
               <CIT.DT>Article</CIT.DT>
-              <CIT.AU>Mart&#237;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#233;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.AU>Mart&#x00ED;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#x00E9;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>610180713</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>RSCAC</CIT.CO>
                 <CIT.JT>RSC Advances</CIT.JT>
-                <CIT.JTS>RSC Advances</CIT.JTS>
+                <CIT.JTS>RSC Adv.</CIT.JTS>
                 <CIT.CC>gbr</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
@@ -1702,7 +2154,7 @@ M  END
                 <CIT.DOI>10.1039/c6ra04325a</CIT.DOI>
                 <CIT.ISSN>2046-2069</CIT.ISSN>
                 <CIT.SCOPUS>84966318678</CIT.SCOPUS>
-                <CIT.CITBY>1</CIT.CITBY>
+                <CIT.CITBY>3</CIT.CITBY>
               </CIT01>
               <CIT.DOCQ>1</CIT.DOCQ>
             </CIT>
@@ -1817,7 +2269,7 @@ M  END
 </RY.PRO>
       </RY>
     </reaction>
-    <reaction index="4">
+    <reaction index="5">
       <RX>
         <RX.ID>28177055</RX.ID>
         <RX01>
@@ -1847,7 +2299,7 @@ M  END
         <RX04>
           <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0A)|01E45(0B)|01E41()|01D45(0F12)|01D45(0F)|01D42(0E10)|01D41(11)|01C62()|01C45()|01C41(11)|01C41()|01C41()|</RX.TRANS>
           <RX.BIN>214537</RX.BIN>
-          <RX.BFREQ>214</RX.BFREQ>
+          <RX.BFREQ>226</RX.BFREQ>
           <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
           <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
           <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
@@ -1873,7 +2325,7 @@ M  END
       <RXD>
         <RXD.L>8706896</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>25</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843507</RXD.YXRN>
@@ -1923,7 +2375,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="2286">
+          <citation index="7">
             <CNR>
               <CNR.CNR>8706896</CNR.CNR>
               <CNR.CED>2009/04/06</CNR.CED>
@@ -1933,13 +2385,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2009</CIT.PREPY>
               <CIT.PUI>352812531</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -1960,7 +2413,7 @@ M  END
       <RXD>
         <RXD.L>9047362</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>21</RXD.SCO>
+        <RXD.SCO>20</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>18843507</RXD.YXRN>
@@ -1986,7 +2439,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="2884">
+          <citation index="11">
             <CNR>
               <CNR.CNR>9047362</CNR.CNR>
               <CNR.CED>2011/06/27</CNR.CED>
@@ -1996,13 +2449,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -2049,7 +2503,7 @@ M  END
           <RXD.DED>2013/02/23</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3311">
+          <citation index="15">
             <CNR>
               <CNR.CNR>35449447</CNR.CNR>
               <CNR.CED>2013/02/23</CNR.CED>
@@ -2062,10 +2516,12 @@ M  END
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Elsevier</CIT.PUB>
@@ -2111,7 +2567,7 @@ M  END
           <RXD.DED>2016/03/12</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3642">
+          <citation index="22">
             <CNR>
               <CNR.CNR>68258015</CNR.CNR>
               <CNR.CED>2016/02/23</CNR.CED>
@@ -2124,10 +2580,12 @@ M  END
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -2173,7 +2631,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="3173">
+          <citation index="14">
             <CNR>
               <CNR.CNR>20131001</CNR.CNR>
               <CNR.CED>2012/06/01</CNR.CED>
@@ -2186,10 +2644,12 @@ M  END
               
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -2319,7 +2779,7 @@ M  END
 </RY.PRO>
       </RY>
     </reaction>
-    <reaction index="5">
+    <reaction index="6">
       <RX>
         <RX.ID>30967279</RX.ID>
         <RX01>
@@ -2349,7 +2809,7 @@ M  END
         <RX04>
           <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0E10)|01D45(10)|01D42(0F11)|01D41(12)|01CE1()|01C62()|01C45()|01C41(13)|01C41(14)|01B41(14)|01B41()|</RX.TRANS>
           <RX.BIN>214537</RX.BIN>
-          <RX.BFREQ>214</RX.BFREQ>
+          <RX.BFREQ>226</RX.BFREQ>
           <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
           <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
           <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
@@ -2375,7 +2835,7 @@ M  END
       <RXD>
         <RXD.L>9047362</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>21</RXD.SCO>
+        <RXD.SCO>20</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>21503873</RXD.YXRN>
@@ -2401,7 +2861,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="2884">
+          <citation index="11">
             <CNR>
               <CNR.CNR>9047362</CNR.CNR>
               <CNR.CED>2011/06/27</CNR.CED>
@@ -2411,13 +2871,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>SYNCA</CIT.CO>
                 <CIT.JT>Synthetic Communications</CIT.JT>
-                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
                 <CIT.CC>usa</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
@@ -2464,7 +2925,7 @@ M  END
           <RXD.DED>2013/02/23</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3311">
+          <citation index="15">
             <CNR>
               <CNR.CNR>35449447</CNR.CNR>
               <CNR.CED>2013/02/23</CNR.CED>
@@ -2477,10 +2938,12 @@ M  END
               
               <CIT.PREPY>2013</CIT.PREPY>
               <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CCAOA</CIT.CO>
                 <CIT.JT>Catalysis Communications</CIT.JT>
-                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
                 <CIT.CC>nld</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Elsevier</CIT.PUB>
@@ -2526,7 +2989,7 @@ M  END
           <RXD.DED>2016/03/12</RXD.DED>
         </RXDS01>
         <citations>
-          <citation index="3642">
+          <citation index="22">
             <CNR>
               <CNR.CNR>68258015</CNR.CNR>
               <CNR.CED>2016/02/23</CNR.CED>
@@ -2539,10 +3002,12 @@ M  END
               
               <CIT.PREPY>2016</CIT.PREPY>
               <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -2563,7 +3028,7 @@ M  END
       <RXD>
         <RXD.L>20115971</RXD.L>
         <RXD.CL>Preparation</RXD.CL>
-        <RXD.SCO>26</RXD.SCO>
+        <RXD.SCO>25</RXD.SCO>
         <RXD.STP>1</RXD.STP>
         <RXD01>
           <RXD.YXRN>21503873</RXD.YXRN>
@@ -2589,7 +3054,7 @@ M  END
           <RXD.COM>diastereoselective reaction</RXD.COM>
         </RXDS01>
         <citations>
-          <citation index="3154">
+          <citation index="13">
             <CNR>
               <CNR.CNR>20115971</CNR.CNR>
               <CNR.CED>2012/05/05</CNR.CED>
@@ -2599,13 +3064,14 @@ M  END
               <CIT.DT>Article</CIT.DT>
               <CIT.AU>Kiran, Kumar H. C.; Mahadevan; Prabhakara, Varma P.; Srinivasa</CIT.AU>
               <CIT.ABPR>Y</CIT.ABPR>
-              
               <CIT.PREPY>2012</CIT.PREPY>
               <CIT.PUI>364521377</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>CJOCE</CIT.CO>
                 <CIT.JT>Chinese Journal of Chemistry</CIT.JT>
-                <CIT.JTS>Chinese Journal of Chemistry</CIT.JTS>
+                <CIT.JTS>Chin J Chem</CIT.JTS>
                 <CIT.CC>chn</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Shanghai Institute of Organic Chemistry</CIT.PUB>
@@ -2651,7 +3117,7 @@ M  END
           <RXD.LCN>experimental part</RXD.LCN>
         </RXDS01>
         <citations>
-          <citation index="3173">
+          <citation index="14">
             <CNR>
               <CNR.CNR>20131001</CNR.CNR>
               <CNR.CED>2012/06/01</CNR.CED>
@@ -2664,10 +3130,12 @@ M  END
               
               <CIT.PREPY>2011</CIT.PREPY>
               <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
               <CIT01>
                 <CIT.CO>BKCSD</CIT.CO>
                 <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
-                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
                 <CIT.CC>kor</CIT.CC>
                 <CIT.LA>English</CIT.LA>
                 <CIT.PUB>Korean Chemical Society</CIT.PUB>
@@ -2805,3 +3273,2359 @@ M  END
 </RY.PRO>
       </RY>
     </reaction>
+    <reaction index="7">
+      <RX>
+        <RX.ID>30967281</RX.ID>
+        <RX01>
+          <RX.RXRN>119049</RX.RXRN>
+          <RX.RCT>vinylcaprolactam</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>605631</RX.RXRN>
+          <RX.RCT>aniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>11068866</RX.PXRN>
+          <RX.PRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RX.PRO>
+        </RX02>
+        <RX.BLB>119049</RX.BLB>
+        <RX.BLB>605631</RX.BLB>
+        <RX.BLB>11068866</RX.BLB>
+        <RX.BLC>119049</RX.BLC>
+        <RX.BLC>605631</RX.BLC>
+        <RX.BLC>11068866</RX.BLC>
+        <RX.NVAR>6</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0A)|01E45(0B)|01E41()|01D45(0F)|01D45(0F)|01D42(0E10)|01D41(11)|01C62()|01C45()|01C41(12)|01C41(13)|01B41(13)|01B41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>226</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJy1V0tv2zAMvvdX6NCzIepBSZcB6ZL2sCQFkmBYT0Ux9LjLMOz3j6ScRLKdwEo7I0gcmvr08Sn6fvdje0eXUkYpuLvfPK/5z+7L5q/rdHGZpQJFKlmo+NLlPa0CzR81/Ukpqe+G1O9Y3XYuaMd3pkMM9gyntuoShHwg3wiK6ywiZhTjoUT5eh3FFCim8yEzIBQTGlBsgUIW+ejyHVnk56O4yiI0ViyCziRt5qP4AsV3YE3IFsVkXYHyfB0FK79Yk31KXEILl1B7N6LNtoFv8UusvJui79d6rWE+Sqq4pATuBpRjWt9J/plTFpZSOyl1Y6mRYE1I8ZSXJ6kVZw51nThnqOvF2KFuEPJDaZqQbqjsV08KIGmX+N9qu/xYQ2Du4ZJT64YAHBCd76io9fzQlA3BdMf9qZStaUAxkyj6xGoeStkQ9GWLrrc4KBuCvdkiP4nSahFWKLfG6NwQcvkMU/fj5WMny8dL/g2lOFFUffKj9mjhU5IfkjLVHpeTP3TBJenXscOY+3/72YFdjL5HgYBhfnjK5CcuVsvaNOTScDKTHRCx55JMg0Vl10c+vUJm1WYRVCga8Ojd0ODdqoTYIsdrQXfgUoNFpuISMxdC0dE1oNiai8lzD/klwXy/FEUgkcacL0iRdiVKQ4Mi7/b5QiiYGmJUWkQTizcx2wbYEuly1ohd1CAxApqAoGHWKCOdaDYNmO/QVTFqmJ6w8168QVzoPG3gEmouKdcReTfFGyNN3kUdc8wBXYN3S4soMl73FkVqNfO5lDNY4EgfUbyZjzJ/BoOB9L/MYFZa1cRkNjGD+ckZzEubGh9OMGFbkHKZkLoxQpTGNWfiEymOfEa0YGwx0YLxYUq0YOwHIgBjP5DiWEpH7f7wIv6kJ8vFQfEe+dfyr2gs1vJYShpEI6/gYZ5lXCKcVJzkvAWbylaxK9lxnAK+RJKkYNPZUDZAJt79w6ft0yPxinofAqVVRoaM/fIgWpvl+uHp9XG3eNqstofX/WG1W3GvyddjVl32nKS3mNy5fYc699zlgr8X6/VRiR7KulVe9/vt5/uvtz/vZyfkNFMFEdMTyfu/flu9qOoqiMjbIBUzngYX07+4Xidi1P7MIKe0SmcGdj4DeaekfX1/FCINLjDDFVbtzq86GmNEPM57/wBXv7U8</RX.RXNFILE>
+        <RX.REG>208909b3063fdc3e0922a7f48969aad4</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>92</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>6</RX.NUMREF>
+        <RX.MAXPMW>258.363</RX.MAXPMW>
+        <RX.ED>2011/06/27</RX.ED>
+        <RX.UPD>2016/12/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.333333</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="11">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>2</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="15">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>91 percent</RXD.YD>
+          <RXD.NYD>91</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="22">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20115971</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>86 percent</RXD.YD>
+          <RXD.NYD>86</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3600276</RXD.RGTXRN>
+            <RXD.RGT>antimony(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1.5</RXD.TIM>
+          <RXD.T>25</RXD.T>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2012/05/05</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="13">
+            <CNR>
+              <CNR.CNR>20115971</CNR.CNR>
+              <CNR.CED>2012/05/05</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Kiran, Kumar H. C.; Mahadevan; Prabhakara, Varma P.; Srinivasa</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2012</CIT.PREPY>
+              <CIT.PUI>364521377</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CJOCE</CIT.CO>
+                <CIT.JT>Chinese Journal of Chemistry</CIT.JT>
+                <CIT.JTS>Chin J Chem</CIT.JTS>
+                <CIT.CC>chn</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Shanghai Institute of Organic Chemistry</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.NB>3</CIT.NB>
+                <CIT.PY>2012</CIT.PY>
+                <CIT.PAG>534 - 540</CIT.PAG>
+                <CIT.DOI>10.1002/cjoc.201100180</CIT.DOI>
+                <CIT.ISSN>1614-7065</CIT.ISSN>
+                <CIT.SCOPUS>84859080883</CIT.SCOPUS>
+                <CIT.CITBY>11</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>19</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>80 percent</RXD.YD>
+          <RXD.NYD>80</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>10</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="14">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35490001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>34</RXD.SCO>
+        <RXD.TI>General procedure for the synthesis of 2-methyl-4-amino-1,2,3,4-tetrahydroquinoline:</RXD.TI>
+        <RXD.TXT>General procedure: To a mixture of amine (0.093 g, 1.0 mmol) and 1-vinylpyrrolidin-2-one (0.389 g, 3.5 mmol) was added 2.0 mL water. The reaction mixture was stirred vigorously at 100 <sup>o</sup>C for 24 h or until the starting materials were completely consumed as indicated by TLC analysis. After reaction, the reaction mixture was extracted by ethyl acetate (10 mL x 3). The combined organic phase was washed with brine, dried with anhydrous Na<sub>2</sub>SO<sub>4</sub>, and evaporated under the reduced pressure. The resulting residue was purified by flash column chromatography with ethyl acetate and petroleum ether as eluents to afford the analytically pure product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>11068866</RXD.YXRN>
+          <RXD.YPRO>cis-2-methyl-4-(2-oxoazepan-1-yl)-1,2,3,4-tetrahydroquinoline</RXD.YPRO>
+          <RXD.YD>76 percent</RXD.YD>
+          <RXD.NYD>76</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>24</RXD.TIM>
+          <RXD.T>100</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/06/26</RXD.DED>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="17">
+            <CNR>
+              <CNR.CNR>35490001</CNR.CNR>
+              <CNR.CED>2013/06/26</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Wu, Lin; Jiang, Ran; Yang, Jin-Ming; Wang, Shun-Yi; Ji, Shun-Jun</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52540863</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>TELEA</CIT.CO>
+                <CIT.JT>Tetrahedron Letters</CIT.JT>
+                <CIT.JTS>Tetrahedron Lett.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier Ltd</CIT.PUB>
+                <CIT.VL>54</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>2849 - 2852</CIT.PAG>
+                <CIT.DOI>10.1016/j.tetlet.2013.03.091</CIT.DOI>
+                <CIT.ISSN>1873-3581</CIT.ISSN>
+                <CIT.SCOPUS>84876740562</CIT.SCOPUS>
+                <CIT.CITBY>6</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="119049">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0 REGNO=119049
+M  V30 BEGIN ATOM
+M  V30 1 N -14.4393 0.5212 0 0
+M  V30 2 C -13.0596 -0.1193 0 0
+M  V30 3 C -15.8146 -0.1564 0 0
+M  V30 4 C -14.4576 2.0615 0 0
+M  V30 5 C -12.6637 -1.5993 0 0
+M  V30 6 O -11.8795 0.8697 0 0
+M  V30 7 C -16.2087 -1.6299 0 0
+M  V30 8 C -15.8009 2.8159 0 0
+M  V30 9 C -13.6461 -2.8159 0 0
+M  V30 10 C -15.1768 -2.8159 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 9
+M  V30 9 1 7 10
+M  V30 10 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="605631">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 7 0 0 0 REGNO=605631
+M  V30 BEGIN ATOM
+M  V30 1 C -6.1596 -0.2868 0 0
+M  V30 2 C -5.3897 1.0469 0 0
+M  V30 3 C -5.3897 -1.6205 0 0
+M  V30 4 N -7.6995 -0.2868 0 0
+M  V30 5 C -3.85 1.0469 0 0
+M  V30 6 C -3.85 -1.6205 0 0
+M  V30 7 C -3.08 -0.2868 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 3 6
+M  V30 6 2 5 7
+M  V30 7 1 6 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="11068866">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 19 21 0 0 0 REGNO=11068866
+M  V30 BEGIN ATOM
+M  V30 1 C 9.4987 -0.917 0 0 CFG=1
+M  V30 2 C 8.1682 -1.6979 0 0
+M  V30 3 N 9.4694 0.6224 0 0
+M  V30 4 C 10.837 -1.6731 0 0
+M  V30 5 C 8.1805 -3.2378 0 0
+M  V30 6 C 6.8305 -0.9326 0 0
+M  V30 7 C 10.831 1.3403 0 0
+M  V30 8 C 8.0621 1.2402 0 0
+M  V30 9 C 10.8493 -3.2144 0 0 CFG=2
+M  V30 10 N 9.5235 -3.9954 0 0
+M  V30 11 C 6.8519 -4.0182 0 0
+M  V30 12 C 5.5 -1.7134 0 0
+M  V30 13 C 11.1186 2.8524 0 0
+M  V30 14 O 12.1598 0.5625 0 0
+M  V30 15 C 7.6662 2.7261 0 0
+M  V30 16 C 12.1921 -3.9739 0 0
+M  V30 17 C 5.5123 -3.2561 0 0
+M  V30 18 C 10.1165 4.0182 0 0
+M  V30 19 C 8.5796 3.9625 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3 CFG=1
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 1 4 9
+M  V30 9 1 5 10
+M  V30 10 2 5 11
+M  V30 11 1 6 12
+M  V30 12 1 7 13
+M  V30 13 2 7 14
+M  V30 14 1 8 15
+M  V30 15 1 9 10
+M  V30 16 1 9 16 CFG=1
+M  V30 17 1 11 17
+M  V30 18 2 12 17
+M  V30 19 1 13 18
+M  V30 20 1 15 19
+M  V30 21 1 18 19
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="8">
+      <RX>
+        <RX.ID>30967284</RX.ID>
+        <RX01>
+          <RX.RXRN>119049</RX.RXRN>
+          <RX.RCT>vinylcaprolactam</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>742030</RX.RXRN>
+          <RX.RCT>4-fluoroaniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>21503870</RX.PXRN>
+          <RX.PRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>119049</RX.BLB>
+        <RX.BLB>742030</RX.BLB>
+        <RX.BLB>21503870</RX.BLB>
+        <RX.BLC>119049</RX.BLC>
+        <RX.BLC>742030</RX.BLC>
+        <RX.BLC>21503870</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0E10)|01D45(10)|01D42(0F11)|01D41(12)|01C71()|01C62()|01C45()|01C41(13)|01C41(14)|01B41(14)|01B41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>226</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01C71(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJytV0tv2zAMvudX6NCzIVEv6zIgnd0elqRAGgzrKSiGHncZhv3+kZRjS7YSWFkNt3EY6tNHii8/HH8cNngJAUKozcP+ZUdfjl/2f00jkws6oQSqRKGgS6bPuEpJukX5DiGI74DqG1LXjfHS0BM0znk9wYmDuAbBt4oPjGIa7ZyLKGBVivL1NgokKNBYHxkgCvgKFJ2goEW2NfEJLbLrUUxmkQPNFqkGgoT1KDZBsY3S4KNFbdAmQXm5jeIyv2iIPkUuvoaLz73bOh1tU7bGL23m3dDaYa2VUq1HCRmXEJS5A+US1huOPxijMJXqotQspcCHVZC6MS5HqWZnznUNO2eua9nYua5n8nNpKEj3mPb9s1AqSBPoW3/o/q8gEMv2mlPzgqDoQGR8wqSW648mLQjQXPbHVNZQgQJFFDmyWoeSFgR53aKn2yhpQdB3W2SLKLUWuQzl3jNKC4K5jnK79KupINxKwnla3ErCQrq5pa4tJqFj6RzBc8QXE8sbkFp+SmJhHEC2c3rPE8sPYeOaVrqKypmGIVbx4AcULW1F5UzDcOLi51wqur5s2iFsKrlkHWWyyFZalAYzdn1n1B3ezQoOWqQVc2kbMDXdLS9bbvBuLUpeti7erfRLkgTpSZu6k1Z51794d4FSUbZwSoQwnFHdSedR52TLFoUGlLtzMsMVJjCKb5zKLKqazHAYuouLz7kMNaXSu9lJT96tzaM06nBiDa6cRxXNUo0tMuCk5yv8kk+Jd6KsnxLdTLq6QUGxQZWnRF1oRbxVYUq0xSnRcgosGx8Vr2XjU4UJ2PMBzXVbbgtrZlKWuoXPkJZaNl+kpZZ+IOnSD0hWLf2AtGDJARWXUmzjr6c39jL+0m1PFDnDp6ZP1tju+Gcyl5s6iLiCXkJIRq969KLWingstA25nIKH3EmBYVMkfnUgh5ChZBaugsjm8dP2GpA4qBZ74R9FN7Bmd2LNfbd7fD4/HbfP+/5wOr+e+mNP9SxeT1G1G3hxdwixlurGm5jt3Zb+b3e7ixKS5nV9XPf7/efHr/c/H5MzYoIJNRGBgUjc//ytfxPZlRCBgYgbhyO9igiI14lBDHgRJgZ6PQN+J8bC4od2i0XY2BUMtDiOr2rQemWNusyU/wD8CdC7</RX.RXNFILE>
+        <RX.REG>43aa5070681b883853925d34e64ea95c</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>95</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>276.354</RX.MAXPMW>
+        <RX.ED>2011/06/27</RX.ED>
+        <RX.UPD>2016/12/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503870</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>95 percent</RXD.YD>
+          <RXD.NYD>95</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="22">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503870</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>93 percent</RXD.YD>
+          <RXD.NYD>93</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="11">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synth. Commun.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>2</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503870</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>91 percent</RXD.YD>
+          <RXD.NYD>91</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="15">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503870</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>88 percent</RXD.YD>
+          <RXD.NYD>88</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>8</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="14">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bull. Korean Chem. Soc.</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20115971</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503870</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-fluoro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>87 percent</RXD.YD>
+          <RXD.NYD>87</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3600276</RXD.RGTXRN>
+            <RXD.RGT>antimony(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1.25</RXD.TIM>
+          <RXD.T>25</RXD.T>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2012/05/05</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="13">
+            <CNR>
+              <CNR.CNR>20115971</CNR.CNR>
+              <CNR.CED>2012/05/05</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Kiran, Kumar H. C.; Mahadevan; Prabhakara, Varma P.; Srinivasa</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2012</CIT.PREPY>
+              <CIT.PUI>364521377</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CJOCE</CIT.CO>
+                <CIT.JT>Chinese Journal of Chemistry</CIT.JT>
+                <CIT.JTS>Chin J Chem</CIT.JTS>
+                <CIT.CC>chn</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Shanghai Institute of Organic Chemistry</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.NB>3</CIT.NB>
+                <CIT.PY>2012</CIT.PY>
+                <CIT.PAG>534 - 540</CIT.PAG>
+                <CIT.DOI>10.1002/cjoc.201100180</CIT.DOI>
+                <CIT.ISSN>1614-7065</CIT.ISSN>
+                <CIT.SCOPUS>84859080883</CIT.SCOPUS>
+                <CIT.CITBY>11</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="119049">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0 REGNO=119049
+M  V30 BEGIN ATOM
+M  V30 1 N -15.5391 0.5213 0 0
+M  V30 2 C -14.1593 -0.1196 0 0
+M  V30 3 C -16.9148 -0.1565 0 0
+M  V30 4 C -15.5579 2.0612 0 0
+M  V30 5 C -13.7634 -1.5996 0 0
+M  V30 6 O -12.9798 0.8694 0 0
+M  V30 7 C -17.3089 -1.6302 0 0
+M  V30 8 C -16.9007 2.8161 0 0
+M  V30 9 C -14.7463 -2.8161 0 0
+M  V30 10 C -16.2771 -2.8161 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 9
+M  V30 9 1 7 10
+M  V30 10 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="742030">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=742030
+M  V30 BEGIN ATOM
+M  V30 1 C -7.6999 -0.2869 0 0
+M  V30 2 C -6.9299 1.0464 0 0
+M  V30 3 C -6.9299 -1.6206 0 0
+M  V30 4 F -9.2398 -0.2869 0 0
+M  V30 5 C -5.3899 1.0464 0 0
+M  V30 6 C -5.3899 -1.6206 0 0
+M  V30 7 C -4.6199 -0.2869 0 0
+M  V30 8 N -3.08 -0.2869 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 3 1 1 4
+M  V30 4 2 2 5
+M  V30 5 1 3 6
+M  V30 6 1 5 7
+M  V30 7 2 6 7
+M  V30 8 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="21503870">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 20 22 0 0 0 REGNO=21503870
+M  V30 BEGIN ATOM
+M  V30 1 C 8.3871 -0.917 0 0 CFG=1
+M  V30 2 C 9.7191 -1.6883 0 0
+M  V30 3 N 8.3871 0.6229 0 0
+M  V30 4 C 7.0534 -1.6883 0 0
+M  V30 5 C 9.7191 -3.2284 0 0
+M  V30 6 C 11.0542 -0.917 0 0
+M  V30 7 C 6.9995 1.2915 0 0
+M  V30 8 C 9.7729 1.2915 0 0
+M  V30 9 C 7.0534 -3.2284 0 0 CFG=2
+M  V30 10 N 8.3871 -3.997 0 0
+M  V30 11 C 11.0542 -3.997 0 0
+M  V30 12 C 12.3861 -1.6883 0 0
+M  V30 13 C 6.6561 2.7946 0 0
+M  V30 14 O 5.7953 0.3305 0 0
+M  V30 15 C 10.1164 2.7946 0 0
+M  V30 16 C 5.72 -3.997 0 0
+M  V30 17 C 12.3861 -3.2284 0 0
+M  V30 18 F 13.7213 -0.917 0 0
+M  V30 19 C 7.6172 3.997 0 0
+M  V30 20 C 9.1571 3.997 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3 CFG=3
+M  V30 3 1 1 4
+M  V30 4 2 2 5
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 1 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 2 6 12
+M  V30 12 1 7 13
+M  V30 13 2 7 14
+M  V30 14 1 8 15
+M  V30 15 1 9 10
+M  V30 16 1 9 16 CFG=3
+M  V30 17 2 11 17
+M  V30 18 1 12 17
+M  V30 19 1 12 18
+M  V30 20 1 13 19
+M  V30 21 1 15 20
+M  V30 22 1 19 20
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="9">
+      <RX>
+        <RX.ID>3553459</RX.ID>
+        <RX01>
+          <RX.RXRN>636190</RX.RXRN>
+          <RX.RCT>E-1-(4'-methoxyphenyl)prop-1-ene</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>969158</RX.RXRN>
+          <RX.RCT>isoprene</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>4992354</RX.PXRN>
+          <RX.PRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RX.PRO>
+        </RX02>
+        <RX.BLB>636190</RX.BLB>
+        <RX.BLB>969158</RX.BLB>
+        <RX.BLB>4992354</RX.BLB>
+        <RX.BLC>636190</RX.BLC>
+        <RX.BLC>969158</RX.BLC>
+        <RX.BLC>4992354</RX.BLC>
+        <RX.NVAR>11</RX.NVAR>
+        <RX03>
+          <RX.BCODE>259123750963135</RX.BCODE>
+          <RX.MCODE>361689357207451</RX.MCODE>
+          <RX.NCODE>392406718622174</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(0A0B)|01E42(08)|01E42()|01E41()|01D45(0C)|01D45(0D)|01C45(0E)|01C45(0E)|01B45(0F)|01A61(10)|01941()|</RX.TRANS>
+          <RX.BIN>221253</RX.BIN>
+          <RX.BFREQ>720</RX.BFREQ>
+          <RX.QRY0>0/88F42(0203*)|88F42(04*)|88F42(*)|80F41(*)|08F42(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0203*)|88F42(04*)|88F42(*)|80F41(*)|08F42(*)|01E45(*)|01E42(*)|01E42(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(*)|01E42(08*)|01E42(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(*)|01E42(08*)|01E42(*)|01E41(*)|01D45(*)|01D45(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(0A0B*)|01E42(08*)|01E42(*)|01E41(*)|01D45(*)|01D45(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(0A0B*)|01E42(08*)|01E42(*)|01E41(*)|01D45(*)|01D45(*)|01C45(*)|01C45(*)|*</RX.QRY5>
+          <RX.QRY6>0/88F42(020306)|88F42(0409)|88F42(08)|80F41(07)|08F42(07)|01E45(0A0B)|01E42(08)|01E42()|01E41()|01D45(0C)|01D45(0D)|01C45(0E)|01C45(0E)|01B45(*)|*</RX.QRY6>
+        </RX04>
+        <RX.RXNFILE>eJytVk1v2zAMvedX8NBrDVOyZesyIKndHJYPwA2K9VQUQ4+7DMN+/0zKjmhZ2WwtgtE6L9ILSfHjPXTfTpt+ASgA3Dwczwf60H05/i6yXCzVAEK/xYFAK5fv/SlEeiCPPtZaeFX99g1t19l4EjNtTO7p4AluUfAz/MDAUg4sKlNarWBRUZZcvC1h0YJFJXtUCJaCLMAUj8ooy1qPjGDB5LhUgqWkE5gSl1qw5Mm2WMFibtty/isL5hOWxOiiz13kFFTya4fqa4ZLtJijiq88RDVfYchb8JWEaMkhDlHDaMhbcSBDtObABCg6R6foEeDl8gauhUCzvTCyPcAYCrIRKkZ3A0p7DSPNhZFjc9jt318ubdee37+2bzBZz25r4w7zHZvr7dRa81uzpb/bw2Hc1IeBz7XuXEsfunYPRhu0bHd7av6vLVKgi1tJMW2LPi1xZWrJhuZbh29Ky1hkQ8tFc13HIhuaLLR1HsmG1o8LW2NKXHxDc3kWKa6bJReWhiu5KTqkizUWy/ou6dKbjNWydEmfFveZovKifZ/ny1rBoqMsa6fFdKKnzuIqyrLSI5RT1CTHJc6y1iNZRskaZVLS6XrJRm1ZG12ZLya5AqS6wNQKmLTd6rYtK9RFnmyLvOk6NV+ERlHjFPbdMalhRpSLiSqXiEYpomqkjKqRclQjRqImokbopzAyDGpGQxssp1yocpDRYG9/HOdard+I8zj0G3EWh1EnaRh0EuXB8F+HuolIeZwocCdIQxFmgINJoeNAUVgoCOQyuUImlhMFRo+R6usO3Duv7tjRaq7lnrvt/tieLoOog3HNtJzOipLz+bGvD+Pq419a7ufH988fH78+vaNqcMkbopaLSjUacm2hVaUWGKKg8xa4RBq+btytLrZAM6Aye226NjcLLNDOAtIphbVKl8UoVP4ATpuNOw==</RX.RXNFILE>
+        <RX.REG>5667b79838fbf0a72ac52cc26caaa2aa</RX.REG>
+        <RX.RANK highlight="true">102</RX.RANK>
+        <RX.MYD>98</RX.MYD>
+        <RX.SKW>nonmapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2018</RX.MAXPUB>
+        <RX.NUMREF>11</RX.NUMREF>
+        <RX.MAXPMW>216.323</RX.MAXPMW>
+        <RX.ED>2007/11/24</RX.ED>
+        <RX.UPD>2018/11/02</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>70643484</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>98 percent</RXD.YD>
+          <RXD.NYD>98</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>22164745</RXD.RGTXRN>
+            <RXD.RGT>tris(2,2&#x2019;--bipyrazyl)ruthenium(II) bis(tetrakis(3,5-bis(trifluoromethyl)phenyl)borate)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>Irradiation</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.RXDES>Scheme or table</RXD.RXDES>
+          <RXD.DED>2017/02/23</RXD.DED>
+          <RXD.COM>regioselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="26">
+            <CNR>
+              <CNR.CNR>70643484</CNR.CNR>
+              <CNR.CED>2017/02/23</CNR.CED>
+              <CNR.CUPD>2018/05/14</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Lies, Shane D.; Lin, Shishi; Yoon, Tehshik P.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>614118812</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.JT>Organic Syntheses</CIT.JT>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Wiley Blackwell</CIT.PUB>
+                <CIT.VL>93</CIT.VL>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>178 - 199</CIT.PAG>
+                <CIT.DOI>10.15227/orgsyn.093.0178</CIT.DOI>
+                <CIT.ISSN>1600-0730</CIT.ISSN>
+                <CIT.SCOPUS>85009810431</CIT.SCOPUS>
+                <CIT.CITBY>0</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>73460953</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>42</RXD.SCO>
+        <RXD.TI>General procedure for bulk electrolysis</RXD.TI>
+        <RXD.TXT>General procedure: To a solution of lithium perchlorate (1.06 g, 10.0 mmol) in nitromethane (10 mL) stirred at rt was added trans-anethole (1) (150 L, 1.0 mmol) and isoprene (2) (303 L, 3.0 mmol). The resulting reaction mixture was electrolyzed at rt using carbon felt electrodes (2 cm &#215; 2 cm) in an undivided cell with stirring at aconstant potential of 1.0 V vs Ag/AgCl. After completion (monitored by TLC and GC&#8211;MS), the reaction mixture was diluted with CH2Cl2 and washed with brine. The organic layer was dried over MgSO4, filtered, and concentrated in vacuo to give a crude product as a yellow oil. Silica gel column chromatography (EtOAc/Hex = 1:30) gave the title compound (211.6 mg, 98percent). 1H NMR (CDCl3, 600 MHz) &#948; 7.08 (2H, d, J= 8.5 Hz), 6.84 (2H, d, J = 8.5 Hz), 5.44 (1H, br. s), 3.79 (3H, s), 2.32-2.27 (1H, m), 2.24-2.10 (2H, m), 2.06(1H, dd, J = 17.2, 4.5 Hz), 1.93-1.85 (1H, m), 1.83-1.76 (1H, m), 1.69 (3H, s), 0.70 (3H, d, J = 6.8 Hz); 13CNMR (150 MHz, CDCl3)  157.7, 138.2, 133.8, 128.5, 120.9, 113.7, 55.2, 46.9, 39.8, 35.3, 34.0, 23.4, 20.3.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>98 percent</RXD.YD>
+          <RXD.NYD>98</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3596973</RXD.RGTXRN>
+            <RXD.RGT>lithium perchlorate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>Electrolysis</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.PRT>Concentration</RXD.PRT>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2018/05/23</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="28">
+            <CNR>
+              <CNR.CNR>73460953</CNR.CNR>
+              <CNR.CED>2018/03/30</CNR.CED>
+              <CNR.CUPD>2018/05/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Imada, Yasushi; Okada, Yohei; Chiba, Kazuhiro</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2018</CIT.PREPY>
+              <CIT.PUI>621345326</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>BJOCB</CIT.CO>
+                <CIT.JT>Beilstein Journal of Organic Chemistry</CIT.JT>
+                <CIT.JTS>Beilstein J. Org. Chem.</CIT.JTS>
+                <CIT.CC>deu</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Beilstein-Institut Zur Forderung der Chemischen Wissenschaften</CIT.PUB>
+                <CIT.VL>14</CIT.VL>
+                <CIT.PY>2018</CIT.PY>
+                <CIT.PAG>642 - 647</CIT.PAG>
+                <CIT.DOI>10.3762/bjoc.14.51</CIT.DOI>
+                <CIT.ISSN>1860-5397</CIT.ISSN>
+                <CIT.SCOPUS>85044423313</CIT.SCOPUS>
+                <CIT.CITBY>0</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>73682676</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>25</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>98 percent</RXD.YD>
+          <RXD.NYD>98</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11334006</RXD.RGTXRN>
+            <RXD.RGT>iron perchlorate hexahydrate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>24</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.PRT>Reagent/catalyst</RXD.PRT>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2018/05/23</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+          <RXD.COM>regioselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="29">
+            <CNR>
+              <CNR.CNR>73682676</CNR.CNR>
+              <CNR.CED>2018/04/30</CNR.CED>
+              <CNR.CUPD>2018/05/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Yu, Yushuang; Fu, Yu; Zhong, Fangrui</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2018</CIT.PREPY>
+              <CIT.PUI>621788747</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>GRCHF</CIT.CO>
+                <CIT.JT>Green Chemistry</CIT.JT>
+                <CIT.JTS>Green Chem.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>20</CIT.VL>
+                <CIT.NB>8</CIT.NB>
+                <CIT.PY>2018</CIT.PY>
+                <CIT.PAG>1743 - 1747</CIT.PAG>
+                <CIT.DOI>10.1039/c8gc00299a</CIT.DOI>
+                <CIT.ISSN>1463-9270</CIT.ISSN>
+                <CIT.SCOPUS>85045929581</CIT.SCOPUS>
+                <CIT.CITBY>4</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>74903317</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>31</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>98 percent</RXD.YD>
+          <RXD.NYD>98</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>33521355</RXD.RGTXRN>
+            <RXD.RGT>Fe(3,4,7,8-tetramethyl-1,10-phenanthroline)<sub>3</sub>(PF<sub>6</sub>)<sub>3</sub></RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1733203</RXD.SOLXRN>
+            <RXD.SOL>2,2,2-trifluoroethanol</RXD.SOL>
+          </RXD05>
+          <RXD05>
+            <RXD.SOLXRN>605264</RXD.SOLXRN>
+            <RXD.SOL>1,2-dichloro-ethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>3</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2018/10/31</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="31">
+            <CNR>
+              <CNR.CNR>74903317</CNR.CNR>
+              <CNR.CED>2018/09/25</CNR.CED>
+              <CNR.CUPD>2018/10/31</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Shin, Jung Ha; Seong, Eun Young; Mun, Hyeon Jin; Jang, Yu Jeong; Kang, Eun Joo</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2018</CIT.PREPY>
+              <CIT.PUI>623973100</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>ORLEF</CIT.CO>
+                <CIT.JT>Organic Letters</CIT.JT>
+                <CIT.JTS>Org. Lett.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>American Chemical Society</CIT.PUB>
+                <CIT.VL>20</CIT.VL>
+                <CIT.NB>18</CIT.NB>
+                <CIT.PY>2018</CIT.PY>
+                <CIT.PAG>5872 - 5876</CIT.PAG>
+                <CIT.DOI>10.1021/acs.orglett.8b02541</CIT.DOI>
+                <CIT.ISSN>1523-7060</CIT.ISSN>
+                <CIT.SCOPUS>85053505669</CIT.SCOPUS>
+                <CIT.CITBY>0</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>74555083</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>40</RXD.SCO>
+        <RXD.TI>General procedure for [4+2] cycloaddition with photocatalyst under visible light irradiation</RXD.TI>
+        <RXD.TXT>General procedure: The alkene (1)(0.50 mmol), diene(2) (1.5 mmol),TXT1 (1.0 molpercent) andCH3NO2 (8.0 mL) wereadded intoa 10 ml recovery flask. The resulting solution was stirred at room temperature under air and green LEDirradiation. After the reaction was completed (checked byTLC), the desired cycloadduct3was isolated bycolumn chromatography on silica gel (hexane/ethylacetate = 100/1).</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>33283569</RXD.RGTXRN>
+            <RXD.RGT>9-(2-trifluoromethylphenyl)-1,3,6,8-tetramethoxythioxanthylium trifluoromethanesulfonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.25</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>UV-irradiation</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2018/09/12</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="30">
+            <CNR>
+              <CNR.CNR>74555083</CNR.CNR>
+              <CNR.CED>2018/08/06</CNR.CED>
+              <CNR.CUPD>2018/09/12</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Tanaka, Kenta; Kishimoto, Mami; Sukekawa, Mayumi; Hoshino, Yujiro; Honda, Kiyoshi</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2018</CIT.PREPY>
+              <CIT.PUI>2000996172</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>TELEA</CIT.CO>
+                <CIT.JT>Tetrahedron Letters</CIT.JT>
+                <CIT.JTS>Tetrahedron Lett.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier Ltd</CIT.PUB>
+                <CIT.VL>59</CIT.VL>
+                <CIT.NB>36</CIT.NB>
+                <CIT.PY>2018</CIT.PY>
+                <CIT.PAG>3361 - 3364</CIT.PAG>
+                <CIT.DOI>10.1016/j.tetlet.2018.07.058</CIT.DOI>
+                <CIT.ISSN>1873-3581</CIT.ISSN>
+                <CIT.SCOPUS>85050864693</CIT.SCOPUS>
+                <CIT.CITBY>0</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>66310324</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>88 percent</RXD.YD>
+          <RXD.NYD>88</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>28195845</RXD.RGTXRN>
+            <RXD.RGT>[Cr(bathophenanthroline)<sub>3</sub>](BF<sub>4</sub>)<sub>3</sub></RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>27</RXD.TIM>
+          <RXD.COND>UV-irradiation</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2015/06/17</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="20">
+            <CNR>
+              <CNR.CNR>66310324</CNR.CNR>
+              <CNR.CED>2015/06/08</CNR.CED>
+              <CNR.CUPD>2016/06/24</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Stevenson, Susan M.; Shores, Matthew P.; Ferreira, Eric M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2015</CIT.PREPY>
+              <CIT.PUI>604489076</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>ACIEF</CIT.CO>
+                <CIT.JT>Angewandte Chemie - International Edition</CIT.JT>
+                <CIT.JTS>Angew. Chem. Int. Ed.</CIT.JTS>
+                <CIT.CC>deu</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Wiley-VCH Verlag</CIT.PUB>
+                <CIT.VL>54</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>2015</CIT.PY>
+                <CIT.PAG>6506 - 6510</CIT.PAG>
+                <CIT.DOI>10.1002/anie.201501220</CIT.DOI>
+                <CIT.ISSN>1521-3773</CIT.ISSN>
+              </CIT01>
+              <CIT01>
+                <CIT.JT>Angew. Chem.</CIT.JT>
+                <CIT.LA>German</CIT.LA>
+                <CIT.VL>127</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>2015</CIT.PY>
+                <CIT.PAG>6606 - 6610,5</CIT.PAG>
+                <CIT.SCOPUS>85027921423</CIT.SCOPUS>
+                <CIT.CITBY>60</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>5621393</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>21.8 percent</RXD.YD>
+          <RXD.NYD>21.8</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>125886</RXD.RGTXRN>
+            <RXD.RGT>2,6-di-tert-butyl-pyridine</RXD.RGT>
+          </RXD03>
+          <RXD03>
+            <RXD.RGTXRN>9538807</RXD.RGTXRN>
+            <RXD.RGT>tris-(4-bromophenyl)aminium hexachloroantimonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.133333</RXD.TIM>
+          <RXD.T>0</RXD.T>
+          <RXD.DED>2007/11/24</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="1">
+            <CNR>
+              <CNR.CNR>5621393</CNR.CNR>
+              <CNR.CED>2007/10/02</CNR.CED>
+              <CNR.CUPD>2008/01/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Reynolds, Dan W.; Bauld, Nathan L.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>1986</CIT.PREPY>
+              <CIT.PUI>216224939</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>TETRAB</CIT.CO>
+                <CIT.JT>Tetrahedron</CIT.JT>
+                <CIT.LA>English</CIT.LA>
+                <CIT.VL>42</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>1986</CIT.PY>
+                <CIT.PAG>6189 - 6194</CIT.PAG>
+                <CIT.DOI>10.1016/S0040-4020(01)88079-0</CIT.DOI>
+                <CIT.ISSN>0040-4020</CIT.ISSN>
+                <CIT.SCOPUS>345367366</CIT.SCOPUS>
+                <CIT.CITBY>28</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.7</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>6471030</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>20</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>9538807</RXD.RGTXRN>
+            <RXD.RGT>tris-(4-bromophenyl)aminium hexachloroantimonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2007/11/24</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3">
+            <CNR>
+              <CNR.CNR>6471030</CNR.CNR>
+              <CNR.CED>2007/10/03</CNR.CED>
+              <CNR.CUPD>2016/06/28</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Fuermeier, Sven; Metzger, Juergen O.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2004</CIT.PREPY>
+              <CIT.PUI>39463632</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>JACSA</CIT.CO>
+                <CIT.JT>Journal of the American Chemical Society</CIT.JT>
+                <CIT.JTS>J. Am. Chem. Soc.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>American Chemical Society</CIT.PUB>
+                <CIT.VL>126</CIT.VL>
+                <CIT.NB>44</CIT.NB>
+                <CIT.PY>2004</CIT.PY>
+                <CIT.PAG>14485 - 14492</CIT.PAG>
+                <CIT.DOI>10.1021/ja046157z</CIT.DOI>
+                <CIT.ISSN>0002-7863</CIT.ISSN>
+                <CIT.SCOPUS>7744230919</CIT.SCOPUS>
+                <CIT.CITBY>52</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>67958276</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>15</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>29130826</RXD.RGTXRN>
+            <RXD.RGT>Ru(bpz)<sub>3</sub>(PF<sub>6</sub>)<sub>2</sub></RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>3</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>Inert atmosphere</RXD.COND>
+          <RXD.COND>Irradiation</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/01</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="21">
+            <CNR>
+              <CNR.CNR>67958276</CNR.CNR>
+              <CNR.CED>2016/01/16</CNR.CED>
+              <CNR.CUPD>2016/12/18</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Alpers, Dirk; Gallhof, Malte; Stark, Christian B. W.; Brasholz, Malte</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607639621</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CHCOF</CIT.CO>
+                <CIT.JT>Chemical Communications</CIT.JT>
+                <CIT.JTS>Chem. Commun.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>52</CIT.VL>
+                <CIT.NB>5</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>1025 - 1028</CIT.PAG>
+                <CIT.DOI>10.1039/c5cc08994h</CIT.DOI>
+                <CIT.ISSN>1364-548X</CIT.ISSN>
+                <CIT.SCOPUS>84954067304</CIT.SCOPUS>
+                <CIT.CITBY>6</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>69620791</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>10</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>4992354</RXD.YXRN>
+          <RXD.YPRO>(1SR,2SR)-4'-methoxy-2,4-dimethyl-1,2,3,6-tetrahydro-1,1'-biphenyl</RXD.YPRO>
+          <RXD.YD>98 percentSpectr.</RXD.YD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>Electrochemical reaction</RXD.COND>
+          <RXD.TYP>Diels-Alder Cycloaddition</RXD.TYP>
+          <RXD.PRT>Solvent</RXD.PRT>
+          <RXD.RXDES>Scheme or table</RXD.RXDES>
+          <RXD.DED>2016/10/26</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="24">
+            <CNR>
+              <CNR.CNR>69620791</CNR.CNR>
+              <CNR.CED>2016/09/28</CNR.CED>
+              <CNR.CUPD>2016/11/04</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Okada, Yohei; Yamaguchi, Yusuke; Ozaki, Atsushi; Chiba, Kazuhiro</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>612267285</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CSHCC</CIT.CO>
+                <CIT.JT>Chemical Science</CIT.JT>
+                <CIT.JTS>Chem. Sci.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>7</CIT.VL>
+                <CIT.NB>10</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>6387 - 6393</CIT.PAG>
+                <CIT.DOI>10.1039/c6sc02117d</CIT.DOI>
+                <CIT.ISSN>2041-6539</CIT.ISSN>
+                <CIT.SCOPUS>84988528164</CIT.SCOPUS>
+                <CIT.CITBY>15</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>70982502</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>15</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>506007</RXD.RGTXRN>
+            <RXD.RGT>acetic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1698205</RXD.SOLXRN>
+            <RXD.SOL>nitromethane</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.COND>Electrolysis</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2017/04/26</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="27">
+            <CNR>
+              <CNR.CNR>70982502</CNR.CNR>
+              <CNR.CED>2017/04/11</CNR.CED>
+              <CNR.CUPD>2017/04/26</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Imada, Yasushi; Yamaguchi, Yusuke; Shida, Naoki; Okada, Yohei; Chiba, Kazuhiro</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2017</CIT.PREPY>
+              <CIT.PUI>615201315</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>CHCOF</CIT.CO>
+                <CIT.JT>Chemical Communications</CIT.JT>
+                <CIT.JTS>Chem. Commun.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>53</CIT.VL>
+                <CIT.NB>28</CIT.NB>
+                <CIT.PY>2017</CIT.PY>
+                <CIT.PAG>3960 - 3963</CIT.PAG>
+                <CIT.DOI>10.1039/c7cc00664k</CIT.DOI>
+                <CIT.ISSN>1364-548X</CIT.ISSN>
+                <CIT.SCOPUS>85017160046</CIT.SCOPUS>
+                <CIT.CITBY>9</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="636190">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 11 11 0 0 0 REGNO=636190
+M  V30 BEGIN ATOM
+M  V30 1 C -16.6508 0.2853 0 0
+M  V30 2 C -15.8809 1.6187 0 0
+M  V30 3 C -15.8809 -1.0485 0 0
+M  V30 4 C -18.1908 0.2853 0 0
+M  V30 5 C -14.3409 1.6187 0 0
+M  V30 6 C -14.3409 -1.0485 0 0
+M  V30 7 C -18.9606 -1.0485 0 0
+M  V30 8 C -13.5711 0.2853 0 0
+M  V30 9 C -20.5009 -1.0485 0 0
+M  V30 10 O -12.0308 0.2853 0 0
+M  V30 11 C -11.2608 -1.0485 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 3 6
+M  V30 6 2 4 7
+M  V30 7 2 5 8
+M  V30 8 1 6 8
+M  V30 9 1 7 9
+M  V30 10 1 8 10
+M  V30 11 1 10 11
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="969158">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 5 4 0 0 0 REGNO=969158
+M  V30 BEGIN ATOM
+M  V30 1 C -5.7473 -0.0784 0 0
+M  V30 2 C -4.4135 0.6914 0 0
+M  V30 3 C -7.0808 0.6914 0 0
+M  V30 4 C -5.7473 -1.6187 0 0
+M  V30 5 C -3.08 -0.0784 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 2 1 4
+M  V30 4 2 2 5
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="4992354">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 16 17 0 0 0 REGNO=4992354
+M  V30 BEGIN ATOM
+M  V30 1 C 11.8802 0.667 0 0
+M  V30 2 C 10.3398 0.667 0 0 CFG=1
+M  V30 3 C 12.6502 2.0005 0 0
+M  V30 4 C 12.6502 -0.6668 0 0
+M  V30 5 C 9.5698 -0.6668 0 0 CFG=1
+M  V30 6 C 9.5698 2.0005 0 0
+M  V30 7 C 14.1902 2.0005 0 0
+M  V30 8 C 14.1902 -0.6668 0 0
+M  V30 9 C 8.03 -0.6668 0 0
+M  V30 10 C 10.3398 -2.0005 0 0
+M  V30 11 C 8.03 2.0005 0 0
+M  V30 12 C 14.9602 0.667 0 0
+M  V30 13 C 7.26 0.667 0 0
+M  V30 14 O 16.5 0.667 0 0
+M  V30 15 C 5.72 0.667 0 0
+M  V30 16 C 17.27 -0.6668 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 2 1 CFG=1
+M  V30 2 1 1 3
+M  V30 3 2 1 4
+M  V30 4 1 2 5
+M  V30 5 1 2 6
+M  V30 6 2 3 7
+M  V30 7 1 4 8
+M  V30 8 1 5 9
+M  V30 9 1 5 10 CFG=3
+M  V30 10 1 6 11
+M  V30 11 1 7 12
+M  V30 12 2 8 12
+M  V30 13 1 9 13
+M  V30 14 2 11 13
+M  V30 15 1 12 14
+M  V30 16 1 13 15
+M  V30 17 1 14 16
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="10">
+      <RX>
+        <RX.ID>8633298</RX.ID>
+        <RX01>
+          <RX.RXRN>605285</RX.RXRN>
+          <RX.RCT>2,3-dimethyl-buta-1,3-diene</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>906752</RX.RXRN>
+          <RX.RCT>trimethylsilylacetylene</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>5424566</RX.PXRN>
+          <RX.PRO>(4,5-dimethylcyclohexa-1,4-dienyl)trimethylsilane</RX.PRO>
+        </RX02>
+        <RX.BLB>605285</RX.BLB>
+        <RX.BLB>906752</RX.BLB>
+        <RX.BLB>5424566</RX.BLB>
+        <RX.BLC>605285</RX.BLC>
+        <RX.BLC>906752</RX.BLC>
+        <RX.BLC>5424566</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>279698871905119</RX.BCODE>
+          <RX.MCODE>349493309069000</RX.MCODE>
+          <RX.NCODE>349493309069000</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/89F43(020305)|89F43(04)|88F42(06)|88F42(07)|01EB1(08090A)|01E42(070B)|01E42(0C)|01D41()|01D41()|01D41()|01D41()|01D41()|</RX.TRANS>
+          <RX.BIN>187290</RX.BIN>
+          <RX.BFREQ>92</RX.BFREQ>
+          <RX.QRY0>0/89F43(0203*)|89F43(04)|88F42(*)|88F42(*)|*</RX.QRY0>
+          <RX.QRY1>0/89F43(0203*)|89F43(04)|88F42(*)|88F42(*)|01EB1(*)|01E42(*)|01E42(*)|*</RX.QRY1>
+          <RX.QRY2>0/89F43(020305)|89F43(04)|88F42(06)|88F42(07)|01EB1(*)|01E42(07*)|01E42(*)|*</RX.QRY2>
+          <RX.QRY3>0/89F43(020305)|89F43(04)|88F42(06)|88F42(07)|01EB1(*)|01E42(07*)|01E42(*)|01D41(*)|01D41(*)|01D41(*)|01D41(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/89F43(020305)|89F43(04)|88F42(06)|88F42(07)|01EB1(08090A*)|01E42(070B*)|01E42(0C*)|01D41(*)|01D41(*)|01D41(*)|01D41(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/89F43(020305)|89F43(04)|88F42(06)|88F42(07)|01EB1(08090A)|01E42(070B)|01E42(0C)|01D41()|01D41()|01D41()|01D41()|01D41()|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJy9lc1uwyAMgO99Cg49I2xsA5dd1mqXtZM6ador7AX2/OMnbSCjU4i2RTk4rvkC9DPZX97Pu3gphUrBbn96eU4Pl4fTJ2lTXXhQoGJJSap0mTpOo0QpjmH3DiGoN4zlu1SO2hqbR4K2ImbGqUd1D5FvKMFuGruRghUFtZ8oRvO0nnUU26WgRosDFKooZjOFu5TRFcmNAsWI+ueStd0s3fb0lsU8qWUt5pe0taco3PFJiWH0nJ6O58M/qogu2CKRA2erzXr9+HGzXKMiecESgfG4fst9RbHaOOQtlNCoGJipRMREqylgKgpoMYRbKHWLGi0BoURRRVhPmVt0XMVO9q6KtqdiMOIYf0XFuBDAe8tsVUwSEUyRcL1ZAypiomCXMqAiaESZ/ziznhIaCju4SiS4XuhGxXkGUUobBii1irEtPNkSWQsDzUVdSpxVCJuETo0eKbRlLtClDM6lOufj6pIvVHZ3zBfsUqyG0ByjA19RThTeMpf5+/e3x0Un675/+yQ307LW5eZYZn2WfUnwWd5lbci1iywUudrsdJAxIbHI9ST7AqGzi5k=</RX.RXNFILE>
+        <RX.REG>bdd1e367fd77e374d134fab7595740d2</RX.REG>
+        <RX.RANK highlight="true">102</RX.RANK>
+        <RX.MYD>94</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>6</RX.PAVAIL>
+        <RX.MAXPUB>2015</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>180.365</RX.MAXPMW>
+        <RX.ED>2007/12/10</RX.ED>
+        <RX.UPD>2018/11/20</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>7050022</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>31</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>5424566</RXD.YXRN>
+          <RXD.YPRO>(4,5-dimethylcyclohexa-1,4-dienyl)trimethylsilane</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD04>
+            <RXD.CAT>[(&#x03B7;<sup>6</sup>-C<sub>10</sub>H<sub>8</sub>)Rh(cod)]BF<sub>4</sub></RXD.CAT>
+          </RXD04>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.25</RXD.TIM>
+          <RXD.T>15</RXD.T>
+          <RXD.DED>2008/02/10</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="4">
+            <CNR>
+              <CNR.CNR>7050022</CNR.CNR>
+              <CNR.CED>2008/02/10</CNR.CED>
+              <CNR.CUPD>2016/06/24</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Paik, Se-Jung; Son, Seung Uk; Chung, Young Keun</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>1999</CIT.PREPY>
+              <CIT.PUI>129566207</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.JT>Organic Letters</CIT.JT>
+                <CIT.JTS>Org. Lett.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>American Chemical Society</CIT.PUB>
+                <CIT.VL>1</CIT.VL>
+                <CIT.NB>13</CIT.NB>
+                <CIT.PY>1999</CIT.PY>
+                <CIT.PAG>2045 - 2047</CIT.PAG>
+                <CIT.ISSN>1523-7060</CIT.ISSN>
+                <CIT.SCOPUS>257154</CIT.SCOPUS>
+                <CIT.CITBY>65</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>6245562</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>31</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>5424566</RXD.YXRN>
+          <RXD.YPRO>(4,5-dimethylcyclohexa-1,4-dienyl)trimethylsilane</RXD.YPRO>
+          <RXD.YD>82 percent</RXD.YD>
+          <RXD.NYD>82</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>4212332</RXD.RGTXRN>
+            <RXD.RGT>tetrabutylammonium borohydride</RXD.RGT>
+          </RXD03>
+          <RXD03>
+            <RXD.RGTXRN>8128156</RXD.RGTXRN>
+            <RXD.RGT>zinc(II) iodide</RXD.RGT>
+          </RXD03>
+          <RXD04>
+            <RXD.CATXRN>14541398</RXD.CATXRN>
+            <RXD.CAT>cobalt(II) bromide-[1,2-bis(diphenylphosphino)ethane]</RXD.CAT>
+          </RXD04>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.TYP>Cycloaddition</RXD.TYP>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2007/12/10</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="2">
+            <CNR>
+              <CNR.CNR>6245562</CNR.CNR>
+              <CNR.CED>2007/10/03</CNR.CED>
+              <CNR.CUPD>2018/08/09</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Hilt; Du Mesnil</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2000</CIT.PREPY>
+              <CIT.PUI>30664349</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>TELEA</CIT.CO>
+                <CIT.JT>Tetrahedron Letters</CIT.JT>
+                <CIT.JTS>Tetrahedron Lett.</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier Ltd</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>35</CIT.NB>
+                <CIT.PY>2000</CIT.PY>
+                <CIT.PAG>6757 - 6761</CIT.PAG>
+                <CIT.DOI>10.1016/S0040-4039(00)01163-1</CIT.DOI>
+                <CIT.ISSN>0040-4039</CIT.ISSN>
+                <CIT.SCOPUS>34718383</CIT.SCOPUS>
+                <CIT.CITBY>46</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8949200</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>42</RXD.SCO>
+        <RXD.LB>3</RXD.LB>
+        <RXD.TXT>Reference Example 3; Synthesis of (4,5-dimethyl-1,4-cyclohexadienyl)trimethylsilaneIn a four-necked flask, 0.54 g (2.5 mmol) of CoBr<sub>2</sub>, 2.62 g (8.2 mmol) of ZnI<sub>2 </sub>and 1.09 g (2.7 mmol) of diphenylphosphinoethane were dissolved in 120 ml of dichloromethane and the mixture was stirred for 0.5 hour at 30&#xB0; C. Subsequently, 27.5 ml (244 mmol) of 2,3-dimethyl-1,3-butadiene, 21.5 g (219 mol) of trimethylsilylacetylene and 0.69 g (2.7 mmol) of Bu<sub>4</sub>NBH<sub>4 </sub>were added thereto, and the mixture was allowed to react for one hour at 30&#xB0; C. After dichloromethane was evaporated under reduced pressure, 23.3 g of the title compound was obtained at a yield of 59.0percent (GC purity 89percent).<sup>1</sup>H-NMR (CDCl<sub>3</sub>, 300 MHz) &#x03B4;:0.07 (s, 9H), 1.64 (s, 3H), 1.66 (s, 3H), 2.62 (m, 4H), 6.00 (m, 1H)</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>5424566</RXD.YXRN>
+          <RXD.YPRO>(4,5-dimethylcyclohexa-1,4-dienyl)trimethylsilane</RXD.YPRO>
+          <RXD.YD>59 percent</RXD.YD>
+          <RXD.NYD>59</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>4212332</RXD.RGTXRN>
+            <RXD.RGT>tetrabutylammonium borohydride</RXD.RGT>
+          </RXD03>
+          <RXD04>
+            <RXD.CATXRN>744253</RXD.CATXRN>
+            <RXD.CAT>ethyl-diphenyl-phosphane</RXD.CAT>
+          </RXD04>
+          <RXD04>
+            <RXD.CATXRN>8127938</RXD.CATXRN>
+            <RXD.CAT>cobalt(II) bromide</RXD.CAT>
+          </RXD04>
+          <RXD04>
+            <RXD.CATXRN>8128156</RXD.CATXRN>
+            <RXD.CAT>zinc(II) iodide</RXD.CAT>
+          </RXD04>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1</RXD.TIM>
+          <RXD.T>30</RXD.T>
+          <RXD.DED>2011/02/21</RXD.DED>
+          <RXD.LCN>Page/Page column 4</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="10">
+            <CNR>
+              <CNR.CNR>8949200</CNR.CNR>
+              <CNR.CED>2010/12/29</CNR.CED>
+              <CNR.CUPD>2016/09/14</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Patent</CIT.DT>
+              <CIT.PA>Takasago International Corporation</CIT.PA>
+              <CIT.ABPR>Y</CIT.ABPR>
+              <CIT.PREPY>2010</CIT.PREPY>
+              <CIT.PUI>454757658</CIT.PUI>
+              <CIT.IS>manual</CIT.IS>
+              <CIT02>
+                <CIT.PCC>US</CIT.PCC>
+                <CIT.PN>US2010/298588</CIT.PN>
+                <CIT.PPY>2010</CIT.PPY>
+                <CIT.PK>A1</CIT.PK>
+                <CIT.PLA>English</CIT.PLA>
+              </CIT02>
+              <CIT.DOCQ>0.7</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>7069719</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>12</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>8128156</RXD.RGTXRN>
+            <RXD.RGT>zinc(II) iodide</RXD.RGT>
+          </RXD03>
+          <RXD03>
+            <RXD.RGTXRN>8973685</RXD.RGTXRN>
+            <RXD.RGT>zinc</RXD.RGT>
+          </RXD03>
+          <RXD04>
+            <RXD.CATXRN>14541398</RXD.CATXRN>
+            <RXD.CAT>cobalt(II) bromide-[1,2-bis(diphenylphosphino)ethane]</RXD.CAT>
+          </RXD04>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2008/03/14</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="5">
+            <CNR>
+              <CNR.CNR>7069719</CNR.CNR>
+              <CNR.CED>2008/03/14</CNR.CED>
+              <CNR.CUPD>2016/06/24</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Hilt, Gerhard; Galbiati, Fabrizio</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2006</CIT.PREPY>
+              <CIT.PUI>44807346</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>SYNTB</CIT.CO>
+                <CIT.JT>Synthesis</CIT.JT>
+                <CIT.JTS>Synthesis</CIT.JTS>
+                <CIT.CC>deu</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Georg Thieme Verlag</CIT.PUB>
+                <CIT.NB>21</CIT.NB>
+                <CIT.PY>2006</CIT.PY>
+                <CIT.PAG>3589 - 3596</CIT.PAG>
+                <CIT.DOI>10.1055/s-2006-942512</CIT.DOI>
+                <CIT.ISSN>0039-7881</CIT.ISSN>
+                <CIT.SCOPUS>33751314777</CIT.SCOPUS>
+                <CIT.CITBY>7</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>65870131</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>8128156</RXD.RGTXRN>
+            <RXD.RGT>zinc(II) iodide</RXD.RGT>
+          </RXD03>
+          <RXD03>
+            <RXD.RGTXRN>8973685</RXD.RGTXRN>
+            <RXD.RGT>zinc</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1730800</RXD.SOLXRN>
+            <RXD.SOL>dichloromethane</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2015/04/27</RXD.DED>
+          <RXD.LCN>supporting information</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="19">
+            <CNR>
+              <CNR.CNR>65870131</CNR.CNR>
+              <CNR.CED>2015/04/14</CNR.CED>
+              <CNR.CUPD>2016/06/24</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Mockel, Robert; Hilt, Gerhard</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2015</CIT.PREPY>
+              <CIT.PUI>603573384</CIT.PUI>
+              <CIT.PS>published</CIT.PS>
+              <CIT.IS>manual</CIT.IS>
+              <CIT01>
+                <CIT.CO>ORLEF</CIT.CO>
+                <CIT.JT>Organic Letters</CIT.JT>
+                <CIT.JTS>Org. Lett.</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>American Chemical Society</CIT.PUB>
+                <CIT.VL>17</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2015</CIT.PY>
+                <CIT.PAG>1644 - 1647</CIT.PAG>
+                <CIT.DOI>10.1021/acs.orglett.5b00306</CIT.DOI>
+                <CIT.ISSN>1523-7060</CIT.ISSN>
+                <CIT.SCOPUS>84926457377</CIT.SCOPUS>
+                <CIT.CITBY>8</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="605285">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 6 5 0 0 0 REGNO=605285
+M  V30 BEGIN ATOM
+M  V30 1 C -11.4752 0.1228 0 0
+M  V30 2 C -13.0151 0.1228 0 0
+M  V30 3 C -10.7053 -1.2106 0 0
+M  V30 4 C -10.7053 1.4566 0 0
+M  V30 5 C -13.785 1.4566 0 0
+M  V30 6 C -13.785 -1.2106 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 2 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="906752">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 6 5 0 0 0 REGNO=906752
+M  V30 BEGIN ATOM
+M  V30 1 Si -4.3011 0.3695 0 0
+M  V30 2 C -5.5227 -0.5683 0 0
+M  V30 3 C -3.08 -0.5683 0 0
+M  V30 4 C -3.2602 1.5047 0 0
+M  V30 5 C -5.3408 1.5047 0 0
+M  V30 6 C -6.7453 -1.5047 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 1 5
+M  V30 5 3 2 6
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="5424566">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 12 12 0 0 0 REGNO=5424566
+M  V30 BEGIN ATOM
+M  V30 1 Si 7.2354 -0.5904 0 0
+M  V30 2 C 8.7754 -0.5904 0 0
+M  V30 3 C 6.8381 -2.0768 0 0
+M  V30 4 C 7.3695 0.9448 0 0
+M  V30 5 C 5.72 -0.3226 0 0
+M  V30 6 C 9.5453 0.743 0 0
+M  V30 7 C 9.5453 -1.9242 0 0
+M  V30 8 C 11.0853 0.743 0 0
+M  V30 9 C 11.0853 -1.9242 0 0
+M  V30 10 C 11.8552 -0.5904 0 0
+M  V30 11 C 11.8552 2.0768 0 0
+M  V30 12 C 13.3954 -0.5904 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 1 5
+M  V30 5 1 2 6
+M  V30 6 2 2 7
+M  V30 7 1 6 8
+M  V30 8 1 7 9
+M  V30 9 2 8 10
+M  V30 10 1 8 11
+M  V30 11 1 9 10
+M  V30 12 1 10 12
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+  </reactions>
+</xf>
