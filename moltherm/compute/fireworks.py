@@ -194,16 +194,29 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 max_iterations=max_iterations,
                 max_molecule_perturb_scale=max_molecule_perturb_scale,
                 reversed_direction=reversed_direction,
-                gzipped_output=False))
-        t.append(
-            tasks.parse_outputs.QChemToDb(
-                db_file=db_file,
-                input_file=input_file,
-                output_file=output_file,
-                additional_fields={
-                    "task_label": name,
-                    "special_run_type": "frequency_flattener"
-                }))
+                gzipped_outputx=False))
+        if directory is None:
+            t.append(
+                tasks.parse_outputs.QChemToDb(
+                    db_file=db_file,
+                    input_file=input_file,
+                    output_file=output_file,
+                    additional_fields={
+                        "task_label": name,
+                        "special_run_type": "frequency_flattener"
+                    }))
+        else:
+            t.append(
+                tasks.parse_outputs.QChemToDb(
+                    db_file=db_file,
+                    calc_dir=directory,
+                    input_file="mol.qin",
+                    output_file="mol.qout",
+                    additional_fields={
+                        "task_label": name,
+                        "special_run_type": "frequency_flattener"
+                    }))
+
         super(FrequencyFlatteningOptimizeFW, self).__init__(
             t,
             parents=parents,

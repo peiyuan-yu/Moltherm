@@ -1,0 +1,2807 @@
+<?xml version="1.0"?>
+<xf>
+  <reactions>
+    <reaction index="1">
+      <RX>
+        <RX.ID>28177052</RX.ID>
+        <RX01>
+          <RX.RXRN>110513</RX.RXRN>
+          <RX.RCT>1-ethenyl-2-pyrrolidinone</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>471359</RX.RXRN>
+          <RX.RCT>4-chloro-aniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>18843502</RX.PXRN>
+          <RX.PRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>110513</RX.BLB>
+        <RX.BLB>471359</RX.BLB>
+        <RX.BLB>18843502</RX.BLB>
+        <RX.BLC>110513</RX.BLC>
+        <RX.BLC>471359</RX.BLC>
+        <RX.BLC>18843502</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0E10)|01D45(10)|01D42(0F11)|01D41(12)|01CE1()|01C62()|01C45()|01C41(12)|01C41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>214</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01CE1(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJy9V01v2zAMvfdX6NBrApH6vgxI57SHJSmQBsN6Koqht+0yDPv9IyknkR3VkLNiRtqotPT0SPGR6u3+2+6GHqVQKbi53T5u+I/9p+0fu9TFg50CRVOyUfGjyzGvivLR1U9KSX1Fmn7D03EJyVslgDZYPMOpnXoPQj6QBz1KitHlkbbWFCifp1FwgOK0tnktjaAdxRQosEQbMY9C0jO42ALF0Nro+7j0eG0orhoXQ3FJrkB5nEbxAy4UDX9NXEKBcl4LS8A5HsUTCuTsLF9nq6la7aUVJUAVqz/lwslqxIHxXCuExnNdZe6W5LN+UADageG/1rvuvwkLONw6j4z3uj3caZBAx/1xiQbbUUBXUfSJVRtKKXI94dGPSZRS5OZqj0wVZa5HQ5FfeUZQity+jzJdQuEs8iyscVL/u7BMVVhZLGOrr8otSMZXhWUDGJc+RFgQFb4bqIGwFiQsCCaPTDLt9b1MoIVeehchj2IMM6phkUDMRWcuSFycvSqBeG1MNnOhhtXOpRQ5e+Rd3xsAQnsaqqHIEUSUHN0wJy5xyMUIF/ItRu+auRSSkLh4uZvQKGl0zVxKkS/MEh3DskcW5txNikLMa+NxrU84oweXxY9OxsT+ZIKOV95w6IzQ6T5Cwbdn3fFzjIuRGw6hWMAZuVvky8LSXcKGfOYJh7nb3BQouhB1f2fzNsw4o6GOLB41aMLgjNpvW+QHRIkuc/Ewg0t526Jil0Q9rADv23O3OKOp21alVUw1BRhZfbVVVMq/qZR/2SrV2goXpPFcJwkztnpJgMtmU7NGKd3j3ZJYx3OTiH9khVxwK9bL5khk4TIORAviRSQJ9HIutcOnw7NEjt50q4PiPfK34W+ZsdrIa6YlzRFVXsHpyzYWJsuKNuVQS2B5dw4Pu81OuhJJbgp8rEwoypu7D9ujR5JkOu1BP5wE2ePuIDO23ebu4eV+v3rYrneHl6fDer9m7eXnPk/tej5Sv6ggKqlGyecK363492qz6ScxWVm3zut+vX5/+/n6++3sPPbunYlgTyTv//Jl/awGT0FEqg6JPvTXAWp7Nre9aSKons4MciJCwcC0M5AKw63hVNSjyUV9moFR+9O/OJGak9N4vIv9BbjUl54=</RX.RXNFILE>
+        <RX.REG>b53efc69d51dab46ca9790588d4fc4c7</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>94</RX.MYD>
+        <RX.SKW>nonmapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>264.755</RX.MAXPMW>
+        <RX.ED>2009/04/06</RX.ED>
+        <RX.UPD>2016/12/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>4.1</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843502</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3311">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843502</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>93 percent</RXD.YD>
+          <RXD.NYD>93</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="2884">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8706896</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843502</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXD.SNR>2</RXD.SNR>
+        <RXDS01>
+          <RXD.STG>1</RXD.STG>
+          <RXD02>
+            <RXD.SXRN>110513</RXD.SXRN>
+            <RXD.SRCT>1-ethenyl-2-pyrrolidinone</RXD.SRCT>
+          </RXD02>
+          <RXD02>
+            <RXD.SXRN>471359</RXD.SXRN>
+            <RXD.SRCT>4-chloro-aniline</RXD.SRCT>
+          </RXD02>
+          <RXD03>
+            <RXD.RGTXRN>1882262</RXD.RGTXRN>
+            <RXD.RGT>4-nitrophthalic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>3</RXD.TIM>
+          <RXD.T>50</RXD.T>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+        </RXDS01>
+        <RXDS01>
+          <RXD.STG>2</RXD.STG>
+          <RXD03>
+            <RXD.RGTXRN>4153970</RXD.RGTXRN>
+            <RXD.RGT>sodium hydrogencarbonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.DED>2009/04/06</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="2286">
+            <CNR>
+              <CNR.CNR>8706896</CNR.CNR>
+              <CNR.CED>2009/04/06</CNR.CED>
+              <CNR.CUPD>2016/06/22</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2009</CIT.PREPY>
+              <CIT.PUI>352812531</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>39</CIT.VL>
+                <CIT.NB>1</CIT.NB>
+                <CIT.PY>2009</CIT.PY>
+                <CIT.PAG>93 - 101</CIT.PAG>
+                <CIT.DOI>10.1080/00397910802369653</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>57449083494</CIT.SCOPUS>
+                <CIT.CITBY>21</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843502</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3642">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>19</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843502</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>84 percent</RXD.YD>
+          <RXD.NYD>84</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>8</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="3173">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="110513">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=110513
+M  V30 BEGIN ATOM
+M  V30 1 N -15.6677 -0.4629 0 0
+M  V30 2 C -14.4479 0.415 0 0
+M  V30 3 C -15.1997 -1.9632 0 0
+M  V30 4 C -17.1279 0.0237 0 0
+M  V30 5 C -13.2003 -0.5027 0 0
+M  V30 6 O -14.4479 1.9632 0 0
+M  V30 7 C -13.6594 -1.9632 0 0
+M  V30 8 C -18.28 -0.9956 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="471359">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=471359
+M  V30 BEGIN ATOM
+M  V30 1 C -7.7003 -0.4357 0 0
+M  V30 2 C -6.9302 0.8978 0 0
+M  V30 3 C -6.9302 -1.7693 0 0
+M  V30 4 Cl -9.2403 -0.4357 0 0
+M  V30 5 C -5.3902 0.8978 0 0
+M  V30 6 C -5.3902 -1.7693 0 0
+M  V30 7 C -4.62 -0.4357 0 0
+M  V30 8 N -3.08 -0.4357 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 3 6
+M  V30 6 2 5 7
+M  V30 7 1 6 7
+M  V30 8 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="18843502">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 18 20 0 0 0 REGNO=18843502
+M  V30 BEGIN ATOM
+M  V30 1 C 9.5154 -1.1897 0 0
+M  V30 2 C 10.8384 -0.4106 0 0 CFG=1
+M  V30 3 C 9.531 -2.7331 0 0
+M  V30 4 C 8.1722 -0.4351 0 0
+M  V30 5 N 10.8276 1.136 0 0
+M  V30 6 C 12.1787 -1.1651 0 0
+M  V30 7 N 10.874 -3.4896 0 0
+M  V30 8 C 8.2076 -3.5142 0 0
+M  V30 9 C 6.8444 -1.2219 0 0
+M  V30 10 C 9.5661 2.0218 0 0
+M  V30 11 C 12.0646 2.0463 0 0
+M  V30 12 C 12.1985 -2.7039 0 0 CFG=2
+M  V30 13 C 6.8647 -2.7591 0 0
+M  V30 14 Cl 5.5 -0.4659 0 0
+M  V30 15 C 10.0345 3.4928 0 0
+M  V30 16 O 8.1169 1.5288 0 0
+M  V30 17 C 11.567 3.5142 0 0
+M  V30 18 C 13.5417 -3.4585 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5 CFG=1
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 2 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 1 6 12
+M  V30 12 1 7 12
+M  V30 13 2 8 13
+M  V30 14 1 9 13
+M  V30 15 1 9 14
+M  V30 16 1 10 15
+M  V30 17 2 10 16
+M  V30 18 1 11 17
+M  V30 19 1 12 18 CFG=1
+M  V30 20 1 15 17
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="2">
+      <RX>
+        <RX.ID>28177053</RX.ID>
+        <RX01>
+          <RX.RXRN>110513</RX.RXRN>
+          <RX.RCT>1-ethenyl-2-pyrrolidinone</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>471556</RX.RXRN>
+          <RX.RCT>4-methoxy-aniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>18843501</RX.PXRN>
+          <RX.PRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>110513</RX.BLB>
+        <RX.BLB>471556</RX.BLB>
+        <RX.BLB>18843501</RX.BLB>
+        <RX.BLC>110513</RX.BLC>
+        <RX.BLC>471556</RX.BLC>
+        <RX.BLC>18843501</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0F10)|01D45(10)|01D42(0E11)|01D41(12)|01C62()|01C61(13)|01C45()|01C41(12)|01C41()|01B41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>214</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01C62(*)|01C61(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJytV01v2zAMvfdX6NBrDJH6sHQZkM5uD0tSIA2G9RQUQ4+7DMN+/0jKiWVbNeyshtGqsvhEPvGR6v3xx+GOHqVQKbi73z/v+I/jl/1fW+nswUaBoiVpUvGj8zFbBXl18Y0xqu9Iy+94OVYQvVUCaGuLPZw6qI8g5IU06FBiCC6NtLUmQ/k6j4IDFKe1TbY0guUoJkOBCm3ANKqjXuGLzVAM2Qbf8dLhLUNxRV4M8RJdhvI8j+IHvhAb/hZe6gylt4UKcE1E4YoCKTvzz2nWFGftdBaFoMKsv+bCddZIAOO1Vhwar3WFtXuST/ukALQDw3+1h+Y/hRXlLRM1FtbFEirjvV5OdxwkkOtQsEKDy1FAF1F0NlqCkoscPo5oPpkhF7m5OSJTRFkbUS5yfTNKLnJ760lDLnLHFlBEmS/E0It8Tp5jwczJsyBEXxRiQZ5O5Dme9UXRBkn2omhtDc75TxEtRIWDPfJ3INoNVA6le9HIBLO8d+TJudEVnR+kUQhmRaXNkpN90VF8wcpE45b7kqUV24badb7EFVU/LyB9RGQLZiCUFbcEXSGI4JldH1Z05jD0xSR2kdn1i33JhCK81MIpo3SdfnUB2ZgKna9TRFaviSgr8mwbLncmH/2KfMkLK5+M606mBliBYgYoiFJ8mCEflmfd5b3wYrFOKMTLitzN8mVjKSISr5x5hIGOljccYhcCCLtQeXe5X668yXEc5qJByhxY7Et+k6M4IILufPFrfMlvclTsosPkVXBmee4OzojYtcIu2watl59Rz8tnNRzIP1zvg+O15fugKTYcKxKb3hKZ/WnLAii1LCjEVhdngzSA8W5RZsdro5SQ0SwkWguz03sxOQtTHsgtCBMmaSuYtFjeaopArfbl9Cp80pdme1K8c/pt+Les2O7kMzsrjRdVsuBU5jlORhY+uSK9nelmn5g0JoNDdzmSJAUfNjvEAUT5+vBp+3RIklCDfQiUrBBkVXOSVftm9/B0fjxun/bt4XR+ObXHlvWdnse0tOl8khqJckugihdd6iLNln9ud7tuETssdm2y+/328/3X25/3ngTsQuwdwc6RtP/5W/uqBk/miFRFKix1d+Wg1mpTqZx3BNVL70FKU8g8MMs9kNrK7efaOAKmkj/vgVHH679ogRqg03C57/0D1Na0jw==</RX.RXNFILE>
+        <RX.REG>aa7543624847cd085b7494ddddb52b47</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>94</RX.MYD>
+        <RX.SKW>nonmapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>260.336</RX.MAXPMW>
+        <RX.ED>2009/04/06</RX.ED>
+        <RX.UPD>2017/03/04</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>8706896</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843501</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXD.SNR>2</RXD.SNR>
+        <RXDS01>
+          <RXD.STG>1</RXD.STG>
+          <RXD02>
+            <RXD.SXRN>110513</RXD.SXRN>
+            <RXD.SRCT>1-ethenyl-2-pyrrolidinone</RXD.SRCT>
+          </RXD02>
+          <RXD02>
+            <RXD.SXRN>471556</RXD.SXRN>
+            <RXD.SRCT>4-methoxy-aniline</RXD.SRCT>
+          </RXD02>
+          <RXD03>
+            <RXD.RGTXRN>1882262</RXD.RGTXRN>
+            <RXD.RGT>4-nitrophthalic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>2</RXD.TIM>
+          <RXD.T>50</RXD.T>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+        </RXDS01>
+        <RXDS01>
+          <RXD.STG>2</RXD.STG>
+          <RXD03>
+            <RXD.RGTXRN>4153970</RXD.RGTXRN>
+            <RXD.RGT>sodium hydrogencarbonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.DED>2009/04/06</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="2286">
+            <CNR>
+              <CNR.CNR>8706896</CNR.CNR>
+              <CNR.CED>2009/04/06</CNR.CED>
+              <CNR.CUPD>2016/06/22</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2009</CIT.PREPY>
+              <CIT.PUI>352812531</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>39</CIT.VL>
+                <CIT.NB>1</CIT.NB>
+                <CIT.PY>2009</CIT.PY>
+                <CIT.PAG>93 - 101</CIT.PAG>
+                <CIT.DOI>10.1080/00397910802369653</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>57449083494</CIT.SCOPUS>
+                <CIT.CITBY>21</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>2</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843501</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>93 percent</RXD.YD>
+          <RXD.NYD>93</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3311">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843501</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.833333</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="2884">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35489695</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>27</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843501</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>84 percent</RXD.YD>
+          <RXD.NYD>84</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3599286</RXD.RGTXRN>
+            <RXD.RGT>sodium dodecyl-sulfate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>8</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.PH>1</RXD.PH>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/06/26</RXD.DED>
+          <RXD.COM>diastereospecific reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3348">
+            <CNR>
+              <CNR.CNR>35489695</CNR.CNR>
+              <CNR.CED>2013/06/26</CNR.CED>
+              <CNR.CUPD>2017/01/29</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Mercha&#769;n Arenas, Diego R.; Marti&#769;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>368919151</CIT.PUI>
+              <CIT01>
+                <CIT.CO>OBCRA</CIT.CO>
+                <CIT.JT>Organic and Biomolecular Chemistry</CIT.JT>
+                <CIT.JTS>Organic and Biomolecular Chemistry</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>11</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>3655 - 3663</CIT.PAG>
+                <CIT.DOI>10.1039/c3ob40171e</CIT.DOI>
+                <CIT.ISSN>1477-0520</CIT.ISSN>
+                <CIT.SCOPUS>84877738013</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68847446</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>32</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843501</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-6-methoxy-1,2,3,4-tetrahydroquinolin-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>84 percent</RXD.YD>
+          <RXD.NYD>84</RXD.NYD>
+          <RXD.YDO>94 percent de</RXD.YDO>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>14414853</RXD.RGTXRN>
+            <RXD.RGT>cerium(IV) sulphate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.P>760.051</RXD.P>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/07/09</RXD.DED>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3667">
+            <CNR>
+              <CNR.CNR>68847446</CNR.CNR>
+              <CNR.CED>2016/05/19</CNR.CED>
+              <CNR.CUPD>2017/03/04</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Mart&#237;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#233;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>610180713</CIT.PUI>
+              <CIT01>
+                <CIT.CO>RSCAC</CIT.CO>
+                <CIT.JT>RSC Advances</CIT.JT>
+                <CIT.JTS>RSC Advances</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>6</CIT.VL>
+                <CIT.NB>44</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>37478 - 37486</CIT.PAG>
+                <CIT.DOI>10.1039/c6ra04325a</CIT.DOI>
+                <CIT.ISSN>2046-2069</CIT.ISSN>
+                <CIT.SCOPUS>84966318678</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="110513">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=110513
+M  V30 BEGIN ATOM
+M  V30 1 N -16.6574 -0.4632 0 0
+M  V30 2 C -15.4377 0.4148 0 0
+M  V30 3 C -16.1892 -1.963 0 0
+M  V30 4 C -18.1176 0.0238 0 0
+M  V30 5 C -14.19 -0.5029 0 0
+M  V30 6 O -15.4377 1.963 0 0
+M  V30 7 C -14.6489 -1.963 0 0
+M  V30 8 C -19.27 -0.996 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="471556">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 9 9 0 0 0 REGNO=471556
+M  V30 BEGIN ATOM
+M  V30 1 C -7.6998 -0.2877 0 0
+M  V30 2 C -6.9302 1.0461 0 0
+M  V30 3 C -6.9302 -1.6213 0 0
+M  V30 4 O -9.2398 -0.2877 0 0
+M  V30 5 C -5.3902 1.0461 0 0
+M  V30 6 C -5.3902 -1.6213 0 0
+M  V30 7 C -10.01 -1.6213 0 0
+M  V30 8 C -4.62 -0.2877 0 0
+M  V30 9 N -3.08 -0.2877 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 3 1 1 4
+M  V30 4 2 2 5
+M  V30 5 1 3 6
+M  V30 6 1 4 7
+M  V30 7 1 5 8
+M  V30 8 2 6 8
+M  V30 9 1 8 9
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="18843501">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 19 21 0 0 0 REGNO=18843501
+M  V30 BEGIN ATOM
+M  V30 1 C 9.7509 -1.1769 0 0
+M  V30 2 C 11.082 -0.4067 0 0 CFG=1
+M  V30 3 C 9.7739 -2.7324 0 0
+M  V30 4 C 8.4216 -0.4297 0 0
+M  V30 5 N 11.082 1.1538 0 0
+M  V30 6 C 12.425 -1.1536 0 0
+M  V30 7 N 11.1279 -3.4873 0 0
+M  V30 8 C 8.4433 -3.5103 0 0
+M  V30 9 C 7.0832 -1.2154 0 0
+M  V30 10 C 9.8124 2.0256 0 0
+M  V30 11 C 12.3063 2.0485 0 0
+M  V30 12 C 12.4464 -2.6939 0 0 CFG=2
+M  V30 13 C 7.1046 -2.7558 0 0
+M  V30 14 O 5.7352 -0.4526 0 0
+M  V30 15 C 10.279 3.495 0 0
+M  V30 16 O 8.3508 1.5281 0 0
+M  V30 17 C 11.8042 3.5103 0 0
+M  V30 18 C 13.7851 -3.4411 0 0
+M  V30 19 C 5.72 1.0768 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5 CFG=1
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 2 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 1 6 12
+M  V30 12 1 7 12
+M  V30 13 2 8 13
+M  V30 14 1 9 13
+M  V30 15 1 9 14
+M  V30 16 1 10 15
+M  V30 17 2 10 16
+M  V30 18 1 11 17
+M  V30 19 1 12 18 CFG=1
+M  V30 20 1 14 19
+M  V30 21 1 15 17
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="3">
+      <RX>
+        <RX.ID>28177054</RX.ID>
+        <RX01>
+          <RX.RXRN>110513</RX.RXRN>
+          <RX.RCT>1-ethenyl-2-pyrrolidinone</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>605631</RX.RXRN>
+          <RX.RCT>aniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>7252256</RX.PXRN>
+          <RX.PRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>110513</RX.BLB>
+        <RX.BLB>605631</RX.BLB>
+        <RX.BLB>7252256</RX.BLB>
+        <RX.BLC>110513</RX.BLC>
+        <RX.BLC>605631</RX.BLC>
+        <RX.BLC>7252256</RX.BLC>
+        <RX.NVAR>10</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0A)|01E45(0B)|01E41()|01D45(0F)|01D45(0F)|01D42(0E10)|01D41(11)|01C62()|01C45()|01C41(11)|01C41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>214</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJytV01v2zAMvfdX6NDrDJHUh3UZkM5uD0tSIAmG9VQUQ4+7DMN+/0RJjmVHMay0htsoNPX0+ExSyv3h5/7OX0KgEHB3v3ve8pfD190/1cjswk6A8C7RKPiS+ZhnteGWxds5J36gd79jd2zAGSUCoLIKRzixF9cgwg1xkFBc2+o4kkpRhvJtGQUnKFpKFef6EaxHoQwFGlQtxpF1soKLylDIz21N0iXhrUPRRV3I6+J0hvK8jGImXLwa5hZdbIYyzoUGsCai9owCMTvzx9FKRau6tGIQqGA151w4WykEMPdVgdDcVxd8d758+icBIDUQf+v33QcLy541vbynhQUst4wjMkaul9tNEmhYHxskXI8Csogiz6zWoeRFLq9HtNwqIC9yujkiKqLURjQt8hvfEYxFHktino4fLwkqlkRM87nVXE9+I7Uh+JTkByvArUt+aoxUkCRWZn3HmqStapRxmF63ooq+N33JAxfluaiKvjctRKtkisi3k4qI8rTliGLnxXlEFbutbkgB3qBu1skDF0sY8eR0h6soZ9YFoYhS0Vqgaa0b8kVX7HCQ77a6QSPTzq8sVugybVCGXNon/c5/4ylkfEeKI6rIOlnUpRJl0uZU45RLczXUbEW5uqZBQIqs/Lkq16XqLOO0HrjUNO7JWcZzkYaizr4ab1J36SxTaOdLjdvMrKbYzgtnGQolWTjhuFLr5+Y499WhkOZWE4p0brVFaxta1Hw1F6wzX4iJVbDqCwRPCy518ATAXmjmQS99/ZZ1PL0EjfyTbnMSvEb8JP4MHptteMwEwgaGIs7gnxFs42OzX5BlZlGDhCwYC8EBcjg6RwpJwWRssD58Gn5CCokU8P0fv3wXnnan8HTXbR+eXh8Pm6ddvz+9Hk/9oefqitdjdO0SF64mVJqX/+KrycRq6jb8f7PdDk6eaJjXx3l/3n69/377+z4GjSm0kQgmInH91+/9i5hcGZFQe77FUNqq/Y+4Nm5sy0RQHEcGMdUgY0DrGVCE9lIMDVe62CqXGZA4DKckixpRm+GY9B8+gHfS</RX.RXNFILE>
+        <RX.REG>4b48da17189b7eb1772b33db8c9a3b87</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>94</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>10</RX.NUMREF>
+        <RX.MAXPMW>230.31</RX.MAXPMW>
+        <RX.ED>2009/04/06</RX.ED>
+        <RX.UPD>2017/03/04</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>64130665</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>28</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>poly(2-bromo aniline)-bromide salt</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.0833333</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Scheme or table</RXD.RXDES>
+          <RXD.DED>2014/10/28</RXD.DED>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3497">
+            <CNR>
+              <CNR.CNR>64130665</CNR.CNR>
+              <CNR.CED>2014/10/15</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Rajender, Boddula; Palaniappan, Srinivasan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2014</CIT.PREPY>
+              <CIT.PUI>373852354</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>57</CIT.VL>
+                <CIT.PY>2014</CIT.PY>
+                <CIT.PAG>94 - 98</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2014.08.011</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84906776923</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3642">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>69825983</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.TI>2.3. General procedure for P2BrABr salt-catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of aromatic amine (2 mmol), N-vinyl lactam (1 mmol) and P2BrABr catalyst (14 wt.percent with respect to aromatic amine) under solvent-free conditions was stirred at 80 &#176;C for a particular period of time. Ethyl acetate was added to the reaction mixture. The catalyst was separated by simple filtration. Ethyl acetate solution was washed with water, followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. The products were isolated by column chromatography using silica gel (60&#8211;120 mesh) and eluted with petroleum ether. All of the products were authenticated by <sup>1</sup>H NMR and mass spectroscopy data [18,21,22]. The recyclability experiment was carried out using the recovered catalyst, wherein, the recovered catalyst was washed with acetone and dried in an oven at 50 &#176;C for 10 min.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>94 percent</RXD.YD>
+          <RXD.NYD>94</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>N,4-poly(2-bromoaniline) hydrobromide</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.0833333</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/10/25</RXD.DED>
+          <RXD.COM>stereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3709">
+            <CNR>
+              <CNR.CNR>69825983</CNR.CNR>
+              <CNR.CED>2016/10/25</CNR.CED>
+              <CNR.CUPD>2016/10/25</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Rajender, Boddula; Palaniappan, Srinivasan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2014</CIT.PREPY>
+              <CIT.PUI>600030711</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOAC</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catal. Commun.</CIT.JTS>
+                <CIT.LA>English</CIT.LA>
+                <CIT.VL>57</CIT.VL>
+                <CIT.PY>2014</CIT.PY>
+                <CIT.PAG>94 - 98</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2014.08.011</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>93 percent</RXD.YD>
+          <RXD.NYD>93</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.PRT>Reagent/catalyst</RXD.PRT>
+          <RXD.PRT>Solvent</RXD.PRT>
+          <RXD.PRT>Time</RXD.PRT>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3311">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.333333</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="2884">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>8706896</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>90 percent</RXD.YD>
+          <RXD.NYD>90</RXD.NYD>
+        </RXD01>
+
+        <RXD.SNR>2</RXD.SNR>
+        <RXDS01>
+          <RXD.STG>1</RXD.STG>
+          <RXD02>
+            <RXD.SXRN>110513</RXD.SXRN>
+            <RXD.SRCT>1-ethenyl-2-pyrrolidinone</RXD.SRCT>
+          </RXD02>
+          <RXD02>
+            <RXD.SXRN>605631</RXD.SXRN>
+            <RXD.SRCT>aniline</RXD.SRCT>
+          </RXD02>
+          <RXD03>
+            <RXD.RGTXRN>1882262</RXD.RGTXRN>
+            <RXD.RGT>4-nitrophthalic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.T>50</RXD.T>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+        </RXDS01>
+        <RXDS01>
+          <RXD.STG>2</RXD.STG>
+          <RXD03>
+            <RXD.RGTXRN>4153970</RXD.RGTXRN>
+            <RXD.RGT>sodium hydrogencarbonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.DED>2009/04/06</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="2286">
+            <CNR>
+              <CNR.CNR>8706896</CNR.CNR>
+              <CNR.CED>2009/04/06</CNR.CED>
+              <CNR.CUPD>2016/06/22</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2009</CIT.PREPY>
+              <CIT.PUI>352812531</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>39</CIT.VL>
+                <CIT.NB>1</CIT.NB>
+                <CIT.PY>2009</CIT.PY>
+                <CIT.PAG>93 - 101</CIT.PAG>
+                <CIT.DOI>10.1080/00397910802369653</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>57449083494</CIT.SCOPUS>
+                <CIT.CITBY>21</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20056768</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>75 percent</RXD.YD>
+          <RXD.NYD>75</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>608199</RXD.RGTXRN>
+            <RXD.RGT>benzene-1,2-dicarboxylic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>1098229</RXD.SOLXRN>
+            <RXD.SOL>methanol</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>7.5</RXD.TIM>
+          <RXD.T>40</RXD.T>
+          <RXD.DED>2012/01/06</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereospecific reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3046">
+            <CNR>
+              <CNR.CNR>20056768</CNR.CNR>
+              <CNR.CED>2012/01/06</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Kouznetsov, Vladimir V.; Merchan Arenas, Diego R.; Ortiz Areniz, Cesar J.; Melendez Gomez, Carlos M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>51707892</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNTB</CIT.CO>
+                <CIT.JT>Synthesis</CIT.JT>
+                <CIT.JTS>Synthesis</CIT.JTS>
+                <CIT.CC>deu</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Georg Thieme Verlag</CIT.PUB>
+                <CIT.NB>24</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>4011 - 4016</CIT.PAG>
+                <CIT.DOI>10.1055/s-0031-1289591</CIT.DOI>
+                <CIT.ARTNO>M81611SS</CIT.ARTNO>
+                <CIT.ISSN>1437-210X</CIT.ISSN>
+                <CIT.SCOPUS>82955193277</CIT.SCOPUS>
+                <CIT.CITBY>7</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>18</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>74 percent</RXD.YD>
+          <RXD.NYD>74</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>8</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="3173">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35489695</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>70 percent</RXD.YD>
+          <RXD.NYD>70</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3599286</RXD.RGTXRN>
+            <RXD.RGT>sodium dodecyl-sulfate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>5</RXD.TIM>
+          <RXD.T>20</RXD.T>
+          <RXD.PH>1</RXD.PH>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/06/26</RXD.DED>
+          <RXD.COM>diastereospecific reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3348">
+            <CNR>
+              <CNR.CNR>35489695</CNR.CNR>
+              <CNR.CED>2013/06/26</CNR.CED>
+              <CNR.CUPD>2017/01/29</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Mercha&#769;n Arenas, Diego R.; Marti&#769;nez Bonilla, Carlos A.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>368919151</CIT.PUI>
+              <CIT01>
+                <CIT.CO>OBCRA</CIT.CO>
+                <CIT.JT>Organic and Biomolecular Chemistry</CIT.JT>
+                <CIT.JTS>Organic and Biomolecular Chemistry</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>11</CIT.VL>
+                <CIT.NB>22</CIT.NB>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>3655 - 3663</CIT.PAG>
+                <CIT.DOI>10.1039/c3ob40171e</CIT.DOI>
+                <CIT.ISSN>1477-0520</CIT.ISSN>
+                <CIT.SCOPUS>84877738013</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68847446</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>31</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>7252256</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2-methyl-1,2,3,4-tetrahydroquinoline-4-yl) pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>70 percent</RXD.YD>
+          <RXD.NYD>70</RXD.NYD>
+          <RXD.YDO>&#62; 99 percent de</RXD.YDO>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>14414853</RXD.RGTXRN>
+            <RXD.RGT>cerium(IV) sulphate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.T>20</RXD.T>
+          <RXD.P>760.051</RXD.P>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/07/09</RXD.DED>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3667">
+            <CNR>
+              <CNR.CNR>68847446</CNR.CNR>
+              <CNR.CED>2016/05/19</CNR.CED>
+              <CNR.CUPD>2017/03/04</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Mart&#237;nez Bonilla, Carlos A.; Puerto Galvis, Carlos E.; Vargas M&#233;ndez, Leonor Y.; Kouznetsov, Vladimir V.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>610180713</CIT.PUI>
+              <CIT01>
+                <CIT.CO>RSCAC</CIT.CO>
+                <CIT.JT>RSC Advances</CIT.JT>
+                <CIT.JTS>RSC Advances</CIT.JTS>
+                <CIT.CC>gbr</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Royal Society of Chemistry</CIT.PUB>
+                <CIT.VL>6</CIT.VL>
+                <CIT.NB>44</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>37478 - 37486</CIT.PAG>
+                <CIT.DOI>10.1039/c6ra04325a</CIT.DOI>
+                <CIT.ISSN>2046-2069</CIT.ISSN>
+                <CIT.SCOPUS>84966318678</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="110513">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=110513
+M  V30 BEGIN ATOM
+M  V30 1 N -14.3484 -0.4628 0 0
+M  V30 2 C -13.1284 0.4154 0 0
+M  V30 3 C -13.8802 -1.9632 0 0
+M  V30 4 C -15.8088 0.024 0 0
+M  V30 5 C -11.8808 -0.5029 0 0
+M  V30 6 O -13.1284 1.9632 0 0
+M  V30 7 C -12.3397 -1.9632 0 0
+M  V30 8 C -16.9608 -0.9957 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="605631">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 7 7 0 0 0 REGNO=605631
+M  V30 BEGIN ATOM
+M  V30 1 C -6.1603 -0.4357 0 0
+M  V30 2 C -5.3902 0.8982 0 0
+M  V30 3 C -5.3902 -1.7694 0 0
+M  V30 4 N -7.7008 -0.4357 0 0
+M  V30 5 C -3.8501 0.8982 0 0
+M  V30 6 C -3.8501 -1.7694 0 0
+M  V30 7 C -3.08 -0.4357 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 3 6
+M  V30 6 2 5 7
+M  V30 7 1 6 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="7252256">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 17 19 0 0 0 REGNO=7252256
+M  V30 BEGIN ATOM
+M  V30 1 C 8.1571 1.1868 0 0
+M  V30 2 C 9.4892 0.4121 0 0 CFG=1
+M  V30 3 C 8.1571 2.7238 0 0
+M  V30 4 C 6.8262 0.4241 0 0
+M  V30 5 N 9.4876 -1.1284 0 0
+M  V30 6 C 10.8325 1.1868 0 0
+M  V30 7 N 9.4953 3.5001 0 0
+M  V30 8 C 6.8293 3.5001 0 0
+M  V30 9 C 5.5 1.1931 0 0
+M  V30 10 C 10.7076 -2.0078 0 0
+M  V30 11 C 8.2107 -2.0448 0 0
+M  V30 12 C 10.8325 2.7331 0 0 CFG=2
+M  V30 13 C 5.5 2.7331 0 0
+M  V30 14 C 10.2284 -3.4802 0 0
+M  V30 15 O 12.1738 -1.5182 0 0
+M  V30 16 C 8.6977 -3.5047 0 0
+M  V30 17 C 12.1644 3.5047 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5 CFG=3
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 2 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 1 6 12
+M  V30 12 1 7 12
+M  V30 13 2 8 13
+M  V30 14 1 9 13
+M  V30 15 1 10 14
+M  V30 16 2 10 15
+M  V30 17 1 11 16
+M  V30 18 1 12 17 CFG=3
+M  V30 19 1 14 16
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="4">
+      <RX>
+        <RX.ID>28177055</RX.ID>
+        <RX01>
+          <RX.RXRN>110513</RX.RXRN>
+          <RX.RCT>1-ethenyl-2-pyrrolidinone</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>741981</RX.RXRN>
+          <RX.RCT><i>o</i>-toluidine</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>18843507</RX.PXRN>
+          <RX.PRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>110513</RX.BLB>
+        <RX.BLB>741981</RX.BLB>
+        <RX.BLB>18843507</RX.BLB>
+        <RX.BLC>110513</RX.BLC>
+        <RX.BLC>741981</RX.BLC>
+        <RX.BLC>18843507</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0A)|01E45(0B)|01E41()|01D45(0F12)|01D45(0F)|01D42(0E10)|01D41(11)|01C62()|01C45()|01C41(11)|01C41()|01C41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>214</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0A*)|01E45(0B*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJy9Vz1v2zAQ3fMrOGQ1weM3lwJOpWSo7QCOETRTEBQZuxRFf395R1qiJMYVjaCCEsun4+Pj433Qt8fvh5t4MSYZg5vb/eMOvxy/7P9oLopLdgxYdElGhpcon3GUp1tU7xACe5bR/QbdJYdgNSNA7bQc4diBfQRBN6SHjBK8N+lJaK0KlK+XUeQExQih09j4BOtRVIECXGov05MLooGLLlBUHOtt1iXjrUMxVV1U1CWYAuXxMoqdcIlq2Gt0cQXKOBY4yJYV+QEFUnSWr5NVVa16aZUkUMVqh1gYrIoWMPfVRGjuayq++5g+/QMDEAYUfusP3X9LLOAqGMEGwPVyh0kwn1FkGwqIAkVyaUEMQdCAUiZ5HCtDHeVyqQBZ5SIbuagql1aUaZKDdHDFHoGporTu0ZjkKbHmQf1ZiTW3psSqpFAlsRxZq4nlNAQPn5JY4Jn8UKhJYm2AG0PVcCN4LK7X1feN5BpESHgqSLMapUwJ4uJyZQbQ5dav755xHdZTz0QuXqznUlRmWpFQIT3FFYX1KEXB2SguvVVZ3eD1el3MhIuyPjOwwV13HogMnJF5rBO+AUVNUKxLK5KoboMuYqqLg4wSWnpwWYgxXpSxCcV7V6KsL6EbzUFLm/C00A2xW5wqIgNhncexwK0Bu16XcqcVV/J8xorqlitaf8KJ6xDW6zMX18BlesKBoCGr63TDOanco6jusEdR3fXxUjYojBebclrFeIGGPRqr1D9OWzCzftgU5iX9UlOoWBfln6YKS6uhYK9YYWm1FNLLZgOVhudIlLmvp5Iz9w3V2QKF/kyzSBaWbRCtyxVHsrBUJ5Jdcojt8On0QsrFN932xHCO9Knwkzy2O3pNgQHkkUZgEqANAzBOiOKT1Cgs8seAQIlws02JREGBi0Sant7cfdocGYlOGMMc8S+OkmnF3Yk89t3u7uH1/rh92PeH0+vTqT/2WAfSdZ9cu8wHM8y5lCWaB5uypNvi/+1ul52QLI3r07hfbz/ef779fh8Xn5KEwUhEZiJp/tdv/QubXAUR+h20wbIjcklVOh0qLhOR7GlkkIKWhZGBWs+AJsNmN7Qpr1ObusxAsePwE8fHA4QR7nwW+wt75ZeK</RX.RXNFILE>
+        <RX.REG>61c4163a7e409d7c90081e1426ba5141</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>90</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>244.337</RX.MAXPMW>
+        <RX.ED>2009/04/06</RX.ED>
+        <RX.UPD>2016/12/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>8706896</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843507</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>90 percent</RXD.YD>
+          <RXD.NYD>90</RXD.NYD>
+        </RXD01>
+
+        <RXD.SNR>2</RXD.SNR>
+        <RXDS01>
+          <RXD.STG>1</RXD.STG>
+          <RXD02>
+            <RXD.SXRN>110513</RXD.SXRN>
+            <RXD.SRCT>1-ethenyl-2-pyrrolidinone</RXD.SRCT>
+          </RXD02>
+          <RXD02>
+            <RXD.SXRN>741981</RXD.SXRN>
+            <RXD.SRCT><i>o</i>-toluidine</RXD.SRCT>
+          </RXD02>
+          <RXD03>
+            <RXD.RGTXRN>1882262</RXD.RGTXRN>
+            <RXD.RGT>4-nitrophthalic acid</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>3.5</RXD.TIM>
+          <RXD.T>50</RXD.T>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+        </RXDS01>
+        <RXDS01>
+          <RXD.STG>2</RXD.STG>
+          <RXD03>
+            <RXD.RGTXRN>4153970</RXD.RGTXRN>
+            <RXD.RGT>sodium hydrogencarbonate</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.DED>2009/04/06</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="2286">
+            <CNR>
+              <CNR.CNR>8706896</CNR.CNR>
+              <CNR.CED>2009/04/06</CNR.CED>
+              <CNR.CUPD>2016/06/22</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Srinivasa, Aswathanarayana; Mahadevan, Kittappa M.; Hulikal, Vijaykumar</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2009</CIT.PREPY>
+              <CIT.PUI>352812531</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>39</CIT.VL>
+                <CIT.NB>1</CIT.NB>
+                <CIT.PY>2009</CIT.PY>
+                <CIT.PAG>93 - 101</CIT.PAG>
+                <CIT.DOI>10.1080/00397910802369653</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>57449083494</CIT.SCOPUS>
+                <CIT.CITBY>21</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843507</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>90 percent</RXD.YD>
+          <RXD.NYD>90</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="2884">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>2</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843507</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>90 percent</RXD.YD>
+          <RXD.NYD>90</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3311">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843507</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>89 percent</RXD.YD>
+          <RXD.NYD>89</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3642">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>18</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>18843507</RXD.YXRN>
+          <RXD.YPRO>cis-1-(2,8-dimethyl-1,2,3,4-tetrahydroquinoline-4-yl)pyrrolidin-2-one</RXD.YPRO>
+          <RXD.YD>71 percent</RXD.YD>
+          <RXD.NYD>71</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>10</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="3173">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="110513">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=110513
+M  V30 BEGIN ATOM
+M  V30 1 N -13.728 -0.4564 0 0
+M  V30 2 C -12.5079 0.4217 0 0
+M  V30 3 C -13.2597 -1.9565 0 0
+M  V30 4 C -15.1879 0.0304 0 0
+M  V30 5 C -11.2605 -0.4965 0 0
+M  V30 6 O -12.5079 1.9692 0 0
+M  V30 7 C -11.7194 -1.9565 0 0
+M  V30 8 C -16.3398 -0.9891 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 7
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="741981">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=741981
+M  V30 BEGIN ATOM
+M  V30 1 C -5.7472 -1.1991 0 0
+M  V30 2 C -5.7472 0.3409 0 0
+M  V30 3 C -4.4138 -1.9692 0 0
+M  V30 4 N -7.0805 -1.9692 0 0
+M  V30 5 C -4.4138 1.1106 0 0
+M  V30 6 C -7.0805 1.1106 0 0
+M  V30 7 C -3.08 -1.1991 0 0
+M  V30 8 C -3.08 0.3409 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 1 2 6
+M  V30 6 2 3 7
+M  V30 7 2 5 8
+M  V30 8 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="18843507">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 18 20 0 0 0 REGNO=18843507
+M  V30 BEGIN ATOM
+M  V30 1 C 9.4916 0.3646 0 0 CFG=1
+M  V30 2 C 8.1667 -0.4167 0 0
+M  V30 3 N 9.4805 1.9032 0 0
+M  V30 4 C 10.8254 -0.3979 0 0
+M  V30 5 C 8.1775 -1.9571 0 0
+M  V30 6 C 6.8189 0.3445 0 0
+M  V30 7 C 8.2312 2.8013 0 0
+M  V30 8 C 10.7205 2.8184 0 0
+M  V30 9 C 10.8377 -1.9387 0 0 CFG=2
+M  V30 10 C 6.842 -2.738 0 0
+M  V30 11 N 9.5147 -2.7178 0 0
+M  V30 12 C 5.5 -0.4352 0 0
+M  V30 13 C 8.6949 4.2711 0 0
+M  V30 14 O 6.7662 2.3128 0 0
+M  V30 15 C 10.2339 4.28 0 0
+M  V30 16 C 12.178 -2.6981 0 0
+M  V30 17 C 5.5111 -1.9755 0 0
+M  V30 18 C 6.8526 -4.28 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3 CFG=1
+M  V30 3 1 1 4
+M  V30 4 2 2 5
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 1 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 2 6 12
+M  V30 12 1 7 13
+M  V30 13 2 7 14
+M  V30 14 1 8 15
+M  V30 15 1 9 11
+M  V30 16 1 9 16 CFG=1
+M  V30 17 2 10 17
+M  V30 18 1 10 18
+M  V30 19 1 12 17
+M  V30 20 1 13 15
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
+    <reaction index="5">
+      <RX>
+        <RX.ID>30967279</RX.ID>
+        <RX01>
+          <RX.RXRN>119049</RX.RXRN>
+          <RX.RCT>vinylcaprolactam</RX.RCT>
+        </RX01>
+        <RX01>
+          <RX.RXRN>471359</RX.RXRN>
+          <RX.RCT>4-chloro-aniline</RX.RCT>
+        </RX01>
+        <RX02>
+          <RX.PXRN>21503873</RX.PXRN>
+          <RX.PRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RX.PRO>
+        </RX02>
+        <RX.BLB>119049</RX.BLB>
+        <RX.BLB>471359</RX.BLB>
+        <RX.BLB>21503873</RX.BLB>
+        <RX.BLC>119049</RX.BLC>
+        <RX.BLC>471359</RX.BLC>
+        <RX.BLC>21503873</RX.BLC>
+        <RX.NVAR>5</RX.NVAR>
+        <RX03>
+          <RX.BCODE>324122893335475</RX.BCODE>
+          <RX.MCODE>367240718450565</RX.MCODE>
+          <RX.NCODE>411087022500152</RX.NCODE>
+        </RX03>
+        <RX04>
+          <RX.TRANS>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D)|01E45(0B)|01E45(0A)|01E41()|01D45(0E10)|01D45(10)|01D42(0F11)|01D41(12)|01CE1()|01C62()|01C45()|01C41(13)|01C41(14)|01B41(14)|01B41()|</RX.TRANS>
+          <RX.BIN>214537</RX.BIN>
+          <RX.BFREQ>214</RX.BFREQ>
+          <RX.QRY0>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|*</RX.QRY0>
+          <RX.QRY1>0/88F42(0204*)|88F42(05)|80F51(05*)|80F45(*)|80F41(*)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY1>
+          <RX.QRY2>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|*</RX.QRY2>
+          <RX.QRY3>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(*)|01E45(*)|01E45(*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY3>
+          <RX.QRY4>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|*</RX.QRY4>
+          <RX.QRY5>0/88F42(020406)|88F42(05)|80F51(0507)|80F45(0708)|80F41(09)|01E51(0C0D*)|01E45(0B*)|01E45(0A*)|01E41(*)|01D45(*)|01D45(*)|01D42(*)|01D41(*)|01CE1(*)|01C62(*)|01C45(*)|01C41(*)|01C41(*)|*</RX.QRY5>
+        </RX04>
+        <RX.RXNFILE>eJytV0tv2zAMvudX6NBrDYnU8zIgXdIelqRAGhTrqSiG3rbLMOz3j5ScWLKVzEpruI3DUJ8+Unz5Zv99t6BLCBBCLW62jxv+sv+y/as7mV2wEkqQShIKvmT+TKuU5FvU7xCCeAZSX7A6dtpJzU/QWetwgBM7cQ4i3io9RBTdobU2oYBROcrXyyiQoUBnXGJAKOAaUDBDIYuM1+mJLDLzUXRhkQWMFqkOgoT5KCZDMZ1CcMkiH1BnKI+XUWzhF4TkU+LiWri40rveYrJNmRa/+MK7wZt+rZFSzUcJBZcQlL4C5RjWixh/cIrCXIpVqZ5KIR5WRWpPcXmSYnTmWFdH54x1TTR2rOsi+bE0VKRbSvv1g1AqSB3423q3+lhBYJb+nFPLgqD4QGR6oqSW848mLwjQHfenVEZoQIEqijyxmoeSFwR5waKfF1HygoBXW2SqKK0W2QLl2jPKC4I+j3K59KuhIKQkHCfAx5MQq0loYhKOpbaami5GfDWxtFNoPiexKA6g4JPf48RyCJCevFYNVTwPQ6riwfe9ADU0VM48DAcuwFyu7Pqy89aoK7gUHWWwSBKKkrNRimCmrm9Tf230blFwyCJM3Qip0xo9G2U0x1hEvAalLFtH7zb6JUuC7KRvJXf9HGV2kmfenaI0lC2aElGaxKotdsuos9KrhAdGNswxpkCR2sv+tAzkGdA0mdEwhNdwcSWXVFNavVuc9ODd1jzKo44m1mD7uXecR/ObJc2pqFTCkwgNfimnROirVCPK/CnRjqRnG9S46aQpsdK2Kq0IK60oblWZEk11SjQxBcZSG4vXmJmLB1qZPvVU18e2MGcmjVI78RnRUtOWTLTU1A8snfqByKqpH4gWTDmQ4lRKbfzp8BK9TL+slgeOnP4T+TNqLDfxZzY3NnUQaQUXNZZxyPOLGhGMx8LbsMs5eNidHBgmR4pTCzuEDWWzaBUkNneftlePFINqshf9cXRD1FwdouZ2tbl7eL3fLx+2693h9emw3q+5nqXrPqmuel6xO6Tee0sZq1LlWS35/3KzOSoR6bhundb9fvvx/uvtz/vgjJRgQg1EoCeS9n/9tn4RxZURgZ6IPQ1H6FPZuUwExNPAIAW8CAMDnM8g1m8qLC61Wy7C9Ob1fwYo9qdXNfBOGfTHmfIfpHzROA==</RX.RXNFILE>
+        <RX.REG>aaf74f116094eb5ddade9e90061210b6</RX.REG>
+        <RX.RANK highlight="true">103</RX.RANK>
+        <RX.MYD>92</RX.MYD>
+        <RX.SKW>mapped reaction</RX.SKW>
+        <RX.RTYP>full reaction</RX.RTYP>
+        <RX.RTYP>has preparation</RX.RTYP>
+        <RX.RAVAIL>6</RX.RAVAIL>
+        <RX.PAVAIL>4</RX.PAVAIL>
+        <RX.MAXPUB>2016</RX.MAXPUB>
+        <RX.NUMREF>5</RX.NUMREF>
+        <RX.MAXPMW>292.809</RX.MAXPMW>
+        <RX.ED>2011/06/27</RX.ED>
+        <RX.UPD>2016/12/21</RX.UPD>
+      </RX>
+      <RXD>
+        <RXD.L>9047362</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>21</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503873</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323013</RXD.RGTXRN>
+            <RXD.RGT>indium(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>3587155</RXD.SOLXRN>
+            <RXD.SOL>water</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2011/06/27</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="2884">
+            <CNR>
+              <CNR.CNR>9047362</CNR.CNR>
+              <CNR.CED>2011/06/27</CNR.CED>
+              <CNR.CUPD>2016/06/27</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Varma, P. Prabhakara; Srinivasa, Aswathnarayana; Mahadevan, Kittappa M.</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>361838772</CIT.PUI>
+              <CIT01>
+                <CIT.CO>SYNCA</CIT.CO>
+                <CIT.JT>Synthetic Communications</CIT.JT>
+                <CIT.JTS>Synthetic Communications</CIT.JTS>
+                <CIT.CC>usa</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Taylor and Francis Inc.</CIT.PUB>
+                <CIT.VL>41</CIT.VL>
+                <CIT.NB>15</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2186 - 2194</CIT.PAG>
+                <CIT.DOI>10.1080/00397911003650453</CIT.DOI>
+                <CIT.ISSN>1532-2432</CIT.ISSN>
+                <CIT.SCOPUS>79957642578</CIT.SCOPUS>
+                <CIT.CITBY>12</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>35449447</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>43</RXD.SCO>
+        <RXD.LB>2</RXD.LB>
+        <RXD.TI>General procedure for polyaniline salt catalyzed domino tetrahydroquinoline synthesis</RXD.TI>
+        <RXD.TXT>General procedure: In a typical experiment, a mixture of aromatic amine (1 mmol), N-vinyl lactam (2 mmol) and PANI-I<sub>2</sub> catalyst (14 wt.percent with respect to N-vinyl lactam) under solvent free conditions was stirred at 80 &#176;C for 10 min. ( Scheme 1 <br/>) Then EtOAc was added to the reaction mixture, filtered and separated the catalyst. Organic layer was washed with water followed by brine, dried over anhydrous Na<sub>2</sub>SO<sub>4</sub>, and concentrated. <br/>The crude material was purified by column chromatography using silica gel (60-120 mesh) and eluted with petroleum ether: ethyl acetate (8:2). <br/>Isolated yield was calculated and the margins of error in these experiments are +- 1percent. All the products were characterized by <sup>1</sup>H NMR, <sup>13</sup>C NMR, and mass spectroscopic data and compared with the literature values [16&#8211;20]. Recyclability experiment was carried out using the separated catalyst, wherein, the separated catalyst was washed with acetone and dried in an oven for 50 &#176;C for 2 h.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503873</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>92 percent</RXD.YD>
+          <RXD.NYD>92</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>polyaniline&#8211;iodine</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOL>neat (no solvent)</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>0.166667</RXD.TIM>
+          <RXD.T>80</RXD.T>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2013/02/23</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3311">
+            <CNR>
+              <CNR.CNR>35449447</CNR.CNR>
+              <CNR.CED>2013/02/23</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Boddula, Rajender; Srinivasan, Palaniappan</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2013</CIT.PREPY>
+              <CIT.PUI>52322313</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CCAOA</CIT.CO>
+                <CIT.JT>Catalysis Communications</CIT.JT>
+                <CIT.JTS>Catalysis Communications</CIT.JTS>
+                <CIT.CC>nld</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Elsevier</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.PY>2013</CIT.PY>
+                <CIT.PAG>56 - 60</CIT.PAG>
+                <CIT.DOI>10.1016/j.catcom.2012.11.002</CIT.DOI>
+                <CIT.ISSN>1566-7367</CIT.ISSN>
+                <CIT.SCOPUS>84869881405</CIT.SCOPUS>
+                <CIT.CITBY>1</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>68258015</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>35</RXD.SCO>
+        <RXD.TI>General Procedure for the Synthesis of 2-Methyl-4-amino-1,2,3,4-tetrahydroquinolines.</RXD.TI>
+        <RXD.TXT>General procedure: A mixture of the substituted anilines (1.0 mmol), N-vinyl-2-pyrrolidinone (3.0 mmol) or N-vinylcaprolactam (3.0 mmol) and IONPs (11 mg, 5 molpercent) in acetonitrile (5 mL) was heated under reflux, and the reaction progress was monitored by thin layer chromatography. After completion of the reaction, the catalyst was recovered by an external magnetic field. The residues were washed with dichloromethane and dried at 80 C. The recovered catalyst was then reused in other reactions under identical conditions. After recovering the catalyst, the solvent was removed using a reduced pressure evaporator. The residue was purified by column chromatography on a silica gel to give the product.</RXD.TXT>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503873</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>91 percent</RXD.YD>
+          <RXD.NYD>91</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGT>iron oxide nanoparticles with Saururus chinensis (S<sub>.</sub> chinensis) leaf extract (IONPs)</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>4</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.COND>Green chemistry</RXD.COND>
+          <RXD.RXDES>Experimental part</RXD.RXDES>
+          <RXD.DED>2016/03/12</RXD.DED>
+        </RXDS01>
+        <citations>
+          <citation index="3642">
+            <CNR>
+              <CNR.CNR>68258015</CNR.CNR>
+              <CNR.CED>2016/02/23</CNR.CED>
+              <CNR.CUPD>2016/12/21</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Basavegowda, Nagaraj; Mishra, Kanchan; Lee, Yong Rok; Joh, Young-Gull</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2016</CIT.PREPY>
+              <CIT.PUI>607775282</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>37</CIT.VL>
+                <CIT.NB>2</CIT.NB>
+                <CIT.PY>2016</CIT.PY>
+                <CIT.PAG>142 - 147</CIT.PAG>
+                <CIT.DOI>10.1002/bkcs.10642</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>84954290004</CIT.SCOPUS>
+                <CIT.CITBY>2</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20115971</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>26</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503873</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>85 percent</RXD.YD>
+          <RXD.NYD>85</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>3600276</RXD.RGTXRN>
+            <RXD.RGT>antimony(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>1.25</RXD.TIM>
+          <RXD.T>25</RXD.T>
+          <RXD.TYP highlight="true"><hi>Diels-Alder reaction</hi></RXD.TYP>
+          <RXD.DED>2012/05/05</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+          <RXD.COM>diastereoselective reaction</RXD.COM>
+        </RXDS01>
+        <citations>
+          <citation index="3154">
+            <CNR>
+              <CNR.CNR>20115971</CNR.CNR>
+              <CNR.CED>2012/05/05</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Kiran, Kumar H. C.; Mahadevan; Prabhakara, Varma P.; Srinivasa</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2012</CIT.PREPY>
+              <CIT.PUI>364521377</CIT.PUI>
+              <CIT01>
+                <CIT.CO>CJOCE</CIT.CO>
+                <CIT.JT>Chinese Journal of Chemistry</CIT.JT>
+                <CIT.JTS>Chinese Journal of Chemistry</CIT.JTS>
+                <CIT.CC>chn</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Shanghai Institute of Organic Chemistry</CIT.PUB>
+                <CIT.VL>30</CIT.VL>
+                <CIT.NB>3</CIT.NB>
+                <CIT.PY>2012</CIT.PY>
+                <CIT.PAG>534 - 540</CIT.PAG>
+                <CIT.DOI>10.1002/cjoc.201100180</CIT.DOI>
+                <CIT.ISSN>1614-7065</CIT.ISSN>
+                <CIT.SCOPUS>84859080883</CIT.SCOPUS>
+                <CIT.CITBY>11</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>1</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RXD>
+        <RXD.L>20131001</RXD.L>
+        <RXD.CL>Preparation</RXD.CL>
+        <RXD.SCO>19</RXD.SCO>
+        <RXD.STP>1</RXD.STP>
+        <RXD01>
+          <RXD.YXRN>21503873</RXD.YXRN>
+          <RXD.YPRO>cis-1-(6-chloro-2-methyl-1,2,3,4-tetrahydroquinoline-4-yl)azepan-2-one</RXD.YPRO>
+          <RXD.YD>80 percent</RXD.YD>
+          <RXD.NYD>80</RXD.NYD>
+        </RXD01>
+
+        <RXDS01>
+          <RXD03>
+            <RXD.RGTXRN>11323458</RXD.RGTXRN>
+            <RXD.RGT>iron(III) chloride</RXD.RGT>
+          </RXD03>
+          <RXD05>
+            <RXD.SOLXRN>741857</RXD.SOLXRN>
+            <RXD.SOL>acetonitrile</RXD.SOL>
+          </RXD05>
+          <RXD.TIM>10</RXD.TIM>
+          <RXD.COND>Reflux</RXD.COND>
+          <RXD.TYP>imino Diels-Alder reaction</RXD.TYP>
+          <RXD.DED>2012/06/01</RXD.DED>
+          <RXD.LCN>experimental part</RXD.LCN>
+        </RXDS01>
+        <citations>
+          <citation index="3173">
+            <CNR>
+              <CNR.CNR>20131001</CNR.CNR>
+              <CNR.CED>2012/06/01</CNR.CED>
+              <CNR.CUPD>2016/06/23</CNR.CUPD>
+            </CNR>
+            <CIT>
+              <CIT.DT>Article</CIT.DT>
+              <CIT.AU>Chen, Ye; Lee, Yong Rok</CIT.AU>
+              <CIT.ABPR>Y</CIT.ABPR>
+              
+              <CIT.PREPY>2011</CIT.PREPY>
+              <CIT.PUI>362169366</CIT.PUI>
+              <CIT01>
+                <CIT.CO>BKCSD</CIT.CO>
+                <CIT.JT>Bulletin of the Korean Chemical Society</CIT.JT>
+                <CIT.JTS>Bulletin of the Korean Chemical Society</CIT.JTS>
+                <CIT.CC>kor</CIT.CC>
+                <CIT.LA>English</CIT.LA>
+                <CIT.PUB>Korean Chemical Society</CIT.PUB>
+                <CIT.VL>32</CIT.VL>
+                <CIT.NB>7</CIT.NB>
+                <CIT.PY>2011</CIT.PY>
+                <CIT.PAG>2485 - 2488</CIT.PAG>
+                <CIT.DOI>10.5012/bkcs.2011.32.7.2485</CIT.DOI>
+                <CIT.ISSN>1229-5949</CIT.ISSN>
+                <CIT.SCOPUS>79960480719</CIT.SCOPUS>
+                <CIT.CITBY>5</CIT.CITBY>
+              </CIT01>
+              <CIT.DOCQ>0.5</CIT.DOCQ>
+            </CIT>
+          </citation>
+        </citations>
+      </RXD>
+      <RY>
+        <RY.RCT rn="119049">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 10 10 0 0 0 REGNO=119049
+M  V30 BEGIN ATOM
+M  V30 1 N -15.76 0.5215 0 0
+M  V30 2 C -14.3797 -0.1194 0 0
+M  V30 3 C -17.1353 -0.1563 0 0
+M  V30 4 C -15.7783 2.0619 0 0
+M  V30 5 C -13.9839 -1.5996 0 0
+M  V30 6 O -13.2001 0.8695 0 0
+M  V30 7 C -17.5298 -1.6305 0 0
+M  V30 8 C -17.1216 2.8164 0 0
+M  V30 9 C -14.9668 -2.8164 0 0
+M  V30 10 C -16.4977 -2.8164 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 2 6
+M  V30 6 1 3 7
+M  V30 7 2 4 8
+M  V30 8 1 5 9
+M  V30 9 1 7 10
+M  V30 10 1 9 10
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.RCT rn="471359">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 8 0 0 0 REGNO=471359
+M  V30 BEGIN ATOM
+M  V30 1 C -7.7002 -0.2869 0 0
+M  V30 2 C -6.9303 1.0468 0 0
+M  V30 3 C -6.9303 -1.6207 0 0
+M  V30 4 Cl -9.2401 -0.2869 0 0
+M  V30 5 C -5.3899 1.0468 0 0
+M  V30 6 C -5.3899 -1.6207 0 0
+M  V30 7 C -4.62 -0.2869 0 0
+M  V30 8 N -3.08 -0.2869 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 2 1 2
+M  V30 2 1 1 3
+M  V30 3 1 1 4
+M  V30 4 1 2 5
+M  V30 5 2 3 6
+M  V30 6 2 5 7
+M  V30 7 1 6 7
+M  V30 8 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.RCT>
+        <RY.PRO rn="21503873">
+
+
+  0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 20 22 0 0 0 REGNO=21503873
+M  V30 BEGIN ATOM
+M  V30 1 C 8.3876 -0.9192 0 0 CFG=1
+M  V30 2 C 9.7215 -1.6879 0 0
+M  V30 3 N 8.3876 0.6212 0 0
+M  V30 4 C 7.052 -1.6879 0 0
+M  V30 5 C 9.7215 -3.2297 0 0
+M  V30 6 C 11.0539 -0.9192 0 0
+M  V30 7 C 6.9981 1.2899 0 0
+M  V30 8 C 9.7753 1.2899 0 0
+M  V30 9 C 7.052 -3.2297 0 0 CFG=2
+M  V30 10 N 8.3876 -3.9964 0 0
+M  V30 11 C 11.0539 -3.9964 0 0
+M  V30 12 C 12.3895 -1.6879 0 0
+M  V30 13 C 6.6565 2.7917 0 0
+M  V30 14 O 5.7939 0.3303 0 0
+M  V30 15 C 10.1173 2.7917 0 0
+M  V30 16 C 5.72 -3.9964 0 0
+M  V30 17 C 12.3895 -3.2297 0 0
+M  V30 18 Cl 13.7233 -0.9192 0 0
+M  V30 19 C 7.6159 3.9964 0 0
+M  V30 20 C 9.1577 3.9964 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 1 3 CFG=3
+M  V30 3 1 1 4
+M  V30 4 2 2 5
+M  V30 5 1 2 6
+M  V30 6 1 3 7
+M  V30 7 1 3 8
+M  V30 8 1 4 9
+M  V30 9 1 5 10
+M  V30 10 1 5 11
+M  V30 11 2 6 12
+M  V30 12 1 7 13
+M  V30 13 2 7 14
+M  V30 14 1 8 15
+M  V30 15 1 9 10
+M  V30 16 1 9 16 CFG=3
+M  V30 17 2 11 17
+M  V30 18 1 12 17
+M  V30 19 1 12 18
+M  V30 20 1 13 19
+M  V30 21 1 15 20
+M  V30 22 1 19 20
+M  V30 END BOND
+M  V30 END CTAB
+M  END
+</RY.PRO>
+      </RY>
+    </reaction>
