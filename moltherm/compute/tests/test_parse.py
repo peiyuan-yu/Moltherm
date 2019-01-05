@@ -3,7 +3,7 @@ from os.path import join, dirname, abspath
 import shutil
 import unittest
 
-import bs4
+from bs4 import BeautifulSoup
 
 from pymatgen.io.babel import BabelMolAdaptor
 
@@ -20,6 +20,7 @@ __date__ = "June 2018"
 module_dir = join(dirname(abspath(__file__)))
 files_dir = join(module_dir, "..", "..", "..", "test_files")
 
+
 class TestReaxysParser(unittest.TestCase):
     def setUp(self):
         self.filename = "reaxys.xml"
@@ -28,6 +29,9 @@ class TestReaxysParser(unittest.TestCase):
     def tearDown(self):
         del self.parser
         del self.filename
+
+        if "tmp" in os.listdir(files_dir):
+            shutil.rmtree(join(files_dir, "tmp"))
 
     def test_parse_reaxys_xml(self):
 
@@ -72,14 +76,112 @@ class TestReaxysParser(unittest.TestCase):
                                                    (906752, 'trimethylsilylacetylene')])
 
     def test_get_unique_reactions(self):
-        pass
+
+        files = [join("reaxys_xml", "diels_alder_1.xml"),
+                 join("reaxys_xml", "diels_alder_2.xml")]
+
+        res_1 = self.parser.parse_reaxys_xml(files[0])
+        res_2 = self.parser.parse_reaxys_xml(files[1])
+
+        self.assertEqual(len(res_1), 207)
+        self.assertEqual(len(res_2), 231)
+
+        unique = self.parser.get_unique_reactions(files)
+        self.assertEqual(len(unique[0]), len(unique[1]))
+        self.assertEqual(len(unique[0]), 328)
+
+        for i in range(len(unique[0])):
+            self.assertEqual(unique[0][i], unique[1][i]["meta"]["rxn_id"])
 
     def test_store_reaxys_reactions_files(self):
-        pass
+
+        parsed = self.parser.parse_reaxys_xml(self.filename)
+
+        rxns = [28100547, 3553459, 8633298]
+        mols = [15815515, 471171, 15815519, 636190, 969158,
+                605285, 906752, 4992354, 5424566]
+
+        # Test with base_path already created
+        os.mkdir(join(files_dir, "tmp"))
+
+        self.parser.store_reaxys_reactions_files(parsed,
+                                                 base_path=join(files_dir,
+                                                                "tmp"))
+
+        files_rxn = os.listdir(join(files_dir, "tmp", "reactions"))
+        for rxn_id in rxns:
+            self.assertTrue("{}.xml".format(rxn_id) in files_rxn)
+
+        files_mol = os.listdir(join(files_dir, "tmp", "molecules"))
+        for mol_id in mols:
+            self.assertTrue("{}".format(mol_id) in files_mol)
+            files_this_mol = os.listdir(join(files_dir, "tmp", "molecules",
+                                             str(mol_id)))
+            self.assertTrue("{}.mol".format(mol_id) in files_this_mol)
+
+        shutil.rmtree(join(files_dir, "tmp"))
+
+        # Test with base_path not created
+
+        self.parser.store_reaxys_reactions_files(parsed,
+                                                 base_path=join(files_dir,
+                                                                "tmp"))
+
+        files_rxn = os.listdir(join(files_dir, "tmp", "reactions"))
+        for rxn_id in rxns:
+            self.assertTrue("{}.xml".format(rxn_id) in files_rxn)
+
+        files_mol = os.listdir(join(files_dir, "tmp", "molecules"))
+        for mol_id in mols:
+            self.assertTrue("{}".format(mol_id) in files_mol)
+            files_this_mol = os.listdir(join(files_dir, "tmp", "molecules",
+                                             str(mol_id)))
+            self.assertTrue("{}.mol".format(mol_id) in files_this_mol)
+
+        for rxn in parsed:
+            rxn_path = join(files_dir, "tmp", "reactions",
+                            "{}.xml".format(rxn["meta"]["rxn_id"]))
+            with open(rxn_path, 'r') as fileobj:
+                xml = fileobj.read()
+                xml_parsed = BeautifulSoup(xml, "lxml-xml")
+
+                self.assertEqual(str(rxn["meta"]["index"]),
+                                 xml_parsed.find("index").text)
+                self.assertEqual(str(rxn["meta"]["rxn_id"]),
+                                 xml_parsed.find("reaxysid").text)
+                self.assertSequenceEqual(rxn["meta"]["solvents"],
+                                         set(xml_parsed.find("solvents").text.split(" || ")))
+
+                pro_ids = [x[0] for x in rxn["meta"]["pro_meta"]]
+                pro_names = [x[1] for x in rxn["meta"]["pro_meta"]]
+                rct_ids = [x[0] for x in rxn["meta"]["rct_meta"]]
+                rct_names = [x[1] for x in rxn["meta"]["rct_meta"]]
+
+                self.assertSequenceEqual([str(e) for e in pro_ids],
+                                         [e.text for e in xml_parsed.find_all("proid")])
+                self.assertSequenceEqual([e for e in pro_names],
+                                         [e.text for e in xml_parsed.find_all("proname")])
+                self.assertSequenceEqual([str(e) for e in rct_ids],
+                                         [e.text for e in xml_parsed.find_all("rctid")])
+                self.assertSequenceEqual([e for e in rct_names],
+                                         [e.text for e in xml_parsed.find_all("rctname")])
+
+                for i, e in enumerate(pro_ids):
+                    with open(join(files_dir, "tmp", "molecules", str(e), "{}.mol".format(e)), 'r') as pro_file:
+                        pro_entry = pro_file.read()
+                        self.assertEqual(pro_entry, rxn["pros"][i])
+
+                for i, e in enumerate(rct_ids):
+                    with open(join(files_dir, "tmp", "molecules", str(e), "{}.mol".format(e)), 'r') as rct_file:
+                        rct_entry = rct_file.read()
+                        self.assertEqual(rct_entry, rxn["rcts"][i])
+
+        shutil.rmtree(join(files_dir, "tmp"))
 
     def test_store_reaxys_reactions_db(self):
         #TODO: How do I test this?
         pass
+
 
 class TestEPISuiteParser(unittest.TestCase):
     def setUp(self):
