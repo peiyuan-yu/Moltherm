@@ -4,7 +4,7 @@ import os
 import re
 from bs4 import BeautifulSoup
 
-from pymongo.errors import DuplicateKeyError
+from pymongo.errors import DuplicateKeyError, ConnectionFailure
 
 from pymatgen.io.babel import BabelMolAdaptor
 from atomate.qchem.database import QChemCalcDb
@@ -279,18 +279,6 @@ class EPISuiteParser:
 
     """
 
-    def __init__(self, db_file="db.json"):
-        """
-        :param db_file: Path to database config file.
-        """
-
-        self.db_file = db_file
-
-        try:
-            self.db = QChemCalcDb.from_db_file(self.db_file)
-        except:
-            self.db = None
-
     @staticmethod
     def parse_epi_suite_summary(file):
         """
@@ -434,7 +422,9 @@ class EPISuiteParser:
                                        "log_kow": log_kow})
         return parsed_results
 
-    def store_epi_suite_db(self, entries, collection="episuite"):
+    @staticmethod
+    def store_epi_suite_db(entries, collection="episuite",
+                           db_file="db.json"):
         """
         :param entries: List of dictionaries, with each entry representing the
         EPI Suite output data for a molecule.
@@ -444,7 +434,13 @@ class EPISuiteParser:
         collection.
         """
 
-        collection = self.db.db[collection]
+        try:
+            db = QChemCalcDb.from_db_file(db_file)
+        except:
+            raise ConnectionFailure("db_file is invalid, or db listed cannot be"
+                                    " connected to at this time.")
+
+        collection = db.db[collection]
 
         collection.create_index("mol_id", unique=True)
 

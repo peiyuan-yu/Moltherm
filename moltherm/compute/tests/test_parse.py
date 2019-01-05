@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 
 from pymatgen.io.babel import BabelMolAdaptor
 
+from monty.serialization import loadfn, #dumpfn
+
 from moltherm.compute.parse import ReaxysParser, EPISuiteParser
 
 
@@ -185,16 +187,31 @@ class TestReaxysParser(unittest.TestCase):
 
 class TestEPISuiteParser(unittest.TestCase):
     def setUp(self):
-        pass
+
+        self.parser = EPISuiteParser()
+
+        self.summary_file = join(files_dir, "episuite_summary.out")
+        self.complete_file = join(files_dir, "episuite_full.out")
 
     def tearDown(self):
-        pass
+
+        del self.complete_file
+        del self.summary_file
+        del self.parser
 
     def test_parse_epi_suite_summary(self):
-        pass
+
+        parsed = self.parser.parse_epi_suite_summary(self.summary_file)
+        #dumpfn(parsed, join(files_dir, "episuite_summary.json"))
+        reference = loadfn(join(files_dir, "episuite_summary.json"))
+        self.assertSequenceEqual(parsed, reference)
 
     def test_parse_epi_suite_complete(self):
-        pass
+
+        parsed = self.parser.parse_epi_suite_complete(self.complete_file)
+        #dumpfn(parsed, join(files_dir, "episuite_complete.json"))
+        reference = loadfn(join(files_dir, "episuite_complete.json"))
+        self.assertSequenceEqual(parsed, reference)
 
     def test_store_epi_suite_db(self):
         #TODO: How do I test this?
