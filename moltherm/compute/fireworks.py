@@ -2,9 +2,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import os
 
-from atomate.qchem.firetasks.parse_outputs import QChemToDb
-
-from atomate.utils.utils import env_chk, get_logger
+from pymatgen.io.qchem.inputs import QCInput
 
 from fireworks import FiretaskBase, explicit_serialize
 from fireworks import Firework
@@ -12,13 +10,20 @@ from fireworks import Firework
 from custodian import Custodian
 from custodian.qchem.handlers import QChemErrorHandler
 
-from pymatgen.io.qchem.inputs import QCInput
-
+from atomate.qchem.firetasks.parse_outputs import QChemToDb
+from atomate.utils.utils import env_chk, get_logger
 import atomate.qchem.firetasks as tasks
 
 from moltherm.compute.jobs import QCJob
 
 logger = get_logger(__name__)
+
+__author__ = "Evan Spotte-Smith, Samuel Blau"
+__version__ = "0.2"
+__maintainer__ = "Evan Spotte-Smith"
+__email__ = "espottesmith@gmail.com"
+__status__ = "Beta"
+__date__ = "Jan 2019"
 
 
 class OptFreqSPFW(Firework):

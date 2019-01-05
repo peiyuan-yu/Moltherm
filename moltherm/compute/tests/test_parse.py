@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import os
 from os.path import join, dirname, abspath
 import shutil
@@ -7,7 +9,7 @@ from bs4 import BeautifulSoup
 
 from pymatgen.io.babel import BabelMolAdaptor
 
-from monty.serialization import loadfn, #dumpfn
+from monty.serialization import loadfn#, dumpfn
 
 from moltherm.compute.parse import ReaxysParser, EPISuiteParser
 
@@ -17,7 +19,7 @@ __version__ = "0.2"
 __maintainer__ = "Evan Spotte-Smith"
 __email__ = "espottesmith@gmail.com"
 __status__ = "Beta"
-__date__ = "June 2018"
+__date__ = "Jan 2018"
 
 module_dir = join(dirname(abspath(__file__)))
 files_dir = join(module_dir, "..", "..", "..", "test_files")

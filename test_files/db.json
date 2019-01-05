@@ -1,0 +1,7 @@
+{
+    "aliases": {},
+    "collection": "tasks",
+    "database": "moltherm_unittest",
+    "host": "localhost",
+    "port": 27017
+}
