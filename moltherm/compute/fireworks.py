@@ -199,7 +199,7 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 max_iterations=max_iterations,
                 max_molecule_perturb_scale=max_molecule_perturb_scale,
                 reversed_direction=reversed_direction,
-                gzipped_outputx=False))
+                gzipped_output=False))
         if directory is None:
             t.append(
                 tasks.parse_outputs.QChemToDb(

@@ -54,6 +54,8 @@ class TestFrequencyFlatteningOptimizeFW(AtomateTest):
         self.act_mol = qc_out.data["initial_molecule"]
         super(TestFrequencyFlatteningOptimizeFW, self).setUp(lpad=False)
 
+        self.maxDiff = None
+
     def tearDown(self):
         pass
 
@@ -71,24 +73,22 @@ class TestFrequencyFlatteningOptimizeFW(AtomateTest):
                              multimode=">>multimode<<",
                              input_file="mol.qin",
                              output_file="mol.qout",
+                             qclog_file="mol.qclog",
                              max_cores=">>max_cores<<",
                              job_type="opt_with_frequency_flattener",
                              max_iterations=10,
                              max_molecule_perturb_scale=0.3,
-                             linked=False).as_dict())
+                             gzipped_output=False,
+                             reversed_direction=False).as_dict())
         self.assertEqual(firework.tasks[2].as_dict(),
                          QChemToDb(
                              db_file=None,
                              input_file="mol.qin",
                              output_file="mol.qout",
-                             additional_fields={
-                                 "task_label":
-                                     "frequency flattening structure optimization",
-                                 "special_run_type":
-                                     "frequency_flattener",
-                                 "linked":
-                                     False
-                             }).as_dict())
+                             additional_fields={"special_run_type":
+                                                    "frequency_flattener",
+                                                "task_label":
+                                                    "frequency flattening structure optimization"}).as_dict())
         self.assertEqual(firework.parents, [])
         self.assertEqual(firework.name,
                          "frequency flattening structure optimization")
@@ -119,10 +119,13 @@ class TestFrequencyFlatteningOptimizeFW(AtomateTest):
                              multimode="mpi",
                              input_file="mol.qin",
                              output_file="mol.qout",
+                             qclog_file="mol.qclog",
                              max_cores=12,
                              job_type="opt_with_frequency_flattener",
                              max_iterations=5,
-                             max_molecule_perturb_scale=0.2).as_dict())
+                             max_molecule_perturb_scale=0.2,
+                             gzipped_output=False,
+                             reversed_direction=False).as_dict())
         self.assertEqual(
             firework.tasks[2].as_dict(),
             QChemToDb(
@@ -133,8 +136,7 @@ class TestFrequencyFlatteningOptimizeFW(AtomateTest):
                     "task_label":
                         "special frequency flattening structure optimization",
                     "special_run_type":
-                        "frequency_flattener",
-                    "linked": True
+                        "frequency_flattener"
                 }).as_dict())
         self.assertEqual(firework.parents, [])
         self.assertEqual(firework.name,
@@ -150,7 +152,7 @@ class TestRunQChemCustodian(AtomateTest):
         pass
 
     def test_RunQChemCustodian_basic_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             firetask = RunQChemCustodian(
                 qchem_cmd="qchem",
@@ -177,7 +179,7 @@ class TestRunQChemCustodian(AtomateTest):
             })
 
     def test_RunQChemCustodian_using_fw_spec_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             firetask = RunQChemCustodian(
                 qchem_cmd=">>qchem_cmd<<",
@@ -205,8 +207,8 @@ class TestRunQChemCustodian(AtomateTest):
             self.assertEqual(custodian_patch.call_args[0][1][0].as_dict(),
                              QCJob(
                                  qchem_command="qchem -slurm",
-                                 max_cores=32,
-                                 multimode="openmp",
+                                 max_cores=">>max_cores<<",
+                                 multimode=">>multimode<<",
                                  input_file=os.path.join(
                                      module_dir, "..", "..", "test_files",
                                      "co_qc.in"),
@@ -218,7 +220,7 @@ class TestRunQChemCustodian(AtomateTest):
             })
 
     def test_RunQChemCustodian_basic_not_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             firetask = RunQChemCustodian(
                 qchem_cmd="qchem -slurm",
@@ -258,7 +260,7 @@ class TestRunQChemCustodian(AtomateTest):
             })
 
     def test_RunQChemCustodian_using_fw_spec_not_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             firetask = RunQChemCustodian(
                 qchem_cmd=">>qchem_cmd<<",
@@ -290,7 +292,7 @@ class TestRunQChemCustodian(AtomateTest):
             self.assertEqual(custodian_patch.call_args[0][1][0].as_dict(),
                              QCJob(
                                  qchem_command="qchem -slurm",
-                                 multimode="mpi",
+                                 multimode=">>multimode<<",
                                  input_file=os.path.join(
                                      module_dir, "..", "..", "test_files",
                                      "co_qc.in"),
@@ -307,10 +309,11 @@ class TestRunQChemCustodian(AtomateTest):
             })
 
     def test_RunQChemCustodian_FF_basic_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        self.maxDiff = None
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             with patch(
-                    "atomate.qchem.firetasks.run_calc.QCJob.opt_with_frequency_flattener"
+                    "moltherm.compute.fireworks.QCJob.opt_with_frequency_flattener"
             ) as FF_patch:
                 firetask = RunQChemCustodian(
                     qchem_cmd="qchem",
@@ -337,35 +340,25 @@ class TestRunQChemCustodian(AtomateTest):
                         "qchem",
                         "multimode":
                         "openmp",
-                        "input_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qin"),
-                        "output_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qout"),
-                        "qclog_file":
-                        "mol.qclog",
-                        "max_iterations":
-                        10,
-                        "max_molecule_perturb_scale":
-                        0.3,
-                        "linked":
-                        False,
-                        "scratch_dir":
-                        "/dev/shm/qcscratch/",
-                        "save_scratch":
-                        False,
-                        "save_name":
-                        "default_save_name",
-                        "max_cores":
-                        32
+                        "input_file": os.path.join(files_dir, "qchem",
+                                                   "test_before_run.qin"),
+                        "output_file": os.path.join(files_dir, "qchem",
+                                                    "test_before_run.qout"),
+                        "qclog_file": "mol.qclog",
+                        "max_iterations": 10,
+                        "max_molecule_perturb_scale": 0.3,
+                        "scratch_dir": "/dev/shm/qcscratch/",
+                        "save_scratch": False,
+                        "save_name": "default_save_name",
+                        "max_cores": 32,
+                        "sp_params": None
                     })
 
     def test_RunQChemCustodian_FF_using_fw_spec_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             with patch(
-                    "atomate.qchem.firetasks.run_calc.QCJob.opt_with_frequency_flattener"
+                    "moltherm.compute.fireworks.QCJob.opt_with_frequency_flattener"
             ) as FF_patch:
                 firetask = RunQChemCustodian(
                     qchem_cmd=">>qchem_cmd<<",
@@ -387,54 +380,40 @@ class TestRunQChemCustodian(AtomateTest):
                         }
                     })
                 custodian_patch.assert_called_once()
+
                 self.assertEqual(custodian_patch.call_args[0][0][0].as_dict(),
                                  QChemErrorHandler(
-                                     input_file=os.path.join(
-                                         module_dir, "..", "..", "test_files",
-                                         "FF_before_run", "test.qin"),
-                                     output_file=os.path.join(
-                                         module_dir, "..", "..", "test_files",
-                                         "FF_before_run",
-                                         "test.qout")).as_dict())
+                                     input_file=os.path.join(files_dir, "qchem",
+                                                             "test_before_run.qin"),
+                                     output_file=os.path.join(files_dir, "qchem",
+                                                              "test_before_run.qout")).as_dict())
                 self.assertEqual(custodian_patch.call_args[1], {
                     "max_errors": 5,
                     "gzipped_output": True
                 })
                 self.assertEqual(
                     FF_patch.call_args[1], {
-                        "qchem_command":
-                        "qchem -slurm",
-                        "multimode":
-                        "openmp",
-                        "input_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qin"),
-                        "output_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qout"),
-                        "qclog_file":
-                        "mol.qclog",
-                        "max_iterations":
-                        10,
-                        "max_molecule_perturb_scale":
-                        0.3,
-                        "linked":
-                        False,
-                        "scratch_dir":
-                        "/this/is/a/test",
-                        "save_scratch":
-                        False,
-                        "save_name":
-                        "default_save_name",
-                        "max_cores":
-                        32
+                        "qchem_command": "qchem -slurm",
+                        "multimode": ">>multimode<<",
+                        "input_file": os.path.join(files_dir, "qchem",
+                                                   "test_before_run.qin"),
+                        "output_file": os.path.join(files_dir, "qchem",
+                                                    "test_before_run.qout"),
+                        "qclog_file": "mol.qclog",
+                        "max_iterations": 10,
+                        "max_molecule_perturb_scale": 0.3,
+                        "scratch_dir": "/this/is/a/test",
+                        "save_scratch": False,
+                        "save_name": "default_save_name",
+                        "max_cores": ">>max_cores<<",
+                        "sp_params": None
                     })
 
     def test_RunQChemCustodian_FF_basic_not_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             with patch(
-                    "atomate.qchem.firetasks.run_calc.QCJob.opt_with_frequency_flattener"
+                    "moltherm.compute.fireworks.QCJob.opt_with_frequency_flattener"
             ) as FF_patch:
                 firetask = RunQChemCustodian(
                     qchem_cmd="qchem -slurm",
@@ -464,39 +443,27 @@ class TestRunQChemCustodian(AtomateTest):
                 })
                 self.assertEqual(
                     FF_patch.call_args[1], {
-                        "qchem_command":
-                        "qchem -slurm",
-                        "multimode":
-                        "mpi",
-                        "input_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qin"),
-                        "output_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qout"),
-                        "qclog_file":
-                        "this_is_a_test.qclog",
-                        "max_iterations":
-                        1029,
-                        "max_molecule_perturb_scale":
-                        0.5,
-                        "linked":
-                        False,
-                        "scratch_dir":
-                        "/this/is/a/test",
-                        "save_scratch":
-                        True,
-                        "save_name":
-                        "no_idea",
-                        "max_cores":
-                        4
+                        "qchem_command": "qchem -slurm",
+                        "multimode": "mpi",
+                        "input_file": os.path.join(files_dir, "qchem",
+                                                   "test_before_run.qin"),
+                        "output_file": os.path.join(files_dir, "qchem",
+                                                    "test_before_run.qout"),
+                        "qclog_file": "this_is_a_test.qclog",
+                        "max_iterations": 1029,
+                        "max_molecule_perturb_scale": 0.5,
+                        "scratch_dir": "/this/is/a/test",
+                        "save_scratch": True,
+                        "save_name": "no_idea",
+                        "max_cores": 4,
+                        "sp_params": None
                     })
 
     def test_RunQChemCustodian_FF_using_fw_spec_not_defaults(self):
-        with patch("atomate.qchem.firetasks.run_calc.Custodian"
+        with patch("moltherm.compute.fireworks.Custodian"
                    ) as custodian_patch:
             with patch(
-                    "atomate.qchem.firetasks.run_calc.QCJob.opt_with_frequency_flattener"
+                    "moltherm.compute.fireworks.QCJob.opt_with_frequency_flattener"
             ) as FF_patch:
                 firetask = RunQChemCustodian(
                     qchem_cmd=">>qchem_cmd<<",
@@ -532,34 +499,24 @@ class TestRunQChemCustodian(AtomateTest):
                     "max_errors": 137,
                     "gzipped_output": False
                 })
+
                 self.assertEqual(
                     FF_patch.call_args[1], {
-                        "qchem_command":
-                        "qchem -slurm",
-                        "multimode":
-                        "mpi",
-                        "input_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qin"),
+                        "qchem_command": "qchem -slurm",
+                        "multimode": ">>multimode<<",
+                        "input_file": join(files_dir, "qchem",
+                                           "test_before_run.qin"),
                         "output_file":
-                        os.path.join(module_dir, "..", "..", "test_files",
-                                     "FF_before_run", "test.qout"),
-                        "qclog_file":
-                        "this_is_a_test.qclog",
-                        "max_iterations":
-                        1029,
-                        "max_molecule_perturb_scale":
-                        0.5,
-                        "linked":
-                        False,
-                        "scratch_dir":
-                        "/this/is/a/test",
-                        "save_scratch":
-                        True,
-                        "save_name":
-                        "no_idea",
-                        "max_cores":
-                        4
+                        join(files_dir, "qchem",
+                             "test_before_run.qout"),
+                        "qclog_file": "this_is_a_test.qclog",
+                        "sp_params": None,
+                        "max_iterations": 1029,
+                        "max_molecule_perturb_scale": 0.5,
+                        "scratch_dir": "/this/is/a/test",
+                        "save_scratch": True,
+                        "save_name": "no_idea",
+                        "max_cores": 4
                     })
 
 class TestWriteCustomInput(AtomateTest):
@@ -575,8 +532,7 @@ class TestWriteCustomInput(AtomateTest):
             os.path.join(files_dir, "qchem", "to_opt.qin"))
         cls.opt_mol = cls.opt_mol_ref_in.molecule
         cls.opt_mol_pcm_ref_in = QCInput.from_file(
-            os.path.join(module_dir, "..", "..", "test_files",
-                         "to_opt_pcm.qin"))
+            os.path.join(files_dir, "qchem", "to_opt_pcm.qin"))
 
     def setUp(self, lpad=False):
         super(TestWriteCustomInput, self).setUp(lpad=False)
