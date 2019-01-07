@@ -3,7 +3,6 @@
 import os
 from os.path import abspath, dirname, join
 import shutil
-import unittest
 from unittest.mock import patch
 
 from pymatgen.core.structure import Molecule
@@ -31,19 +30,123 @@ module_dir = join(dirname(abspath(__file__)))
 files_dir = join(module_dir, "..", "..", "..", "test_files")
 
 
-class TestOptFreqSPFW(unittest.TestCase):
+class TestOptFreqSPFW(AtomateTest):
 
     def setUp(self):
-        pass
+        self.opt_freq_params = {"rem": {"job_type": "opt",
+                               "method": "wb97x-d",
+                               "basis": "6-31g*",
+                               "max_scf_cycles": 200,
+                               "gen_scfman": True,
+                               "scf_algorithm": "diis",
+                               "geom_opt_max_cycles": 200}
+                               }
+
+        self.sp_params = {"rem": {"job_type": "sp",
+                                  "method": "wb97x-d",
+                                  "basis": "6-311++g(d,p)",
+                                  "max_scf_cycles": 200,
+                                  "gen_scfman": True,
+                                  "scf_algorithm": "diis",
+                                  "solvent_method": "pcm"},
+                          "pcm": {"theory": "iefpcm"},
+                          "solvent": {"dielectric": 80.4}
+                          }
+
+        out_file = os.path.join(files_dir, "qchem", "test.qout.opt_0")
+        qc_out = QCOutput(filename=out_file)
+        self.act_mol = qc_out.data["initial_molecule"]
+        super(TestOptFreqSPFW, self).setUp(lpad=False)
 
     def tearDown(self):
         pass
 
     def test_OptFreqSPFW_defaults(self):
-        pass
+        firework = OptFreqSPFW(molecule=self.act_mol,
+                               qchem_input_params=self.opt_freq_params,
+                               sp_params=self.sp_params)
+        self.assertEqual(firework.tasks[0].as_dict(),
+                         WriteCustomInput(
+                             molecule=self.act_mol,
+                             rem=self.opt_freq_params["rem"],
+                             opt=None,
+                             pcm=None,
+                             solvent=None,
+                             smx=None,
+                             input_file="mol.qin").as_dict())
+        self.assertEqual(firework.tasks[1].as_dict(),
+                         RunQChemCustodian(
+                             qchem_cmd="qchem",
+                             multimode="openmp",
+                             input_file="mol.qin",
+                             output_file="mol.qout",
+                             qclog_file="mol.qclog",
+                             max_cores=24,
+                             job_type="opt_with_frequency_flattener",
+                             max_iterations=1,
+                             gzipped_output=False,
+                             reversed_direction=False,
+                             sp_params=self.sp_params,
+                             handler_group="no_handler").as_dict())
+        self.assertEqual(firework.tasks[2].as_dict(),
+                         QChemToDb(
+                             db_file=None,
+                             input_file="mol.qin",
+                             output_file="mol.qout",
+                             additional_fields={"special_run_type": "opt_freq_sp",
+                                                "task_label": "opt_freq_sp"},
+                             calc_dir="").as_dict())
+        self.assertEqual(firework.parents, [])
+        self.assertEqual(firework.name, "opt_freq_sp")
 
     def test_OptFreqSPFw_not_defaults(self):
-        pass
+        self.maxDiff = None
+        firework = OptFreqSPFW(
+            molecule=self.act_mol,
+            name="special",
+            qchem_cmd="qchem -slurm",
+            multimode="mpi",
+            max_cores=12,
+            qchem_input_params=self.opt_freq_params,
+            sp_params=self.sp_params,
+            max_iterations=5,
+            db_file=os.path.join(files_dir, "db.json"),
+            parents=None)
+        self.assertEqual(firework.tasks[0].as_dict(),
+                         WriteCustomInput(
+                             molecule=self.act_mol,
+                             rem=self.opt_freq_params["rem"],
+                             opt=None,
+                             pcm=None,
+                             solvent=None,
+                             smx=None,
+                             input_file="mol.qin").as_dict())
+        self.assertEqual(firework.tasks[1].as_dict(),
+                         RunQChemCustodian(
+                             qchem_cmd="qchem -slurm",
+                             multimode="mpi",
+                             input_file="mol.qin",
+                             output_file="mol.qout",
+                             qclog_file="mol.qclog",
+                             max_cores=12,
+                             job_type="opt_with_frequency_flattener",
+                             max_iterations=5,
+                             gzipped_output=False,
+                             reversed_direction=False,
+                             handler_group="no_handler",
+                             sp_params=self.sp_params).as_dict())
+        self.assertEqual(
+            firework.tasks[2].as_dict(),
+            QChemToDb(
+                db_file=os.path.join(files_dir, "db.json"),
+                input_file="mol.qin",
+                output_file="mol.qout",
+                additional_fields={
+                    "task_label": "special",
+                    "special_run_type": "opt_freq_sp"},
+                calc_dir="").as_dict())
+        self.assertEqual(firework.parents, [])
+        self.assertEqual(firework.name, "special")
 
 
 class TestFrequencyFlatteningOptimizeFW(AtomateTest):
@@ -53,8 +156,6 @@ class TestFrequencyFlatteningOptimizeFW(AtomateTest):
         qc_out = QCOutput(filename=out_file)
         self.act_mol = qc_out.data["initial_molecule"]
         super(TestFrequencyFlatteningOptimizeFW, self).setUp(lpad=False)
-
-        self.maxDiff = None
 
     def tearDown(self):
         pass
