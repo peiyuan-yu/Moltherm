@@ -600,12 +600,10 @@ class MolThermDataProcessor:
             raise RuntimeError("Cannot query database; connection is invalid."
                                " Try to connect again.")
 
-        db_collection = self.db.db[collection]
-
-        mol_entry = db_collection.find_one({"mol_id": mol_id})
+        mol_entry = self.mol_coll.find_one({"mol_id": mol_id})
 
         mol_data["enthalpy"] = mol_entry["output"]["enthalpy"] * 4.184 * 1000
-        mol_data["entropy"]  = mol_entry["output"]["entropy"] * 4.184
+        mol_data["entropy"] = mol_entry["output"]["entropy"] * 4.184
 
         try:
             final_energy = mol_entry["output"]["final_energy_sp"]
@@ -651,60 +649,41 @@ class MolThermDataProcessor:
 
         return mol_data
 
-    def get_reaction_data(self, directory=None, mol_ids=None):
+    def get_reaction_data(self, rxn_id):
         """
         Compile all useful data for a set of molecules associated with a
         particular reaction. This data will be compiled on a reaction basis
         (difference between reactants and products) as well as an individual
         molecule basis.
 
-        :param directory: Subdirectory where molecule data is located.
-        :param mol_ids: List of unique IDs for molecules associated with the
-            reaction
+        :param rxn_id: str representing a reaction ID
         :return: dict of relevant reaction data.
         """
 
         reaction_data = {}
-        reaction_data["thermo"] = None
 
-        if directory is not None:
-            mol_ids = [extract_id(f) for f in listdir(join(self.base_dir, directory))
-                        if f.endswith(".mol")]
+        rxn_entry = self.rxn_coll.find_one({"rxn_id": rxn_id})
 
-            component_data = [self.get_molecule_data(m) for m in mol_ids]
+        reaction_data["rxn_id"] = rxn_id
+        reaction_data["mol_ids"] = rxn_entry["pro_ids"] + rxn_id["rct_ids"]
+        reaction_data["product"] = self.get_molecule_data(rxn_entry["pro_ids"][0])
+        reaction_data["reactants"] = [self.get_molecule_data(m)
+                                      for m in rxn_entry["rct_ids"]]
 
-            reaction_data["thermo"] = self.extract_reaction_thermo_db(directory)["thermo"]
+        reaction_data["thermo"] = {}
+        pro_h = reaction_data["product"]["enthalpy"] + reaction_data["product"]["energy"]
+        rct_h = sum(r["enthalpy"] + r["energy"]
+                    for r in reaction_data["reactants"])
+        reaction_data["thermo"]["enthalpy"] = pro_h - rct_h
 
-        elif mol_ids is not None:
-            component_data = [self.get_molecule_data(m) for m in mol_ids]
+        pro_s = reaction_data["product"]["entropy"]
+        rct_s = sum(r["entropy"] for r in reaction_data["reactants"])
+        reaction_data["thermo"]["entropy"] = pro_s - rct_s
 
-
-        else:
-            raise ValueError("get_reaction_data requires either a directory or "
-                             "a set of molecule ids.")
-
-        component_data = sorted(component_data, key=lambda x: len(x["molecule"]))
-
-        reaction_data["dir_name"] = directory
-        reaction_data["mol_ids"] = mol_ids
-        reaction_data["product"] = component_data[-1]
-        reaction_data["reactants"] = component_data[:-1]
-
-        if reaction_data["thermo"] is None:
-            reaction_data["thermo"] = {}
-            pro_h = reaction_data["product"]["enthalpy"] + reaction_data["product"]["energy"]
-            rct_h = sum(r["enthalpy"] + r["energy"]
-                        for r in reaction_data["reactants"])
-            reaction_data["thermo"]["enthalpy"] = pro_h - rct_h
-
-            pro_s = reaction_data["product"]["entropy"]
-            rct_s = sum(r["entropy"] for r in reaction_data["reactants"])
-            reaction_data["thermo"]["entropy"] = pro_s - rct_s
-
-            try:
-                reaction_data["thermo"]["t_star"] = reaction_data["thermo"]["enthalpy"] / reaction_data["thermo"]["entropy"]
-            except ZeroDivisionError:
-                reaction_data["thermo"]["t_star"] = 0
+        try:
+            reaction_data["thermo"]["t_star"] = reaction_data["thermo"]["enthalpy"] / reaction_data["thermo"]["entropy"]
+        except ZeroDivisionError:
+            reaction_data["thermo"]["t_star"] = 0
 
         return reaction_data
 
