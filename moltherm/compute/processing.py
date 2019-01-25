@@ -543,7 +543,7 @@ class MolThermDataProcessor:
                                           output_file="mol.qout",
                                           multirun=False)
                 completion = result["state"]
-            except ValueError:
+            except (ValueError, IndexError):
                 completion = "incomplete"
 
             if completion == "complete":
