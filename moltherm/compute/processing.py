@@ -546,7 +546,7 @@ class MolThermDataProcessor:
             except (ValueError, IndexError):
                 completion = "incomplete"
 
-            if completion == "complete":
+            if completion == "successful":
                 if extra:
                     completed.add((m, path))
                 else:
