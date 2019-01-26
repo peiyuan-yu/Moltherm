@@ -567,7 +567,7 @@ class MolThermDataProcessor:
                                "and try again later.")
 
         completed_molecules = [x["mol_id"] for x in self.mol_coll.find()]
-        completed_reactions = set()
+        completed_reactions = list()
 
         all_reactions = [r for r in self.rxn_coll.find({}, {"_id": 0})]
 
@@ -577,7 +577,7 @@ class MolThermDataProcessor:
             are_completed = [True if m in completed_molecules else False for m in all_ids]
 
             if all(are_completed):
-                completed_reactions.add(r)
+                completed_reactions.append(r)
 
         return completed_reactions
 
