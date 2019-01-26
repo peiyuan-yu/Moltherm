@@ -365,15 +365,15 @@ class MolThermDataProcessor:
             rxns_in_db = [rxn for rxn in self.thermo_coll.find()]
 
             for rxn in completed_rxns:
-                if rxn not in [r["rxn_id"] for r in rxns_in_db]:
+                if rxn["rxn_id"] not in [r["rxn_id"] for r in rxns_in_db]:
                     try:
-                        self.record_reaction_data_db(rxn, use_db=True)
+                        self.record_reaction_data_db(rxn["rxn_id"], use_db=True)
                     except:
-                        print("Failed to add reaction: {}".format(rxn))
+                        print("Failed to add reaction: {}".format(rxn.get("rxn_id", rxn)))
 
                 elif overwrite:
-                    self.thermo_coll.update_one({"rxn_id": rxn},
-                                                {"$set": self.extract_reaction_thermo_db(rxn)})
+                    self.thermo_coll.update_one({"rxn_id": rxn["rxn_id"]},
+                                                {"$set": self.extract_reaction_thermo_db(rxn["rxn_id"])})
 
     def update_molecules(self):
         """
