@@ -542,11 +542,22 @@ class MolThermDataProcessor:
                                           input_file="mol.qin",
                                           output_file="mol.qout",
                                           multirun=False)
-                completion = result["state"]
-            except (ValueError, IndexError):
-                completion = "incomplete"
 
-            if completion == "successful":
+                output = result["output"]
+                complete = True
+                important_values = ["enthalpy", "entropy",
+                                    "frequencies", "final_energy"]
+                if any([x not in output.keys() for x in important_values]):
+                    complete = False
+                else:
+                    freqs = output["frequencies"]
+                    if any([x < 0 for x in freqs]):
+                        complete = False
+
+            except (ValueError, IndexError):
+                complete = False
+
+            if complete:
                 if extra:
                     completed.add((m, path))
                 else:
