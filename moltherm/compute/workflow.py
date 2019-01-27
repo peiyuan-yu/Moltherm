@@ -154,6 +154,55 @@ class MolThermWorkflow:
 
         return Workflow(fws)
 
+    def get_perturbed_molecule_workflow(self, path, mol_id, geometry,
+                                        name_pre="molecule_opt_freq",
+                                        qchem_cmd="qchem -slurm", max_cores=24,
+                                        qchem_input_params=None,
+                                        max_perturb_scale=0.3,
+                                        max_iterations=3):
+        """
+        Generates a Fireworks Workflow to optimize a perturbed molecular
+        geometry and perform a vibrational analysis (frequency calculation) in
+        Q-Chem.
+
+        :param path: Specified (sub)path in which to run the reaction. By
+        default, this is None, and the Fireworks will run in self.base_dir
+        :param mol_id: str representing the unique molecule identifier
+        :param geometry: pymatgen Molecule object with perturbed geometry
+        :param name_pre: str indicating the prefix which should be used for all
+        Firework names
+        :param qchem_cmd: str indicating how the Q-Chem code should be called.
+        Default is "qchem -slurm", for a SLURM-based system.
+        :param max_cores: int specifying how many cores the workflow should be
+        split over. Default is 24.
+        :param qchem_input_params: dict listing all parameters differing from
+        default values.
+        :param max_perturb_scale: The maximum scaled perturbation that can be
+        applied to the molecule. Defaults to 0.3.
+        :param max_iterations: Number of perturbation -> optimization -> frequency
+        iterations to perform. Defaults to 3.
+        :return: Workflow
+        """
+
+        fws = []
+
+        base_path = join(self.base_dir, path, mol_id)
+
+        fw = FrequencyFlatteningOptimizeFW(molecule=geometry,
+                                           name=name_pre + "_{}".format(mol_id),
+                                           qchem_cmd=qchem_cmd,
+                                           qchem_input_params=qchem_input_params,
+                                           multimode="openmp",
+                                           max_cores=max_cores,
+                                           directory=base_path,
+                                           max_iterations=max_iterations,
+                                           max_molecule_perturb_scale=max_perturb_scale,
+                                           db_file=self.db_file)
+
+        fws.append(fw)
+
+        return Workflow(fws)
+
     def get_reaction_workflow(self, rxn_id, mol_dir=None,
                               name_pre="reaction_opt_freq",
                               qchem_cmd="qchem -slurm", max_cores=24,
