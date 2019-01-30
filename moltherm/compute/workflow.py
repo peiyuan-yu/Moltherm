@@ -15,9 +15,8 @@ from pymatgen.analysis.local_env import OpenBabelNN
 from pymatgen.analysis.molecule_structure_comparator import MoleculeStructureComparator
 
 from atomate.qchem.database import QChemCalcDb
-from atomate.qchem.fireworks.core import SinglePointFW
 
-from moltherm.compute.fireworks import OptFreqSPFW, FrequencyFlatteningOptimizeFW
+from moltherm.compute.fireworks import SinglePointFW, OptFreqSPFW, FrequencyFlatteningOptimizeFW
 from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 from moltherm.compute.jobs import perturb_coordinates
 
@@ -242,7 +241,8 @@ class MolThermWorkflow:
                                qchem_cmd=qchem_cmd,
                                multimode="openmp",
                                max_cores=max_cores,
-                               qchem_input_params=qchem_input_params)
+                               qchem_input_params=qchem_input_params,
+                               directory=base_path)
 
             fws.append(fw)
 
