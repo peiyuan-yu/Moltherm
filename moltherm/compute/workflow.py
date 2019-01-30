@@ -131,14 +131,14 @@ class MolThermWorkflow:
         else:
             file = files[0]
 
-            result = self.molecules.find_one({"mol_id": mol_id})
+            entry = self.molecules.find_one({"mol_id": mol_id})
 
-            if result is None:
+            if entry is None:
                 mol = get_molecule(join(base_path, file))
             else:
-                entry = result["output"].get('optimized_molecule',
-                                          result["output"].get('initial_molecule'))
-                mol = Molecule.from_dict(entry)
+                geometry = entry["output"].get('optimized_molecule',
+                                          entry["output"].get('initial_molecule'))
+                mol = Molecule.from_dict(geometry)
 
             fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                name=name_pre+"_{}".format(mol_id),
@@ -202,6 +202,52 @@ class MolThermWorkflow:
         fws.append(fw)
 
         return Workflow(fws)
+
+    def get_single_point_workflow(self, path, mol_id,
+                                  name_pre="solubility_calc",
+                                  qchem_cmd="qchem -slurm",
+                                  max_cores=24,
+                                  qchem_input_params=None):
+        """
+
+        :param path: Specified (sub)path in which to run the reaction. By
+        default, this is None, and the Fireworks will run in self.base_dir
+        :param mol_id: str representing the unique molecule identifier
+        :param name_pre: tr indicating the prefix which should be used for all
+        Firework names
+        :param qchem_cmd: str indicating how the Q-Chem code should be called.
+        Default is "qchem -slurm", for a SLURM-based system.
+        :param max_cores: int specifying how many cores the workflow should be
+        split over. Default is 24.
+        :param qchem_input_params: dict listing all parameters differing from
+        default values.
+        :return: Workflow
+        """
+
+        fws = []
+
+        base_path = join(self.base_dir, path, mol_id)
+
+        if self.db is None:
+            raise RuntimeError("Cannot search for molecule geometry without"
+                               " valid database connection. Try again later.")
+        else:
+            entry = self.molecules.find_one({"mol_id": mol_id})
+            geometry = entry["output"].get('optimized_molecule',
+                                           entry["output"].get('initial_molecule'))
+            mol = Molecule.from_dict(geometry)
+
+            fw = SinglePointFW(molecule=mol,
+                               name=name_pre,
+                               qchem_cmd=qchem_cmd,
+                               multimode="openmp",
+                               max_cores=max_cores,
+                               qchem_input_params=qchem_input_params)
+
+            fws.append(fw)
+
+            return Workflow(fws)
+
 
     def get_reaction_workflow(self, rxn_id, mol_dir=None,
                               name_pre="reaction_opt_freq",
