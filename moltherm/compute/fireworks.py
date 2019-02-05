@@ -11,9 +11,9 @@ from custodian import Custodian
 from custodian.qchem.handlers import QChemErrorHandler
 
 from atomate.qchem.firetasks.write_inputs import WriteInputFromIOSet
+from atomate.qchem.firetasks.run_calc import RunQChemCustodian as RunQChemCustodianAtomate
 from atomate.qchem.firetasks.parse_outputs import QChemToDb
 from atomate.utils.utils import env_chk, get_logger
-import atomate.qchem.firetasks as tasks
 
 from moltherm.compute.jobs import QCJob
 
@@ -267,13 +267,13 @@ class FrequencyFlatteningOptimizeFW(Firework):
             qclog_file = os.path.join(directory, "mol.qclog")
         t = []
         t.append(
-            tasks.write_inputs.WriteInputFromIOSet(
+            WriteInputFromIOSet(
                 molecule=molecule,
                 qchem_input_set="OptSet",
                 input_file=input_file,
                 qchem_input_params=qchem_input_params))
         t.append(
-            tasks.run_calc.RunQChemCustodian(
+            RunQChemCustodianAtomate(
                 qchem_cmd=qchem_cmd,
                 multimode=multimode,
                 input_file=input_file,
@@ -287,7 +287,7 @@ class FrequencyFlatteningOptimizeFW(Firework):
                 gzipped_output=False))
         if directory is None:
             t.append(
-                tasks.parse_outputs.QChemToDb(
+                QChemToDb(
                     db_file=db_file,
                     input_file=input_file,
                     output_file=output_file,
@@ -297,7 +297,7 @@ class FrequencyFlatteningOptimizeFW(Firework):
                     }))
         else:
             t.append(
-                tasks.parse_outputs.QChemToDb(
+                QChemToDb(
                     db_file=db_file,
                     calc_dir=directory,
                     input_file="mol.qin",
