@@ -36,18 +36,16 @@ class MolThermWorkflow:
     workflows on molecular data.
     """
 
-    def __init__(self, base_dir, db_file="db.json",
-                 reaction_collection="reaxys",
-                 molecule_collection="molecules",
-                 thermo_collection="thermo"):
+    def __init__(self, base_dir, db_file="db.json", rxn_coll="reaxys",
+                 mol_coll="molecules", thermo_coll="thermo"):
         """
         :param base_dir: Directory where input and output data should be stored.
         :param db_file: Path to database config file.
-        :param reaction_collection: Name of database collection where reaction
+        :param rxn_coll: Name of database collection where reaction
         metadata is stored.
-        :param molecule_collection: Name of database collection where molecule
+        :param mol_coll: Name of database collection where molecule
         calculations are stored.
-        :param thermo_collection: Name of database collection where reaction
+        :param thermo_coll: Name of database collection where reaction
         thermodynamics calculations are stored.
         """
 
@@ -60,9 +58,9 @@ class MolThermWorkflow:
             self.db = None
 
         if self.db is not None:
-            self.reactions = self.db.db[reaction_collection]
-            self.molecules = self.db.db[molecule_collection]
-            self.thermo = self.db.db[thermo_collection]
+            self.reactions = self.db.db[rxn_coll]
+            self.molecules = self.db.db[mol_coll]
+            self.thermo = self.db.db[thermo_coll]
 
     @staticmethod
     def add_workflow(workflow):

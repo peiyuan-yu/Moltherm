@@ -39,12 +39,14 @@ class MolThermDataProcessor:
         :param rxn_dir: Subdirectory where reaction metadata files (and
             potentially calculations) are stored. Default is "reactions".
         :param db_file: Path to database config file.
-        :param molecules: Database collection in which to store molecule data.
+        :param mol_coll: Database collection in which to store molecule data.
             Default is "molecules".
-        :param reactions: Database collection in which reaction metadata is
+        :param rxn_coll: Database collection in which reaction metadata is
             stored. Default is "reaxys".
-        :param thermo: Database collection in which to store thermo data.
+        :param thermo_coll: Database collection in which to store thermo data.
             Default is "thermo".
+        :param sol_coll: Database collection in which to store solubility data.
+            Default is "solubility".
         """
 
         self.base_dir = base_dir
