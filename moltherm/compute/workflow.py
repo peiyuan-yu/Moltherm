@@ -435,13 +435,14 @@ class MolThermWorkflowOld:
 
         infile = join(base_path, mol_id + ".qin")
         outfile = join(base_path, mol_id + ".qout")
+        qclogfile = join(base_path, mol_id + ".qclog")
 
         fw = OptFreqSPFW(molecule=mol,
                          name="{}: {}/{}".format(name_pre, path, file),
                          qchem_cmd="qchem -slurm",
                          input_file=infile,
                          output_file=outfile,
-                         qclog_file=join(base_path, mol_id + ".qclog"),
+                         qclog_file=qclogfile,
                          max_cores=max_cores,
                          max_iterations=max_iterations,
                          qchem_input_params=qchem_input_params,

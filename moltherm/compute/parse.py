@@ -152,6 +152,8 @@ class ReaxysParser:
         Create CTAB (.mol) files and metadata XML files from parsed XML data.
 
         :param reactions: List of reactions, defined as above.
+        :param base_path: If not None (default), the base directory in which to
+            store reaction and molecule data
         :return:
         """
 
