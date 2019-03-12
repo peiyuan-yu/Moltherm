@@ -177,7 +177,6 @@ class OptFreqSPFW(Firework):
                 sp_params=sp_params,
                 job_type="opt_with_frequency_flattener",
                 gzipped_output=False,
-                handler_group="no_handler",
                 reversed_direction=reversed_direction
             ))
 

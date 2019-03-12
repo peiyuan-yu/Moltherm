@@ -12,7 +12,7 @@ from pymatgen.io.qchem.outputs import QCOutput
 from atomate.qchem.database import QChemCalcDb
 from atomate.qchem.drones import QChemDrone
 
-from moltherm.compute.utils import get_molecule, extract_id
+from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -678,7 +678,7 @@ class MolThermDataProcessor:
         rxn_entry = self.rxn_coll.find_one({"rxn_id": rxn_id})
 
         reaction_data["rxn_id"] = rxn_id
-        reaction_data["mol_ids"] = rxn_entry["pro_ids"] + rxn_id["rct_ids"]
+        reaction_data["mol_ids"] = rxn_entry["pro_ids"] + rxn_entry["rct_ids"]
         reaction_data["product"] = self.get_molecule_data(rxn_entry["pro_ids"][0])
         reaction_data["reactants"] = [self.get_molecule_data(m)
                                       for m in rxn_entry["rct_ids"]]
@@ -1441,8 +1441,11 @@ class MolThermDataProcessorOld:
 
         mol_entry = db_collection.find_one({"mol_id": mol_id})
 
+        if mol_entry is None:
+            print(mol_id)
+
         mol_data["enthalpy"] = mol_entry["output"]["enthalpy"] * 4.184 * 1000
-        mol_data["entropy"]  = mol_entry["output"]["entropy"] * 4.184
+        mol_data["entropy"] = mol_entry["output"]["entropy"] * 4.184
 
         try:
             final_energy = mol_entry["output"]["final_energy_sp"]
