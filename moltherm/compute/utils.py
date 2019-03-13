@@ -148,6 +148,7 @@ def get_smiles(base_path, molecules, extra=False):
     else:
         raise ValueError("No path given.")
 
+
 def associate_qchem_to_mol(base_dir, directory):
     """
     Assign all .in and .out files in a directory to one of the .mol files in that
@@ -164,9 +165,11 @@ def associate_qchem_to_mol(base_dir, directory):
                  and f.endswith(".mol") and not f.startswith(".")]
     # Note: This will catch .in and .out files for incomplete computations
     in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                and ".in" in f and not f.startswith("atomate")]
+                and (".in" in f or ".qin" in f)
+                and not f.startswith("atomate")]
     out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
-                 and ".out" in f and not f.startswith("atomate")]
+                 and (".out" in f or ".qout" in f)
+                 and not f.startswith("atomate")]
 
     mapping = {mol: {"in": [], "out": []} for mol in mol_files}
 
