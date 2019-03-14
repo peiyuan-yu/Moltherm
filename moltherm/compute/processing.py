@@ -1,6 +1,7 @@
 from os import listdir
 from os.path import join, isfile, isdir, abspath
 from collections import Counter
+from itertools import chain
 
 import networkx as nx
 
@@ -1035,7 +1036,10 @@ class MolThermDataProcessorOld:
         :return:
         """
 
-        drone = QChemDrone()
+        runs = list(chain.from_iterable([["opt_" + str(ii), "freq_" + str(ii)] for ii in range(3)]))
+        runs.append("sp")
+
+        drone = QChemDrone(runs=runs)
 
         task_doc = drone.assimilate(
             path=calc_dir,
@@ -1130,15 +1134,15 @@ class MolThermDataProcessorOld:
             molfile = molfile.replace(".mol", "")
             if mol_id not in [m["mol_id"] for m in mols_in_db]:
                 self.record_molecule_data_db(mol_id, join(self.base_dir, d),
-                                             molfile+".in", molfile+".out",
+                                             molfile+".qin", molfile+".qout",
                                              collection=molecules)
             elif overwrite:
                 drone = QChemDrone()
 
                 task_doc = drone.assimilate(
                     path=join(self.base_dir, d),
-                    input_file=molfile+".in",
-                    output_file=molfile+".out",
+                    input_file=molfile+".qin",
+                    output_file=molfile+".qout",
                     multirun=False)
 
                 task_doc["mol_id"] = mol_id

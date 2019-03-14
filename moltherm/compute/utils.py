@@ -161,13 +161,15 @@ def associate_qchem_to_mol(base_dir, directory):
 
     base_path = join(base_dir, directory)
 
-    mol_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+    all_files = [e for e in listdir(base_path) if not e.startswith(".") and not e.endswith("swp")]
+
+    mol_files = [f for f in all_files  if isfile(join(base_path, f))
                  and f.endswith(".mol") and not f.startswith(".")]
     # Note: This will catch .in and .out files for incomplete computations
-    in_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+    in_files = [f for f in all_files if isfile(join(base_path, f))
                 and (".in" in f or ".qin" in f)
                 and not f.startswith("atomate")]
-    out_files = [f for f in listdir(base_path) if isfile(join(base_path, f))
+    out_files = [f for f in all_files if isfile(join(base_path, f))
                  and (".out" in f or ".qout" in f)
                  and not f.startswith("atomate")]
 
