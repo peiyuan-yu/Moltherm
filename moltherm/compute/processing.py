@@ -69,16 +69,22 @@ class MolThermDataProcessor:
             self.rxn_coll = self.db.db[rxn_coll]
             self.thermo_coll = self.db.db[thermo_coll]
 
-    def extract_reaction_thermo_files(self, rxn_id, runs_pattern=None):
+    def extract_reaction_thermo_files(self, rxn_id, files_mol_prefix=False,
+                                      runs_pattern=None):
         """
         Naively scrape thermo data from QChem output files.
 
         :param rxn_id: str representing a reaction ID
-        :param runs_pattern: QChem drone assimilation requires a template for
+        :param files_mol_prefix: QChemDrone.assimilate() requires a template for
+            QChem input and output file names. If True, the prefix for these
+            files will be the mol_id. If False (default), the prefix will be
+            "mol".
+        :param runs_pattern: QChemDrone.assimilate() requires a template for
             what calculations have completed. This should be represented by a
             link. Default None
 
-        :return: dict {prop: value}, where properties are enthalpy, entropy.
+        :return: dict {prop: value}, where properties are enthalpy, entropy,
+            etc.
         """
 
         base_path = self.mol_dir
@@ -98,20 +104,32 @@ class MolThermDataProcessor:
         drone = QChemDrone(runs=runs_pattern)
 
         for mol_id in rct_ids:
-            calc_doc = drone.assimilate(path=join(base_path, mol_id),
-                                        input_file="mol.qin",
-                                        output_file="mol.qout",
-                                        multirun=False)
+            if files_mol_prefix:
+                calc_doc = drone.assimilate(path=join(base_path, mol_id),
+                                            input_file="{}.qin".format(mol_id),
+                                            output_file="{}.qout".format(mol_id),
+                                            multirun=False)
+            else:
+                calc_doc = drone.assimilate(path=join(base_path, mol_id),
+                                            input_file="mol.qin",
+                                            output_file="mol.qout",
+                                            multirun=False)
 
             rct_thermo["entropy"] += calc_doc["output"]["entropy"]
             rct_thermo["enthalpy"] += calc_doc["output"]["enthalpy"]
             rct_thermo["energy"] += calc_doc["output"]["final_energy"]
 
         for mol_id in pro_ids:
-            calc_doc = drone.assimilate(path=join(base_path, mol_id),
-                                        input_file="mol.qin",
-                                        output_file="mol.qout",
-                                        multirun=False)
+            if files_mol_prefix:
+                calc_doc = drone.assimilate(path=join(base_path, mol_id),
+                                            input_file="{}.qin".format(mol_id),
+                                            output_file="{}.qout".format(mol_id),
+                                            multirun=False)
+            else:
+                calc_doc = drone.assimilate(path=join(base_path, mol_id),
+                                            input_file="mol.qin",
+                                            output_file="mol.qout",
+                                            multirun=False)
 
             pro_thermo["entropy"] += calc_doc["output"]["entropy"]
             pro_thermo["enthalpy"] += calc_doc["output"]["enthalpy"]
@@ -138,7 +156,7 @@ class MolThermDataProcessor:
 
         return result
 
-    def extract_reaction_thermo_db(self, rxn_id, opt=None, freq=None):
+    def extract_reaction_thermo_db(self, rxn_id, opt=None, freq=None, sp=None):
         """
         Gathers all relevant reaction parameters, including references to
         each job performed.
@@ -150,6 +168,9 @@ class MolThermDataProcessor:
         :param freq: dict containing information about the frequency jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
+        :param sp: dict containing information about the single-point jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
 
         :return: dict
         """
@@ -159,10 +180,16 @@ class MolThermDataProcessor:
                                "and try again later.")
 
         # To extract enthalpy and entropy from calculation results
-        def get_thermo(job):
+        def get_thermo(job, sp=False):
             enthalpy = job["output"]["enthalpy"]
             entropy = job["output"]["entropy"]
-            energy = job["output"]["final_energy"]
+            if sp:
+                try:
+                    energy = job["output"]["final_energy_sp"]
+                except KeyError:
+                    energy = job["output"]["final_energy"]
+            else:
+                energy = job["output"]["final_energy"]
 
             if enthalpy is None:
                 enthalpy = 0.0
@@ -185,9 +212,9 @@ class MolThermDataProcessor:
 
         for i, record in enumerate(records):
             if opt is None:
-                for calc in record["calcs_reversed"][::-1]:
-                    if calc["task"]["type"] == "opt" or \
-                            calc["task"]["type"] == "optimization":
+                for calc in record["calcs_reversed"]:
+                    if calc["input"]["rem"]["job_type"] == "opt" or \
+                            calc["input"]["rem"]["job_type"] == "optimization":
                         method = calc["input"]["rem"]["method"]
                         basis = calc["input"]["rem"]["basis"]
                         solvent_method = calc["input"]["rem"].get(
@@ -208,9 +235,9 @@ class MolThermDataProcessor:
                                "solvent": solvent}
                         break
             if freq is None:
-                for calc in record["calcs_reversed"][::-1]:
-                    if calc["task"]["type"] == "freq" or \
-                            calc["task"]["type"] == "frequency":
+                for calc in record["calcs_reversed"]:
+                    if calc["input"]["rem"]["job_type"] == "freq" or \
+                            calc["input"]["rem"]["job_type"] == "frequency":
                         method = calc["input"]["rem"]["method"]
                         basis = calc["input"]["rem"]["basis"]
                         solvent_method = calc["input"]["rem"].get(
@@ -230,10 +257,36 @@ class MolThermDataProcessor:
                                 "solvent_method": solvent_method,
                                 "solvent": solvent}
                         break
+            if sp is None:
+                for calc in record["calcs_reversed"]:
+                    if calc["input"]["rem"]["job_type"] == "sp":
+                        method = calc["input"]["rem"]["method"]
+                        basis = calc["input"]["rem"]["basis"]
+                        solvent_method = calc["input"]["rem"].get(
+                            "solvent_method", None)
+                        if solvent_method == "smd":
+                            if calc["input"]["smx"] is None:
+                                solvent = None
+                            else:
+                                solvent = calc["input"]["smx"]["solvent"]
+                        elif solvent_method == "pcm":
+                            solvent = calc["input"]["solvent"]
+                        else:
+                            solvent = None
+
+                        sp = {"method": method,
+                              "basis": basis,
+                              "solvent_method": solvent_method,
+                              "solvent": solvent}
+                        break
 
         # Get thermo data
-        rct_thermo = [get_thermo(r) for r in reactants]
-        pro_thermo = [get_thermo(p) for p in products]
+        if sp is None:
+            rct_thermo = [get_thermo(r) for r in reactants]
+            pro_thermo = [get_thermo(p) for p in products]
+        else:
+            rct_thermo = [get_thermo(r, sp=True) for r in reactants]
+            pro_thermo = [get_thermo(p, sp=True) for p in products]
 
         # Compile reaction thermo from reactant and product thermos
         delta_e = sum(p["energy"] for p in pro_thermo) - sum(r["energy"] for r in rct_thermo)
@@ -255,7 +308,7 @@ class MolThermDataProcessor:
         result = {"rxn_id": rxn_id,
                   "opt": opt,
                   "freq": freq,
-                  "sp": None,
+                  "sp": sp,
                   "rct_ids": rxn_entry["rct_ids"],
                   "pro_ids": rxn_entry["pro_ids"],
                   "thermo": thermo}
@@ -300,7 +353,7 @@ class MolThermDataProcessor:
         self.mol_coll.insert_one(task_doc)
 
     def record_reaction_data_db(self, rxn_id, use_db=False, opt=None,
-                                freq=None):
+                                freq=None, sp=None):
         """
         Record thermo data in thermo collection.
 
@@ -311,6 +364,9 @@ class MolThermDataProcessor:
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
         :param freq: dict containing information about the frequency jobs. By
+            default, this is None, and that information will be obtained by
+            querying the self.db.tasks collection.
+        :param sp: dict containing information about the single-point jobs. By
             default, this is None, and that information will be obtained by
             querying the self.db.tasks collection.
 
@@ -324,7 +380,8 @@ class MolThermDataProcessor:
         if use_db:
             self.thermo_coll.insert_one(self.extract_reaction_thermo_db(rxn_id,
                                                                         opt=opt,
-                                                                        freq=freq))
+                                                                        freq=freq,
+                                                                        sp=sp))
         else:
             self.thermo_coll.insert_one(self.extract_reaction_thermo_files(rxn_id))
 
@@ -588,7 +645,8 @@ class MolThermDataProcessor:
         for r in all_reactions:
             all_ids = r["pro_ids"] + r["rct_ids"]
 
-            are_completed = [True if m in completed_molecules else False for m in all_ids]
+            are_completed = [True if m in completed_molecules else False
+                             for m in all_ids]
 
             if all(are_completed):
                 completed_reactions.append(r)
