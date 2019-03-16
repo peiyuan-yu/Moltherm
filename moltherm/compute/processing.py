@@ -346,6 +346,14 @@ class MolThermDataProcessor:
 
         task_doc["mol_id"] = mol_id
 
+        if "enthalpy" not in task_doc["output"] or "enthalpy" not in task_doc or "frequencies" not in task_doc:
+            if task_doc["calcs_reversed"][1]["input"]["rem"]["job_type"] in ["freq", "frequency"]:
+                freq = task_doc["calcs_reversed"][1]
+                task_doc["output"]["enthalpy"] = freq["total_enthalpy"]
+                task_doc["output"]["entropy"] = freq["total_entropy"]
+                task_doc["output"]["frequencies"] = freq["frequencies"]
+
+
         if self.db is None:
             raise RuntimeError("Cannot record data to db without valid database"
                                " connection!")
@@ -414,7 +422,14 @@ class MolThermDataProcessor:
 
         for mol_id, path in completed_mols:
             if mol_id not in [m["mol_id"] for m in mols_in_db]:
-                self.record_molecule_data_db(mol_id, "mol.qin", "mol.qout")
+                if files_mol_prefix:
+                    self.record_molecule_data_db(mol_id,
+                                                 "{}.qin".format(mol_id),
+                                                 "{}.qout".format(mol_id),
+                                                 runs_pattern=runs_pattern)
+                else:
+                    self.record_molecule_data_db(mol_id, "mol.qin", "mol.qout",
+                                                 runs_pattern=runs_pattern)
             elif overwrite:
                 drone = QChemDrone(runs=runs_pattern)
 
