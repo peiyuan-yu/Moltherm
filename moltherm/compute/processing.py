@@ -638,10 +638,21 @@ class MolThermDataProcessor:
 
                 output = result["output"]
                 complete = True
-                important_values = ["enthalpy", "entropy",
-                                    "frequencies", "final_energy"]
-                if any([x not in output.keys() for x in important_values]):
-                    complete = False
+
+                important_values = ["enthalpy", "entropy", "frequencies",
+                                    "final_energy"]
+
+                # Important thing is not how calcs are processed by drone
+                # Important thing is that all values are present
+                for value in important_values:
+                    if value not in output.keys():
+                        found = False
+                        for calc in result["calcs_reversed"]:
+                            if value in calc.keys():
+                                found = True
+                        if not found:
+                            complete = False
+
                 else:
                     freqs = output["frequencies"]
                     if any([x < 0 for x in freqs]):
