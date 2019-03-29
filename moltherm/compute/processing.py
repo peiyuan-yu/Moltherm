@@ -644,17 +644,21 @@ class MolThermDataProcessor:
 
                 # Important thing is not how calcs are processed by drone
                 # Important thing is that all values are present
+                found_vals = dict()
                 for value in important_values:
                     if value not in output.keys():
                         found = False
                         for calc in result["calcs_reversed"]:
                             if value in calc.keys():
                                 found = True
+                                found_vals[value] = calc[value]
                         if not found:
                             complete = False
+                    else:
+                        found_vals[value] = output[value]
 
-                else:
-                    freqs = output["frequencies"]
+                if complete:
+                    freqs = found_vals["frequencies"]
                     if any([x < 0 for x in freqs]):
                         complete = False
 
