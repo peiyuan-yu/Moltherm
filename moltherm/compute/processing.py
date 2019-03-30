@@ -402,8 +402,8 @@ class MolThermDataProcessor:
         :param thermo: If True (default False), store thermodynamics information
         :param overwrite: If True (default False), overwrite molecules that are
             already included in the db.
-         :param files_mol_prefix: QChemDrone.assimilate() requires a template for
-            QChem input and output file names. If True, the prefix for these
+         :param files_mol_prefix: QChemDrone.assimilate() requires a template
+            for QChem input and output file names. If True, the prefix for these
             files will be the mol_id. If False (default), the prefix will be
             "mol".
         :param runs_pattern: QChemDrone.assimilate() requires a template for
@@ -468,10 +468,15 @@ class MolThermDataProcessor:
                     self.thermo_coll.update_one({"rxn_id": rxn["rxn_id"]},
                                                 {"$set": self.extract_reaction_thermo_db(rxn["rxn_id"])})
 
-    def update_molecules(self):
+    def update_molecules(self, files_mol_prefix=False):
         """
         Update molecules collection with data from the subdirectories in
         self.mol_dir.
+
+        :param files_mol_prefix: QChemDrone.assimilate() requires a template
+            for QChem input and output file names. If True, the prefix for these
+            files will be the mol_id. If False (default), the prefix will be
+            "mol".
 
         :return:
         """
@@ -488,10 +493,16 @@ class MolThermDataProcessor:
         for d in dirs:
             calc_dir = join(self.mol_dir, d)
 
-            new_calc = drone.assimilate(path=calc_dir,
-                                        input_file="mol.qin",
-                                        output_file="mol.qout",
-                                        multirun=False)
+            if files_mol_prefix:
+                new_calc = drone.assimilate(path=calc_dir,
+                                            input_file="{}.qin".format(d),
+                                            output_file="{}.qout".format(d),
+                                            multirun=False)
+            else:
+                new_calc = drone.assimilate(path=calc_dir,
+                                            input_file="mol.qin",
+                                            output_file="mol.qout",
+                                            multirun=False)
 
             old_calc = self.mol_coll.find_one({"mol_id": d})
 
@@ -602,7 +613,7 @@ class MolThermDataProcessor:
         return mapping
 
     def get_completed_molecules(self, mols=None, extra=False,
-                                runs_pattern=None):
+                                files_mol_prefix=False, runs_pattern=None):
         """
         Returns a list of molecules with completed opt, freq, and sp output
         files.
@@ -611,6 +622,10 @@ class MolThermDataProcessor:
             to search for completion.
         :params extra: If True, include directory of completed reaction and name
             of molfile along with mol_id
+        :param files_mol_prefix: QChemDrone.assimilate() requires a template
+            for QChem input and output file names. If True, the prefix for these
+            files will be the mol_id. If False (default), the prefix will be
+            "mol".
         :param runs_pattern: QChem drone assimilation requires a template for
             what calculations have completed. This should be represented by a
             link. Default None
@@ -631,10 +646,16 @@ class MolThermDataProcessor:
             path = join(self.mol_dir, m)
 
             try:
-                result = drone.assimilate(path=path,
-                                          input_file="mol.qin",
-                                          output_file="mol.qout",
-                                          multirun=False)
+                if files_mol_prefix:
+                    result = drone.assimilate(path=path,
+                                              input_file="{}.qin".format(m),
+                                              output_file="{}.qout".format(m),
+                                              multirun=False)
+                else:
+                    result = drone.assimilate(path=path,
+                                              input_file="mol.qin",
+                                              output_file="mol.qout",
+                                              multirun=False)
 
                 output = result["output"]
                 complete = True
