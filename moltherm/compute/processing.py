@@ -13,7 +13,9 @@ from pymatgen.io.qchem.outputs import QCOutput
 from atomate.qchem.database import QChemCalcDb
 from atomate.qchem.drones import QChemDrone
 
-from moltherm.compute.utils import get_molecule, extract_id, associate_qchem_to_mol
+from moltherm.compute.utils import (associate_qchem_to_mol,
+                                    calculate_solubility,
+                                    extract_id, get_molecule)
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.1"
@@ -32,7 +34,8 @@ class MolThermDataProcessor:
 
     def __init__(self, base_dir, mol_dir="molecules", rxn_dir="reactions",
                  db_file="db.json", mol_coll="molecules", rxn_coll="reactions",
-                 thermo_coll="thermo"):
+                 thermo_coll="thermo", sol_coll="solubility",
+                 epi_coll="episuite"):
         """
         :param base_dir: Directory where all data should be stored.
         :param mol_dir: Subdirectory where molecule files and calculations are
@@ -48,6 +51,9 @@ class MolThermDataProcessor:
             Default is "thermo".
         :param sol_coll: Database collection in which to store solubility data.
             Default is "solubility".
+        :param epi_coll: Database collection from which to extract data
+            regarding physical parameters (for instance, vapor pressure and
+            boiling point). Default is "episuite".
         """
 
         self.base_dir = base_dir
@@ -64,10 +70,14 @@ class MolThermDataProcessor:
             self.mol_coll = mol_coll
             self.rxn_coll = rxn_coll
             self.thermo_coll = thermo_coll
+            self.sol_coll = sol_coll
+            self.epi_coll = epi_coll
         else:
             self.mol_coll = self.db.db[mol_coll]
             self.rxn_coll = self.db.db[rxn_coll]
             self.thermo_coll = self.db.db[thermo_coll]
+            self.sol_coll = self.db.db[sol_coll]
+            self.epi_coll = self.db.db[epi_coll]
 
     def extract_reaction_thermo_files(self, rxn_id, files_mol_prefix=False,
                                       runs_pattern=None):
@@ -393,13 +403,15 @@ class MolThermDataProcessor:
         else:
             self.thermo_coll.insert_one(self.extract_reaction_thermo_files(rxn_id))
 
-    def populate_collections(self, thermo=False, overwrite=False,
-                             files_mol_prefix=False, runs_pattern=None):
+    def populate_collections(self, thermo=False, solubility=False,
+                             overwrite=False, files_mol_prefix=False,
+                             runs_pattern=None, solvent=None):
         """
         Mass insert into db collections using above data extraction and
         recording methods.
 
         :param thermo: If True (default False), store thermodynamics information
+        :param solubility: If True (default False), store solubility information
         :param overwrite: If True (default False), overwrite molecules that are
             already included in the db.
          :param files_mol_prefix: QChemDrone.assimilate() requires a template
@@ -409,6 +421,7 @@ class MolThermDataProcessor:
         :param runs_pattern: QChemDrone.assimilate() requires a template for
             what calculations have completed. This should be represented by a
             link. Default None
+        :param solvent: Solvent of interest. Only needed if solubility is True.
 
         :return:
         """
@@ -467,6 +480,30 @@ class MolThermDataProcessor:
                 elif overwrite:
                     self.thermo_coll.update_one({"rxn_id": rxn["rxn_id"]},
                                                 {"$set": self.extract_reaction_thermo_db(rxn["rxn_id"])})
+        if solubility:
+            # Update list, presuming that there were some additions
+            mols_in_db = [mol for mol in self.mol_coll.find({}, {"_id": 0})]
+            mols_in_sol_coll = [mol for mol in self.sol_coll.find({}, {"_id": 0})]
+
+            for mol in mols_in_db:
+                mol_id = mol["mol_id"]
+
+                try:
+                    data = self.get_solubility_data(mol_id, solvent)
+                    entry = {"mol_id": data["mol_id"],
+                             "solubilities":
+                                 {data["solvent"]: data["solubility"]}}
+
+                    if mol_id not in [e["mol_id"] for e in mols_in_db]:
+                        self.sol_coll.insert_one(entry)
+                    elif overwrite:
+                        new = self.sol_coll.find_one({"mol_id": mol_id})
+                        new["solubilities"][data["solvent"]] = data["solubility"]
+                        self.sol_coll.update_one({"mol_id": mol_id},
+                                                 {"$set": new})
+
+                except RuntimeError:
+                    continue
 
     def update_molecules(self, files_mol_prefix=False):
         """
@@ -564,6 +601,32 @@ class MolThermDataProcessor:
         for update in to_update:
             self.thermo_coll.update_one({"rxn_id": update[0]},
                                         {"$set": {"thermo": update[1]}})
+
+    def update_solubility(self, solvent="water"):
+        """
+        Update solubility collection with data from the subdirectories in
+        self.base_dir.
+
+        :param solvent: Solvent of interest. Default is "water"
+
+        :return:
+        """
+
+        mols_in_db = [mol for mol in self.mol_coll.find({}, {"_id": 0})]
+
+        for mol in mols_in_db:
+            mol_id = mol["mol_id"]
+
+            try:
+                data = self.get_solubility_data(mol_id, solvent)
+
+                new = self.sol_coll.find_one({"mol_id": mol_id})
+                new["solubilities"][data["solvent"]] = data["solubility"]
+                self.sol_coll.update_one({"mol_id": mol_id},
+                                         {"$set": new})
+
+            except RuntimeError:
+                continue
 
     def find_reactions_common_reactant(self, mol_id):
         """
@@ -827,6 +890,57 @@ class MolThermDataProcessor:
             reaction_data["thermo"]["t_star"] = 0
 
         return reaction_data
+
+    def get_solubility_data(self, mol_id, solvent, molecule_collection=None):
+        """
+        Extract solubility data from molecule data.
+
+        :param mol_id: Unique ID associated with the molecule.
+        :param solvent: Name of the solvent
+        :param molecule_collection: Collection to search for solubility data.
+            By default, this will be None, and self.mol_coll will be used.
+
+        :return: sol_data
+        """
+
+        if collection is None:
+            coll = self.mol_coll
+        else:
+            coll = self.db.db[molecule_collection]
+
+        entry = coll.find_one({"mol_id": mol_id})
+
+        vp = self.epi_coll.find_one({"mol_id": mol_id})["vp"]
+
+        sol_data = dict()
+        sol_data["mol_id"] = mol_id
+        sol_data["solvent"] = solvent
+
+        g_liq = None
+        g_vac = None
+
+        for calc in entry["calcs_reversed"]:
+            job_type = calc["input"]["rem"]["job_type"]
+
+            if job_type == "sp" and g_liq is None:
+                try:
+                    g_liq = calc["solvent_data"]["smd6"]
+                except KeyError:
+                    continue
+            elif job_type in ["opt", "optimization"] and q_vac is None:
+                try:
+                    g_vac = calc["final_energy"]
+                except KeyError:
+                    continue
+
+        if g_vac is None or g_liq is None:
+            raise RuntimeError("Could not find energy values from"
+                               " molecule calculations!")
+        else:
+            delta_g_solv = (g_liq - g_vac) * 627.509471 * 4184
+            sol_data["solubility"] = calculate_solubility(vp, delta_g_solv)
+
+            return sol_data
 
 
 class MolThermDataProcessorOld:

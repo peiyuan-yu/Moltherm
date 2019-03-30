@@ -4,6 +4,8 @@ import operator
 
 from bs4 import BeautifulSoup
 
+import numpy as np
+
 from pymatgen.core.structure import Molecule
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
@@ -206,3 +208,31 @@ def associate_qchem_to_mol(base_dir, directory):
                 break
 
     return mapping
+
+
+def calculate_solubility(vp, delta_g_solv, temp_kelvin=298):
+    """
+    Get the solubility of an arbitrary material in an arbitrary solvent.
+
+    Based on the method described in:
+
+    Thompson, J.D., Cramer, C.J. and Truhlar, D.G., 2003. Predicting aqueous
+    solubilities from aqueous free energies of solvation and experimental or
+    calculated vapor pressures of pure substances.
+    The Journal of chemical physics, 119(3), pp.1661-1670.
+
+    :param vp: Vapor pressure of the solute molecules under standard temperature
+    :param delta_g_solv: Free energy of solvation, given by (for instance) the
+        SMD universal solvation method.
+    :param temp_kelvin: Temperature in Kelvin
+
+    :return: S, the equilibrium solubility in units of mols per unit volume
+    """
+
+    # Ideal gas pressure at 1 molar concentration and 298K
+    p_std = 2477396.2
+    R = 8.314
+
+    S = vp / p_std * np.exp(-1 * delta_g_solv / (R * temp_kelvin))
+
+    return S
