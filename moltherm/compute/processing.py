@@ -496,7 +496,7 @@ class MolThermDataProcessor:
                              "solubilities":
                                  {data["solvent"]: data["solubility"]}}
 
-                    if mol_id not in [e["mol_id"] for e in mols_in_db]:
+                    if mol_id not in [e["mol_id"] for e in mols_in_sol_coll]:
                         self.sol_coll.insert_one(entry)
                     elif overwrite:
                         new = self.sol_coll.find_one({"mol_id": mol_id})
