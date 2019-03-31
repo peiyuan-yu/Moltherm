@@ -723,30 +723,29 @@ class MolThermDataProcessor:
                                               multirun=False)
 
                 output = result["output"]
-                complete = True
+                calcs = result["calcs_reversed"]
+                parts = {"opt": False, "freq": False, "sp": False}
 
-                important_values = ["enthalpy", "entropy", "frequencies",
-                                    "final_energy"]
+                freqs = None
 
-                # Important thing is not how calcs are processed by drone
-                # Important thing is that all values are present
-                found_vals = dict()
-                for value in important_values:
-                    if value not in output.keys():
-                        found = False
-                        for calc in result["calcs_reversed"]:
-                            if value in calc.keys():
-                                found = True
-                                found_vals[value] = calc[value]
-                        if not found:
-                            complete = False
-                    else:
-                        found_vals[value] = output[value]
+                for calc in calcs:
+                    if freqs is None:
+                        freqs = calc.get("frequencies", None)
 
-                if complete:
-                    freqs = found_vals["frequencies"]
+                    task_type = calc["task"]["type"]
+                    part = bool(calc["completion"])
+                    if "sp" in task_type and part:
+                        parts["sp"] = True
+                    elif "freq" in task_type and part:
+                        parts["freq"] = True
+                    elif "opt" in task_type and part:
+                        parts["opt"] = True
+
+                if parts["opt"] and parts["freq"] and parts["sp"]:
                     if any([x < 0 for x in freqs]):
                         complete = False
+                    else:
+                        complete = True
 
             except (ValueError, IndexError):
                 complete = False
@@ -905,7 +904,7 @@ class MolThermDataProcessor:
         :return: sol_data
         """
 
-        if collection is None:
+        if molecule_collection is None:
             coll = self.mol_coll
         else:
             coll = self.db.db[molecule_collection]
