@@ -932,7 +932,7 @@ class MolThermDataProcessor:
                     g_liq = calc["solvent_data"]["smd6"]
                 except KeyError:
                     continue
-            elif job_type in ["opt", "optimization"] and q_vac is None:
+            elif job_type in ["opt", "optimization"] and g_vac is None:
                 try:
                     g_vac = calc["final_energy"]
                 except KeyError:
