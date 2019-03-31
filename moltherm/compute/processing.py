@@ -505,6 +505,7 @@ class MolThermDataProcessor:
                                                  {"$set": new})
 
                 except RuntimeError:
+                    print("Could not process {}".format(mol_id))
                     continue
 
     def update_molecules(self, files_mol_prefix=False):
@@ -911,7 +912,10 @@ class MolThermDataProcessor:
 
         entry = coll.find_one({"mol_id": mol_id})
 
-        vp = self.epi_coll.find_one({"mol_id": mol_id})["vp"]
+        try:
+            vp = self.epi_coll.find_one({"mol_id": mol_id})["vp"]
+        except TypeError:
+            raise RuntimeError("{} is not in epi_coll!".format(mol_id))
 
         sol_data = dict()
         sol_data["mol_id"] = mol_id
