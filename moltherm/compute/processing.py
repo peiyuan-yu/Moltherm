@@ -430,7 +430,9 @@ class MolThermDataProcessor:
             raise RuntimeError("Cannot connect to database. Check configuration"
                                " file and try again.")
 
-        completed_mols = self.get_completed_molecules(extra=True)
+        completed_mols = self.get_completed_molecules(extra=True,
+                                                      files_mol_prefix=files_mol_prefix,
+                                                      runs_pattern=runs_pattern)
         mols_in_db = [mol for mol in self.mol_coll.find({}, {"_id": 0})]
 
         for mol_id, path in completed_mols:
