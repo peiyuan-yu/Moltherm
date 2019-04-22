@@ -405,7 +405,8 @@ class MolThermDataProcessor:
 
     def populate_collections(self, thermo=False, solubility=False,
                              overwrite=False, files_mol_prefix=False,
-                             runs_pattern=None, solvent=None):
+                             runs_pattern=None, solvent=None,
+                             vacuum_directory=None):
         """
         Mass insert into db collections using above data extraction and
         recording methods.
@@ -422,6 +423,9 @@ class MolThermDataProcessor:
             what calculations have completed. This should be represented by a
             link. Default None
         :param solvent: Solvent of interest. Only needed if solubility is True.
+        :param vacuum_directory: FOR SOLVATION ONLY: Path to search for energy
+            data in vacuum, to be compared against the solvated data in the
+            molecule collection.
 
         :return:
         """
@@ -491,7 +495,10 @@ class MolThermDataProcessor:
                 mol_id = mol["mol_id"]
 
                 try:
-                    data = self.get_solubility_data(mol_id, solvent)
+                    # Assume that vacuum data uses mol.qin format
+                    # This should probably be changed in the future
+                    data = self.get_solubility_data(mol_id, solvent,
+                                                    vacuum_directory=vacuum_directory)
                     entry = {"mol_id": data["mol_id"],
                              "solubilities":
                                  {data["solvent"]: data["solubility"]}}
@@ -605,12 +612,19 @@ class MolThermDataProcessor:
             self.thermo_coll.update_one({"rxn_id": update[0]},
                                         {"$set": {"thermo": update[1]}})
 
-    def update_solubility(self, solvent="water"):
+    def update_solubility(self, solvent="water", vacuum_directory=None,
+                          files_mol_prefix=False):
         """
         Update solubility collection with data from the subdirectories in
         self.base_dir.
 
         :param solvent: Solvent of interest. Default is "water"
+        :param vacuum_directory: Path to search for energy data in vacuum, to be
+            compared against the solvated data in the molecule collection.
+        :param files_mol_prefix: QChemDrone.assimilate() requires a template
+            for QChem input and output file names. If True, the prefix for these
+            files will be the mol_id. If False (default), the prefix will be
+            "mol".
 
         :return:
         """
@@ -621,7 +635,9 @@ class MolThermDataProcessor:
             mol_id = mol["mol_id"]
 
             try:
-                data = self.get_solubility_data(mol_id, solvent)
+                data = self.get_solubility_data(mol_id, solvent,
+                                                vacuum_directory=vacuum_directory,
+                                                files_mol_prefix=files_mol_prefix)
 
                 new = self.sol_coll.find_one({"mol_id": mol_id})
                 new["solubilities"][data["solvent"]] = data["solubility"]
@@ -893,7 +909,8 @@ class MolThermDataProcessor:
 
         return reaction_data
 
-    def get_solubility_data(self, mol_id, solvent, molecule_collection=None):
+    def get_solubility_data(self, mol_id, solvent, molecule_collection=None,
+                            vacuum_directory=None, files_mol_prefix=False):
         """
         Extract solubility data from molecule data.
 
@@ -901,6 +918,12 @@ class MolThermDataProcessor:
         :param solvent: Name of the solvent
         :param molecule_collection: Collection to search for solubility data.
             By default, this will be None, and self.mol_coll will be used.
+        :param vacuum_directory: Path to search for energy data in vacuum, to be
+            compared against the solvated data in the molecule collection.
+        :param files_mol_prefix: QChemDrone.assimilate() requires a template
+            for QChem input and output file names. If True, the prefix for these
+            files will be the mol_id. If False (default), the prefix will be
+            "mol".
 
         :return: sol_data
         """
@@ -932,11 +955,30 @@ class MolThermDataProcessor:
                     g_liq = calc["solvent_data"]["smd6"]
                 except KeyError:
                     continue
-            elif job_type in ["opt", "optimization"] and g_vac is None:
+            elif job_type in ["opt", "optimization"] and g_vac is None\
+                    and vacuum_directory is None:
                 try:
                     g_vac = calc["final_energy"]
                 except KeyError:
                     continue
+
+        if g_vac is None and vacuum_directory is not None:
+            drone = QChemDrone(runs=[])
+            calc_dir = join(vacuum_directory, mol_id)
+
+            if files_mol_prefix:
+                vac_calc = drone.assimilate(path=calc_dir,
+                                            input_file="{}.qin".format(mol_id),
+                                            output_file="{}.qout".format(mol_id),
+                                            multirun=False)
+            else:
+                vac_calc = drone.assimilate(path=calc_dir,
+                                            input_file="mol.qin",
+                                            output_file="mol.qout",
+                                            multirun=False)
+
+            g_vac = vac_calc["output"].get("final_energy_sp",
+                                           vac_calc["output"]["final_energy"])
 
         if g_vac is None or g_liq is None:
             raise RuntimeError("Could not find energy values from"

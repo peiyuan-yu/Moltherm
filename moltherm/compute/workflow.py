@@ -246,7 +246,6 @@ class MolThermWorkflow:
 
             return Workflow(fws)
 
-
     def get_reaction_workflow(self, rxn_id, mol_dir=None,
                               name_pre="reaction_opt_freq",
                               qchem_cmd="qchem -slurm", max_cores=24,
