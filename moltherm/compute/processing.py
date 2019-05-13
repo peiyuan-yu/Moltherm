@@ -739,7 +739,11 @@ class MolThermDataProcessor:
                                               output_file="mol.qout",
                                               multirun=False)
 
-                output = result["output"]
+                sp = False
+                if runs_pattern is not None:
+                    if "sp" in runs_pattern:
+                        sp = True
+
                 calcs = result["calcs_reversed"]
                 parts = {"opt": False, "freq": False, "sp": False}
 
@@ -758,12 +762,22 @@ class MolThermDataProcessor:
                     elif "opt" in task_type and part:
                         parts["opt"] = True
 
-                if parts["opt"] and parts["freq"] and parts["sp"]:
-                    if any([x < 0 for x in freqs]):
-                        complete = False
+                if sp:
+                    if parts["opt"] and parts["freq"] and parts["sp"]:
+                        if any([x < 0 for x in freqs]):
+                            complete = False
+                        else:
+                            complete = True
                     else:
-                        complete = True
-
+                        complete = False
+                else:
+                    if parts["opt"] and parts["freq"]:
+                        if any([x < 0 for x in freqs]):
+                            complete = False
+                        else:
+                            complete = True
+                    else:
+                        complete = False
             except (ValueError, IndexError):
                 complete = False
 
