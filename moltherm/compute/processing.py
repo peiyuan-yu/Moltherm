@@ -640,9 +640,14 @@ class MolThermDataProcessor:
                                                 files_mol_prefix=files_mol_prefix)
 
                 new = self.sol_coll.find_one({"mol_id": mol_id})
-                new["solubilities"][data["solvent"]] = data["solubility"]
-                self.sol_coll.update_one({"mol_id": mol_id},
-                                         {"$set": new})
+                if new is None:
+                    new = {"mol_id": mol_id, "solubilities": dict()}
+                    new["solubilities"][data["solvent"]] = data["solubility"]
+                    self.sol_coll.insert_one(new)
+                else:
+                    new["solubilities"][data["solvent"]] = data["solubility"]
+                    self.sol_coll.update_one({"mol_id": mol_id},
+                                             {"$set": new})
 
             except RuntimeError:
                 continue

@@ -76,8 +76,9 @@ class MolThermWorkflow:
         launchpad.add_wf(workflow)
 
     def get_molecule_workflow(self, path, mol_id, name_pre="molecule_opt_freq",
-                              qchem_cmd="qchem -slurm", max_cores=24,
-                              qchem_input_params=None):
+                              qchem_cmd="qchem -slurm", max_cores=32,
+                              qchem_input_params=None, max_iterations=3,
+                              max_perturb_scale=0.3):
         """
         Generates a Fireworks Workflow to optimize a molecular geometry and
         perform a vibrational analysis (frequency calculation) in Q-Chem.
@@ -93,6 +94,10 @@ class MolThermWorkflow:
         split over. Default is 24.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
+        :param max_iterations (int): Number of perturbation -> optimization -> frequency
+        iterations to perform. Defaults to 3.
+        :param max_perturb_scale (float): The maximum scaled perturbation that can be
+        applied to the molecule. Defaults to 0.3.
         :return: Workflow
         """
 
@@ -117,7 +122,8 @@ class MolThermWorkflow:
                                                    multimode="openmp",
                                                    max_cores=max_cores,
                                                    directory=base_path,
-                                                   max_iterations=3,
+                                                   max_iterations=max_iterations,
+                                                   max_molecule_perturb_scale=max_perturb_scale,
                                                    db_file=self.db_file)
 
                 fws.append(fw)
@@ -153,7 +159,7 @@ class MolThermWorkflow:
 
     def get_perturbed_molecule_workflow(self, path, mol_id, geometry,
                                         name_pre="molecule_opt_freq",
-                                        qchem_cmd="qchem -slurm", max_cores=24,
+                                        qchem_cmd="qchem -slurm", max_cores=32,
                                         qchem_input_params=None,
                                         max_perturb_scale=0.3,
                                         max_iterations=3):
@@ -203,7 +209,7 @@ class MolThermWorkflow:
     def get_single_point_workflow(self, path, mol_id,
                                   name_pre="solubility_calc",
                                   qchem_cmd="qchem -slurm",
-                                  max_cores=24,
+                                  max_cores=32,
                                   qchem_input_params=None):
         """
 
@@ -248,8 +254,10 @@ class MolThermWorkflow:
 
     def get_reaction_workflow(self, rxn_id, mol_dir=None,
                               name_pre="reaction_opt_freq",
-                              qchem_cmd="qchem -slurm", max_cores=24,
-                              qchem_input_params=None):
+                              qchem_cmd="qchem -slurm", max_cores=32,
+                              qchem_input_params=None,
+                              max_iterations=3,
+                              max_perturb_scale=0.3):
         """
         Generates a Fireworks Workflow to perform geometry optimizations and
         vibrational analyses on all of the molecules involved in a chemical
@@ -267,6 +275,10 @@ class MolThermWorkflow:
         split over. Default is 24.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
+        :param max_iterations (int): Number of perturbation -> optimization -> frequency
+        iterations to perform. Defaults to 3.
+        :param max_perturb_scale (float): The maximum scaled perturbation that can be
+        applied to the molecule. Defaults to 0.3.
         :return: Workflow
         """
 
@@ -323,7 +335,8 @@ class MolThermWorkflow:
                                                multimode="openmp",
                                                max_cores=max_cores,
                                                directory=mol_path,
-                                               max_iterations=3,
+                                               max_iterations=max_iterations,
+                                               max_molecule_perturb_scale=max_perturb_scale,
                                                db_file=self.db_file)
 
             fws.append(fw)
@@ -394,8 +407,8 @@ class MolThermWorkflowOld:
         return add_up
 
     def get_single_molecule_workflow(self, mol_id, name_pre="opt_freq_sp",
-                                     path=None, max_cores=24, max_iterations=1,
-                                     qchem_input_params=None,
+                                     path=None, max_cores=32, max_iterations=1,
+                                     max_perturb_scale=0.3, qchem_input_params=None,
                                      sp_params=None):
         """
         Generates a Fireworks Workflow to find the structures and energies of
@@ -412,6 +425,8 @@ class MolThermWorkflowOld:
         can be performed in case of negative frequencies. By default, no such
         "frequency flattening" is allowed (max_iterations=1); in general, 3
         is recommended.
+        :param max_perturb_scale (float): The maximum scaled perturbation that can be
+        applied to the molecule. Defaults to 0.3.
         :param qchem_input_params: dict
         :param sp_params: For OptFreqSPFW, single-point calculations can be
         treated differently from Opt and Freq. In this case, another dict
@@ -444,6 +459,7 @@ class MolThermWorkflowOld:
                          qclog_file=qclogfile,
                          max_cores=max_cores,
                          max_iterations=max_iterations,
+                         max_molecule_perturb_scale=max_perturb_scale,
                          qchem_input_params=qchem_input_params,
                          sp_params=sp_params,
                          db_file=self.db_file)
@@ -453,7 +469,7 @@ class MolThermWorkflowOld:
         return Workflow(fws)
 
     def get_single_reaction_workflow(self, name_pre="opt_freq_sp", path=None,
-                                     filenames=None, max_cores=64,
+                                     filenames=None, max_cores=32,
                                      qchem_input_params=None,
                                      sp_params=None):
         """
@@ -537,7 +553,7 @@ class MolThermWorkflowOld:
 
         return Workflow(fws)
 
-    def get_reaction_set_workflow(self, name_pre="opt_freq_sp", max_cores=64,
+    def get_reaction_set_workflow(self, name_pre="opt_freq_sp", max_cores=32,
                                   qchem_input_params=None,
                                   sp_params=None):
         """Generates a Fireworks Workflow to find the structures and energies of
@@ -642,7 +658,7 @@ class MolThermWorkflowOld:
 
         return Workflow(fws)
 
-    def get_unfinished_jobs(self, sp_params, name_pre="single_point", dirs=None, max_cores=24):
+    def get_unfinished_jobs(self, sp_params, name_pre="single_point", dirs=None, max_cores=32):
         """
         Look for jobs where optimization and frequency calculations have
         successfully completed, but single-point has not. Then, for these cases,
@@ -849,7 +865,7 @@ class MolThermWorkflowOld:
                                input_file=join(new_path, pro_name + ".in"),
                                output_file=join(new_path, pro_name + ".out"),
                                qclog_file=join(new_path, pro_name + ".qclog"),
-                               max_cores=24,
+                               max_cores=32,
                                qchem_input_params=qchem_input_params,
                                sp_params=sp_params,
                                db_file=self.db_file))
@@ -864,7 +880,7 @@ class MolThermWorkflowOld:
                                                     rct_name + ".out"),
                                    qclog_file=join(new_path,
                                                    rct_name + ".qclog"),
-                                   max_cores=24,
+                                   max_cores=32,
                                    qchem_input_params=qchem_input_params,
                                    sp_params=sp_params,
                                    db_file=self.db_file))
@@ -959,7 +975,7 @@ class MolThermWorkflowOld:
                                        qclog_file=join(self.base_dir,
                                                         dir_name,
                                                         mol_id + ".qclog"),
-                                       max_cores=24,
+                                       max_cores=32,
                                        max_iterations=max_iterations,
                                        qchem_input_params=qchem_input_params,
                                        sp_params=sp_params,
