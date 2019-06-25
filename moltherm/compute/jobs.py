@@ -153,6 +153,8 @@ class QCJob(Job):
             multimode (str): Parallelization scheme, either openmp or mpi.
             input_file (str): Name of the QChem input file.
             output_file (str): Name of the QChem output file
+            qclog_file (str): Name of the QChem log file.
+            sp_params (dict): Dictionary with any special parameters for the single-point calculation.
             max_iterations (int): Number of perturbation -> optimization -> frequency
                 iterations to perform. Defaults to 10.
             max_molecule_perturb_scale (float): The maximum scaled perturbation that
@@ -200,7 +202,8 @@ class QCJob(Job):
                     rem=orig_freq_rem,
                     opt=orig_opt_input.opt,
                     pcm=orig_opt_input.pcm,
-                    solvent=orig_opt_input.solvent)
+                    solvent=orig_opt_input.solvent,
+                    smx=orig_opt_input.smx)
                 freq_QCInput.write_file(input_file)
                 yield (QCJob(
                     qchem_command=qchem_command,
@@ -269,7 +272,8 @@ class QCJob(Job):
                         rem=orig_opt_rem,
                         opt=orig_opt_input.opt,
                         pcm=orig_opt_input.pcm,
-                        solvent=orig_opt_input.solvent)
+                        solvent=orig_opt_input.solvent,
+                        smx=orig_opt_input.smx)
                     new_opt_QCInput.write_file(input_file)
 
         if sp_params is not None:
@@ -300,6 +304,182 @@ class QCJob(Job):
                      qclog_file=qclog_file,
                      suffix=".sp",
                      **QCJob_kwargs))
+
+    @classmethod
+    def ts_with_frequency_flattener(cls,
+                                    qchem_command,
+                                    multimode="openmp",
+                                    input_file="mol.qin",
+                                    output_file="mol.qout",
+                                    qclog_file="mol.qclog",
+                                    ts_guess_method="fsm",
+                                    max_iterations=10,
+                                    max_molecule_perturb_scale=0.3,
+                                    check_connectivity=True,
+                                    **QCJob_kwargs):
+        """
+        Optimize the transition state for a reaction based on reactant and product geometries and calculate vibrational
+        frequencies to check if the structure is in a true minima. If a frequency is negative, iteratively
+        perturbe the geometry, optimize, and recalculate frequencies until all are
+        positive, aka a true minima has been found.
+
+        Args:
+            qchem_command (str): Command to run QChem.
+            multimode (str): Parallelization scheme, either openmp or mpi.
+            input_file (str): Name of the QChem input file.
+            output_file (str): Name of the QChem output file.
+            qclog_file (str): Name of the QChem log file.
+            ts_guess_method (str): Name of the method to be used to generate a guess for the transition state. By
+                default, this will be "fsm", meaning that the Freezing-String Method will be used. In the future, "gsm"
+                for the Growing-String Method will also be supported.
+            max_iterations (int): Number of perturbation -> optimization -> frequency
+                iterations to perform. Defaults to 10.
+            max_molecule_perturb_scale (float): The maximum scaled perturbation that
+                can be applied to the molecule. Defaults to 0.3.
+            check_connectivity (bool): Whether to check differences in connectivity
+                introduced by structural perturbation. Defaults to True.
+            **QCJob_kwargs: Passthrough kwargs to QCJob. See
+                :class:`custodian.qchem.jobs.QCJob`.
+        """
+
+        min_molecule_perturb_scale = 0.1
+        scale_grid = 10
+        perturb_scale_grid = (
+            max_molecule_perturb_scale - min_molecule_perturb_scale
+        ) / scale_grid
+
+        orig_ts_input = QCInput.from_file(input_file)
+        orig_ts_rem = copy.deepcopy(orig_ts_input.rem)
+        orig_ts_rem["job_type"] = "ts"
+        del orig_ts_rem["fsm_ngrad"]
+        del orig_ts_rem["fsm_nnode"]
+        del orig_ts_rem["fsm_mode"]
+        del orig_ts_rem["fsm_opt_mode"]
+
+        orig_freq_rem = copy.deepcopy(orig_ts_input.rem)
+        orig_freq_rem["job_type"] = "freq"
+
+        orig_ts_rem["geom_opt_max_cycles"] = 250
+
+        if not os.path.exists(input_file):
+            raise AssertionError('Input file must be present!')
+
+        # First job should be the transition state guess, via FSM or GSM
+        yield (QCJob(qchem_command=qchem_command,
+                     multimode=multimode,
+                     input_file=input_file,
+                     output_file=output_file,
+                     qclog_file=qclog_file,
+                     suffix=".fsm",
+                     backup=True,
+                     **QCJob_kwargs))
+
+        fsm_outdata = QCOutput(output_file + ".fsm").data
+        #TODO: Consider possible errors or other problems which might arise in an FSM job
+        ts_QCInput = QCInput(molecule=fsm_outdata.get("molecule_from_last_geometry"),
+                             rem=orig_ts_rem,
+                             opt=orig_ts_input.opt,
+                             pcm=orig_ts_input.pcm,
+                             solvent=orig_ts_input.solvent,
+                             smx=orig_ts_input.smx)
+        ts_QCInput.write_file(input_file)
+
+        reversed_direction = False
+        num_neg_freqs = []
+
+        for ii in range(max_iterations):
+            yield (QCJob(
+                qchem_command=qchem_command,
+                multimode=multimode,
+                input_file=input_file,
+                output_file=output_file,
+                qclog_file=qclog_file,
+                suffix=".ts_" + str(ii),
+                backup=False,
+                **QCJob_kwargs))
+            first = False
+            ts_outdata = QCOutput(output_file + ".ts_" + str(ii)).data
+            if ts_outdata["structure_change"] == "unconnected_fragments" and not ts_outdata["completion"]:
+                print("Unstable molecule broke into unconnected fragments which failed to optimize! Exiting...")
+                break
+            else:
+                freq_QCInput = QCInput(
+                    molecule=ts_outdata.get("molecule_from_optimized_geometry"),
+                    rem=orig_freq_rem,
+                    opt=orig_ts_input.opt,
+                    pcm=orig_ts_input.pcm,
+                    solvent=orig_ts_input.solvent,
+                    smx=orig_ts_input.smx)
+                freq_QCInput.write_file(input_file)
+                yield (QCJob(
+                    qchem_command=qchem_command,
+                    multimode=multimode,
+                    input_file=input_file,
+                    output_file=output_file,
+                    qclog_file=qclog_file,
+                    suffix=".freq_" + str(ii),
+                    backup=first,
+                    **QCJob_kwargs))
+                outdata = QCOutput(output_file + ".freq_" + str(ii)).data
+                errors = outdata.get("errors")
+                if len(errors) != 0:
+                    raise AssertionError('No errors should be encountered while flattening frequencies!')
+                if outdata.get('frequencies')[0] > 0.0:
+                    print("All frequencies positive!")
+                    break
+                else:
+                    num_neg_freqs += [sum(1 for freq in outdata.get('frequencies') if freq < 0)]
+                    if len(num_neg_freqs) > 1:
+                        if num_neg_freqs[-1] == num_neg_freqs[-2] and not reversed_direction:
+                            reversed_direction = True
+                        elif num_neg_freqs[-1] == num_neg_freqs[-2] and reversed_direction:
+                            if len(num_neg_freqs) < 3:
+                                raise AssertionError("ERROR: This should only be possible after at least three frequency flattening iterations! Exiting...")
+                            else:
+                                raise Exception("ERROR: Reversing the perturbation direction still could not flatten any frequencies. Exiting...")
+                        elif num_neg_freqs[-1] != num_neg_freqs[-2] and reversed_direction:
+                            reversed_direction = False
+
+                    negative_freq_vecs = outdata.get("frequency_mode_vectors")[0]
+                    structure_successfully_perturbed = False
+
+                    for molecule_perturb_scale in np.arange(
+                            max_molecule_perturb_scale, min_molecule_perturb_scale,
+                            -perturb_scale_grid):
+                        new_coords = perturb_coordinates(
+                            old_coords=outdata.get("initial_geometry"),
+                            negative_freq_vecs=negative_freq_vecs,
+                            molecule_perturb_scale=molecule_perturb_scale,
+                            reversed_direction=reversed_direction)
+                        new_molecule = Molecule(
+                            species=outdata.get('species'),
+                            coords=new_coords,
+                            charge=outdata.get('charge'),
+                            spin_multiplicity=outdata.get('multiplicity'))
+                        if check_connectivity:
+                            old_molgraph = MoleculeGraph.with_local_env_strategy(outdata.get("initial_molecule"),
+                                                               OpenBabelNN(),
+                                                               reorder=False,
+                                                               extend_structure=False)
+                            new_molgraph = MoleculeGraph.with_local_env_strategy(new_molecule,
+                                                               OpenBabelNN(),
+                                                               reorder=False,
+                                                               extend_structure=False)
+                            if old_molgraph.isomorphic_to(new_molgraph):
+                                structure_successfully_perturbed = True
+                                break
+                    if not structure_successfully_perturbed:
+                        raise Exception(
+                            "ERROR: Unable to perturb coordinates to remove negative frequency without changing the connectivity! Exiting..."
+                        )
+
+                    new_ts_QCInput = QCInput(
+                        molecule=new_molecule,
+                        rem=orig_ts_rem,
+                        opt=orig_ts_input.opt,
+                        pcm=orig_ts_input.pcm,
+                        solvent=orig_ts_input.solvent)
+                    new_ts_QCInput.write_file(input_file)
 
 
 def perturb_coordinates(old_coords, negative_freq_vecs, molecule_perturb_scale,
