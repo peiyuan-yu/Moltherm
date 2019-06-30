@@ -94,7 +94,7 @@ class MolThermWorkflow:
         split over. Default is 24.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
-        :param max_iterations (int): Number of perturbation -> optimization -> frequency
+        :param max_iterati ons (int): Number of perturbation -> optimization -> frequency
         iterations to perform. Defaults to 3.
         :param max_perturb_scale (float): The maximum scaled perturbation that can be
         applied to the molecule. Defaults to 0.3.
