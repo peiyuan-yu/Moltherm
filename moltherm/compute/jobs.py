@@ -370,11 +370,11 @@ class QCJob(Job):
                      input_file=input_file,
                      output_file=output_file,
                      qclog_file=qclog_file,
-                     suffix=".fsm",
+                     suffix="." + ts_guess_method,
                      backup=True,
                      **QCJob_kwargs))
 
-        fsm_outdata = QCOutput(output_file + ".fsm").data
+        fsm_outdata = QCOutput(output_file + "." + ts_guess_method).data
         #TODO: Consider possible errors or other problems which might arise in an FSM job
         ts_QCInput = QCInput(molecule=fsm_outdata.get("molecule_from_last_geometry"),
                              rem=orig_ts_rem,
