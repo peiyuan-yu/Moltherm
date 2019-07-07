@@ -734,15 +734,21 @@ class MolThermDataProcessor:
 
             try:
                 if files_mol_prefix:
-                    result = drone.assimilate(path=path,
-                                              input_file="{}.qin".format(m),
-                                              output_file="{}.qout".format(m),
-                                              multirun=False)
+                    try:
+                        result = drone.assimilate(path=path,
+                                                  input_file="{}.qin".format(m),
+                                                  output_file="{}.qout".format(m),
+                                                  multirun=False)
+                    except KeyError:
+                        continue
                 else:
-                    result = drone.assimilate(path=path,
-                                              input_file="mol.qin",
-                                              output_file="mol.qout",
-                                              multirun=False)
+                    try:
+                        result = drone.assimilate(path=path,
+                                                  input_file="mol.qin",
+                                                  output_file="mol.qout",
+                                                  multirun=False)
+                    except KeyError:
+                        continue
 
                 sp = False
                 if runs_pattern is not None:
