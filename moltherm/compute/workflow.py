@@ -77,8 +77,8 @@ class MolThermWorkflow:
 
     def get_molecule_workflow(self, path, mol_id, name_pre="molecule_opt_freq",
                               qchem_cmd="qchem -slurm", max_cores=32,
-                              qchem_input_params=None, max_iterations=3,
-                              max_perturb_scale=0.3):
+                              qchem_input_params=None, modify_mol=True,
+                              max_iterations=3, max_perturb_scale=0.3):
         """
         Generates a Fireworks Workflow to optimize a molecular geometry and
         perform a vibrational analysis (frequency calculation) in Q-Chem.
@@ -91,10 +91,12 @@ class MolThermWorkflow:
         :param qchem_cmd: str indicating how the Q-Chem code should be called.
         Default is "qchem -slurm", for a SLURM-based system.
         :param max_cores: int specifying how many cores the workflow should be
-        split over. Default is 24.
+        split over. Default is 32.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
-        :param max_iterati ons (int): Number of perturbation -> optimization -> frequency
+        :param modify_mol: If True (default), use utility get_molecule to modify, including
+        adding implicit hydrogens and performing an initial optimization.
+        :param max_iterations (int): Number of perturbation -> optimization -> frequency
         iterations to perform. Defaults to 3.
         :param max_perturb_scale (float): The maximum scaled perturbation that can be
         applied to the molecule. Defaults to 0.3.
@@ -113,7 +115,10 @@ class MolThermWorkflow:
             print("Generating workflows for all valid files found.")
 
             for i, file in enumerate(files):
-                mol = get_molecule(join(base_path, file))
+                if modify_mol:
+                    mol = get_molecule(join(base_path, file))
+                else:
+                    mol = Molecule.from_file(join(base_path, file))
 
                 fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                    name=name_pre+"_{}".format(mol_id),
@@ -177,7 +182,7 @@ class MolThermWorkflow:
         :param qchem_cmd: str indicating how the Q-Chem code should be called.
         Default is "qchem -slurm", for a SLURM-based system.
         :param max_cores: int specifying how many cores the workflow should be
-        split over. Default is 24.
+        split over. Default is 32.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
         :param max_perturb_scale: The maximum scaled perturbation that can be
@@ -221,7 +226,7 @@ class MolThermWorkflow:
         :param qchem_cmd: str indicating how the Q-Chem code should be called.
         Default is "qchem -slurm", for a SLURM-based system.
         :param max_cores: int specifying how many cores the workflow should be
-        split over. Default is 24.
+        split over. Default is 32.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
         :return: Workflow
@@ -272,7 +277,7 @@ class MolThermWorkflow:
         :param qchem_cmd: str indicating how the Q-Chem code should be called.
         Default is "qchem -slurm", for a SLURM-based system.
         :param max_cores: int specifying how many cores the workflow should be
-        split over. Default is 24.
+        split over. Default is 32.
         :param qchem_input_params: dict listing all parameters differing from
         default values.
         :param max_iterations (int): Number of perturbation -> optimization -> frequency
