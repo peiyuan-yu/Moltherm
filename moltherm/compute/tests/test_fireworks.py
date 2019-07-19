@@ -62,6 +62,7 @@ class TestOptFreqSPFW(AtomateTest):
         pass
 
     def test_OptFreqSPFW_defaults(self):
+        self.maxDiff = None
         firework = OptFreqSPFW(molecule=self.act_mol,
                                qchem_input_params=self.opt_freq_params,
                                sp_params=self.sp_params)
@@ -84,10 +85,10 @@ class TestOptFreqSPFW(AtomateTest):
                              max_cores=24,
                              job_type="opt_with_frequency_flattener",
                              max_iterations=1,
+                             max_molecule_perturb_scale=0.3,
                              gzipped_output=False,
                              reversed_direction=False,
-                             sp_params=self.sp_params,
-                             handler_group="no_handler").as_dict())
+                             sp_params=self.sp_params).as_dict())
         self.assertEqual(firework.tasks[2].as_dict(),
                          QChemToDb(
                              db_file=None,
@@ -131,9 +132,9 @@ class TestOptFreqSPFW(AtomateTest):
                              max_cores=12,
                              job_type="opt_with_frequency_flattener",
                              max_iterations=5,
+                             max_molecule_perturb_scale=0.3,
                              gzipped_output=False,
                              reversed_direction=False,
-                             handler_group="no_handler",
                              sp_params=self.sp_params).as_dict())
         self.assertEqual(
             firework.tasks[2].as_dict(),

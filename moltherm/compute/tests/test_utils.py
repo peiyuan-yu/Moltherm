@@ -75,7 +75,7 @@ class TestUtils(unittest.TestCase):
                   ('toluene', 2)]
 
         # Ensure that result is expected
-        self.assertSequenceEqual(common_solvents, result)
+        self.assertSequenceEqual(sorted(common_solvents), sorted(result))
 
         # Ensure that sorting is correct
         self.assertEqual(common_solvents, sorted(common_solvents,
