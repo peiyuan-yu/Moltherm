@@ -1,12 +1,18 @@
 from os import listdir
 from os.path import join, isfile, basename
 import operator
+from difflib import SequenceMatcher
+from statistics import mean
 
 from bs4 import BeautifulSoup
 
 import numpy as np
+import networkx as nx
+import networkx.algorithms.isomorphism as iso
 
 from pymatgen.core.structure import Molecule
+from pymatgen.analysis.graphs import MoleculeGraph
+from pymatgen.analysis.local_env import OpenBabelNN
 from pymatgen.io.qchem.inputs import QCInput
 from pymatgen.io.qchem.outputs import QCOutput
 from pymatgen.io.babel import BabelMolAdaptor
@@ -236,3 +242,93 @@ def calculate_solubility(vp, delta_g_solv, temp_kelvin=298):
     S = vp / p_std * np.exp(-1 * delta_g_solv / (R * temp_kelvin))
 
     return S
+
+
+def map_atoms(reactants, product):
+    """
+    Create a mapping of atoms between a set of reactant Molecules and a product
+    Molecule.
+
+    :param reactants: list of Molecule objects representing the reaction
+        reactants
+    :param product: Molecule object representing the reaction product
+
+    NOTE: This currently only works with one product
+
+    :return: dict with 'reactants' and 'product' keys
+    """
+
+    def get_ranked_atom_dists(mol):
+        dist_matrix = mol.distance_matrix
+
+        result = dict()
+        for e, row in enumerate(dist_matrix):
+            ranking = np.argsort(row)
+            # The first member will always be the atom itself, which should be excluded
+            result[e] = ranking[1:]
+        return result
+
+    rct_mgs = list()
+    for reactant in reactants:
+        rct_mgs.append(MoleculeGraph.with_local_env_strategy(reactant, OpenBabelNN(), reorder=False,
+                                                             extend_structure=False))
+    pro_mg = MoleculeGraph.with_local_env_strategy(product, OpenBabelNN(), reorder=False,
+                                                   extend_structure=False)
+
+    # Next, try to construct isomorphisms between reactant and product
+    nm = iso.categorical_node_match("specie", "ERROR")
+    # Prefer undirected graphs
+    rct_graphs = [rct_mg.graph.to_undirected() for rct_mg in rct_mgs]
+    pro_graph = pro_mg.graph.to_undirected()
+
+    pro_dists = get_ranked_atom_dists(pro_mg.molecule)
+    mapping = dict()
+    index_total = 0
+    for e, rct_graph in enumerate(rct_graphs):
+
+        meta_iso = {e: set() for e in range(len(pro_mg.molecule))}
+        matcher = iso.GraphMatcher(pro_graph, rct_graph, node_match=nm)
+
+        best_ratio = 0
+        best_mapping = None
+
+        # Compile all isomorphisms
+        isomorphisms = [i for i in matcher.subgraph_isomorphisms_iter()]
+        for isomorphism in isomorphisms:
+            for pro_node, rct_node in isomorphism.items():
+                meta_iso[pro_node].add(rct_node)
+
+        # Determine which nodes need to be checked
+        disputed_nodes = set()
+        for pro_node, rct_nodes in meta_iso.items():
+            if len(rct_nodes) > 1:
+                disputed_nodes.add(pro_node)
+
+        average_ratios = list()
+        rct_dists = get_ranked_atom_dists(reactants[e])
+        for isomorphism in isomorphisms:
+            ratios = list()
+
+            for node in disputed_nodes:
+                rct_dist = rct_dists[isomorphism[node]]
+                pro_dist_old = pro_dists[node]
+
+                pro_dist = list()
+                for node in pro_dist_old:
+                    if len(meta_iso[node]) != 0:
+                        pro_dist.append(isomorphism[node])
+
+                matcher = SequenceMatcher(None, rct_dist, pro_dist)
+                ratios.append(matcher.ratio())
+
+            average_ratios.append(mean(ratios))
+
+        old_mapping = isomorphisms[np.argmax(np.array(average_ratios))]
+        this_mapping = dict()
+        for key, value in old_mapping.items():
+            this_mapping[key] = value + index_total
+
+        mapping.update(this_mapping)
+        index_total += len(reactants[e])
+
+    return mapping
