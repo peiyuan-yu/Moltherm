@@ -289,9 +289,6 @@ def map_atoms(reactants, product):
         meta_iso = {e: set() for e in range(len(pro_mg.molecule))}
         matcher = iso.GraphMatcher(pro_graph, rct_graph, node_match=nm)
 
-        best_ratio = 0
-        best_mapping = None
-
         # Compile all isomorphisms
         isomorphisms = [i for i in matcher.subgraph_isomorphisms_iter()]
         for isomorphism in isomorphisms:
@@ -313,11 +310,14 @@ def map_atoms(reactants, product):
                 rct_dist = rct_dists[isomorphism[node]]
                 pro_dist_old = pro_dists[node]
 
+                # Get a new distance list which can be compared to that for the reactant
                 pro_dist = list()
-                for node in pro_dist_old:
-                    if len(meta_iso[node]) != 0:
-                        pro_dist.append(isomorphism[node])
+                for n in pro_dist_old:
+                    if len(meta_iso[n]) != 0:
+                        pro_dist.append(isomorphism[n])
 
+                # Determine the similarity between the distance lists
+                # A more similar list would imply that the atoms are in the right places
                 matcher = SequenceMatcher(None, rct_dist, pro_dist)
                 ratios.append(matcher.ratio())
 
