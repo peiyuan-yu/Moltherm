@@ -3,11 +3,11 @@ from os.path import join, isfile, basename
 import operator
 from difflib import SequenceMatcher
 from statistics import mean
+import itertools
 
 from bs4 import BeautifulSoup
 
 import numpy as np
-import networkx as nx
 import networkx.algorithms.isomorphism as iso
 
 from pymatgen.core.structure import Molecule
@@ -244,7 +244,7 @@ def calculate_solubility(vp, delta_g_solv, temp_kelvin=298):
     return S
 
 
-def map_atoms(reactants, product):
+def map_atoms_reaction(reactants, product):
     """
     Create a mapping of atoms between a set of reactant Molecules and a product
     Molecule.
@@ -282,8 +282,7 @@ def map_atoms(reactants, product):
     pro_graph = pro_mg.graph.to_undirected()
 
     pro_dists = get_ranked_atom_dists(pro_mg.molecule)
-    mapping = dict()
-    index_total = 0
+    ranking_by_reactant = list()
     for e, rct_graph in enumerate(rct_graphs):
 
         meta_iso = {e: set() for e in range(len(pro_mg.molecule))}
@@ -294,6 +293,8 @@ def map_atoms(reactants, product):
         for isomorphism in isomorphisms:
             for pro_node, rct_node in isomorphism.items():
                 meta_iso[pro_node].add(rct_node)
+
+        meta_iso = {k: v for (k, v) in meta_iso.items() if v != set()}
 
         # Determine which nodes need to be checked
         disputed_nodes = set()
@@ -307,28 +308,39 @@ def map_atoms(reactants, product):
             ratios = list()
 
             for node in disputed_nodes:
-                rct_dist = rct_dists[isomorphism[node]]
-                pro_dist_old = pro_dists[node]
+                if node in isomorphism:
+                    rct_dist = rct_dists[isomorphism[node]]
+                    pro_dist_old = pro_dists[node]
 
-                # Get a new distance list which can be compared to that for the reactant
-                pro_dist = list()
-                for n in pro_dist_old:
-                    if len(meta_iso[n]) != 0:
-                        pro_dist.append(isomorphism[n])
+                    pro_dist = list()
+                    for n in pro_dist_old:
+                        if n in isomorphism:
+                            pro_dist.append(isomorphism[n])
 
-                # Determine the similarity between the distance lists
-                # A more similar list would imply that the atoms are in the right places
-                matcher = SequenceMatcher(None, rct_dist, pro_dist)
-                ratios.append(matcher.ratio())
+                    matcher = SequenceMatcher(None, rct_dist, pro_dist)
+                    ratios.append(matcher.ratio())
 
             average_ratios.append(mean(ratios))
 
-        old_mapping = isomorphisms[np.argmax(np.array(average_ratios))]
-        this_mapping = dict()
-        for key, value in old_mapping.items():
-            this_mapping[key] = value + index_total
+        # Rank isomorphisms by the average SequenceMatch ratio
+        ranking_by_reactant.append([isom for _, isom in sorted(zip(average_ratios, isomorphisms),
+                                                         key=lambda pair: pair[0])])
 
-        mapping.update(this_mapping)
-        index_total += len(reactants[e])
+    combinations = list(itertools.product(*ranking_by_reactant))
+
+    mapping = None
+    for combination in combinations:
+        index_total = 0
+        this_mapping = dict()
+
+        for part in combination:
+            for key, value in part.items():
+                this_mapping[key] = value + index_total
+            index_total += len(part.keys())
+
+        # If this is a valid mapping - all atoms accounted for
+        if len(this_mapping) == len(product):
+            mapping = this_mapping
+            break
 
     return mapping

@@ -10,7 +10,7 @@ from pymatgen.core.structure import Molecule
 
 from moltherm.compute.utils import (get_molecule, find_common_solvents,
                                     get_reactions_common_solvent, extract_id,
-                                    get_smiles)
+                                    get_smiles, map_atoms_reaction)
 
 __author__ = "Evan Spotte-Smith"
 __version__ = "0.2"
@@ -146,3 +146,14 @@ class TestUtils(unittest.TestCase):
                                    if str(e) != "H"])
 
             self.assertSequenceEqual(smiles_species, file_species)
+
+    def test_map_atoms_reaction(self):
+        rct_1 = Molecule.from_file(join(files_dir, "molecules", "103221", "103221.mol"))
+        rct_2 = Molecule.from_file(join(files_dir, "molecules", "106910", "106910.mol"))
+        pro = Molecule.from_file(join(files_dir, "molecules", "84283", "84283.mol"))
+
+        mapping = map_atoms_reaction([rct_1, rct_2], pro)
+
+        self.assertDictEqual(mapping, {6: 0, 2: 1, 4: 2, 7: 3, 10: 4, 14: 5, 15: 6, 16: 7, 18: 8,
+                                       3: 9, 8: 10, 0: 11, 9: 12, 5: 13, 1: 14, 11: 15, 17: 16,
+                                       12: 17, 13: 18})
