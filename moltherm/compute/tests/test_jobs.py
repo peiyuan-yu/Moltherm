@@ -85,6 +85,7 @@ class QCJobTest(TestCase):
     #             self.assertEqual(putenv_patch.call_args_list[2][0][0], "OMP_NUM_THREADS")
     #             self.assertEqual(putenv_patch.call_args_list[2][0][1], "32")
 
+
 class OptFFTest(TestCase):
     def setUp(self):
         os.makedirs(scr_dir)
@@ -154,6 +155,17 @@ class OptFFTest(TestCase):
         self.assertEqual(QCInput.from_file(join(test_dir,"standard/rct_1_471171.in.sp")).as_dict(),
                          QCInput.from_file(join(scr_dir,"test.qin")).as_dict())
         self.assertRaises(StopIteration,myjob.__next__)
+
+
+class TSFFTest(TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test_TSFF(self):
+        pass
 
 
 if __name__ == "__main__":
