@@ -509,7 +509,7 @@ class MolThermDataProcessor:
                         self.sol_coll.update_one({"mol_id": mol_id},
                                                  {"$set": new})
 
-                except RuntimeError:
+                except ValueError:
                     print("Could not process {}".format(mol_id))
                     continue
 
@@ -960,23 +960,18 @@ class MolThermDataProcessor:
         g_liq = None
         g_vac = None
 
-        for calc in entry["calcs_reversed"]:
-            job_type = calc["input"]["rem"]["job_type"]
-
-            if job_type == "opt" and g_liq is None:
-                try:
-                    # g_liq = calc["solvent_data"]["smd6"][-1]
-                    g_liq = calc["output"].get("final_energy", None)
-                    break
-                except KeyError:
-                    continue
+        g_liq = entry["output"].get("final_energy", None)
 
         if vacuum_collection is not None:
-            vac_calc = self.db.db[vacuum_collection].find_one({"mol_id": mol_id})
+            try:
+                vac_calc = self.db.db[vacuum_collection].find_one({"mol_id": mol_id})
 
-            g_vac = vac_calc["output"].get("final_energy", None)
+                g_vac = vac_calc["output"].get("final_energy", None)
+            except TypeError:
+                raise ValueError("Vacuum calculation does not exist for molecule {}".format(mol_id))
 
         if g_vac is None or g_liq is None:
+            print("{}: g_vac {}, g_liq {}".format(mol_id, g_vac, g_liq))
             raise RuntimeError("Could not find energy values from"
                                " molecule calculations!")
         else:
