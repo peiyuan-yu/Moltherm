@@ -1,5 +1,5 @@
 import os
-from os import listdir
+from os import listdir, mkdir
 from os.path import join, isfile, isdir
 import shutil
 
@@ -111,6 +111,7 @@ class MolThermWorkflow:
                  and f.startswith(mol_id) and f.endswith(".mol")]
 
         if len(files) > 1:
+
             print("Multiple valid molecule files found.")
             print("Generating workflows for all valid files found.")
 
@@ -120,13 +121,20 @@ class MolThermWorkflow:
                 else:
                     mol = Molecule.from_file(join(base_path, file))
 
+                filename = file.split(".")[0]
+                dir_name = join(base_path, "{}_{}".format(filename, i))
+                try:
+                    mkdir(dir_name)
+                except FileExistsError:
+                    print("Subdirectory {} already exists".format(dir_name))
+
                 fw = FrequencyFlatteningOptimizeFW(molecule=mol,
                                                    name=name_pre+"_{}".format(mol_id),
                                                    qchem_cmd=qchem_cmd,
                                                    qchem_input_params=qchem_input_params,
                                                    multimode="openmp",
                                                    max_cores=max_cores,
-                                                   directory=base_path,
+                                                   directory=join(base_path),
                                                    max_iterations=max_iterations,
                                                    max_molecule_perturb_scale=max_perturb_scale,
                                                    db_file=self.db_file)

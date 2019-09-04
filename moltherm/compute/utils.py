@@ -262,10 +262,10 @@ def map_atoms_reaction(reactants, product):
         dist_matrix = mol.distance_matrix
 
         result = dict()
-        for e, row in enumerate(dist_matrix):
+        for num, row in enumerate(dist_matrix):
             ranking = np.argsort(row)
             # The first member will always be the atom itself, which should be excluded
-            result[e] = ranking[1:]
+            result[num] = ranking[1:]
         return result
 
     rct_mgs = list()
