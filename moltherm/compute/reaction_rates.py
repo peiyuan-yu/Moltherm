@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+from scipy.constants import h, k, R
 
 from pymatgen.core.structure import Molecule
 from pymatgen.analysis.reaction_calculator import Reaction, ReactionError
@@ -87,7 +88,7 @@ class ReactionRateCalculator:
         for rct_doc in reactants:
             reactant = dict()
             try:
-                reactant["task_id"] = rct_doc["task_id"]
+                reactant["id"] = rct_doc["task_id"]
                 reactant["label"] = rct_doc["task_label"]
                 reactant["smiles"] = rct_doc["smiles"]
                 # convert all energies from Hartree to kcal/mol
@@ -107,7 +108,7 @@ class ReactionRateCalculator:
             product = dict()
 
             try:
-                product["task_id"] = pro_doc["task_id"]
+                product["id"] = pro_doc["task_id"]
                 product["label"] = pro_doc["task_label"]
                 product["smiles"] = pro_doc["smiles"]
                 # convert all energies from Hartree to kcal/mol
@@ -125,7 +126,7 @@ class ReactionRateCalculator:
 
         transition = dict()
         try:
-            transition["task_id"] = transition_state["task_id"]
+            transition["id"] = transition_state["task_id"]
             transition["label"] = transition_state["task_label"]
             transition["smiles"] = transition_state["smiles"]
             # convert all energies from Hartree to kcal/mol
@@ -311,7 +312,7 @@ class ReactionRateCalculator:
             float: Gibbs free energy of activation
         """
 
-        return self.calculate_act_enthalpy() - temperature * self.calculate_act_entropy()
+        return self.calculate_act_enthalpy(reverse=reverse) - temperature * self.calculate_act_entropy(reverse=reverse)
 
     def calculate_activation_thermo(self, temperature=300.0, reverse=False):
         """
@@ -326,9 +327,63 @@ class ReactionRateCalculator:
             act_thermo: dict with relevant activation thermodynamic variables
         """
 
-        net_thermo = {"energy": self.calculate_act_energy(),
-                      "enthalpy": self.calculate_act_enthalpy(),
-                      "entropy": self.calculate_act_entropy(),
-                      "gibbs": self.calculate_act_gibbs(temperature)}
+        act_thermo = {"energy": self.calculate_act_energy(reverse=reverse),
+                      "enthalpy": self.calculate_act_enthalpy(reverse=reverse),
+                      "entropy": self.calculate_act_entropy(reverse=reverse),
+                      "gibbs": self.calculate_act_gibbs(temperature, reverse=reverse)}
 
-        return net_thermo
+        return act_thermo
+
+    def calculate_rate_constant(self, temperature=300.0, reverse=False, kappa=1.0):
+        """
+        Calculate the rate constant k by the Eyring-Polanyi equation of transition state theory.
+
+        Args:
+            temperature (float): absolute temperature in Kelvin
+            reverse (bool): if True (default False), consider the reverse reaction; otherwise,
+                consider the forwards reaction
+            kappa (float): transmission coefficient (by default, we assume the assumptions of
+                transition-state theory are valid, so kappa = 1.0
+
+        Returns:
+            k_rate (float): temperature-dependent rate constant
+        """
+
+        gibbs = self.calculate_act_gibbs(temperature=temperature, reverse=reverse)
+
+        k_rate = kappa * k * temperature / h * np.exp(-gibbs / (R * temperature))
+        return k_rate
+
+    def calculate_rate(self, concentrations, temperature=300.0, reverse=False, kappa=1.0):
+        """
+        Calculate the based on the reaction stoichiometry.
+
+        NOTE: Here, we assume that the reaction is an elementary step.
+
+        Args:
+            concentrations (list): concentrations of reactant molecules. Order of the reactants
+                DOES matter.
+            temperature (float): absolute temperature in Kelvin
+            reverse (bool): if True (default False), consider the reverse reaction; otherwise,
+                consider the forwards reaction
+            kappa (float): transmission coefficient (by default, we assume the assumptions of
+                transition-state theory are valid, so kappa = 1.
+
+        Returns:
+            rate (float): reaction rate, based on the stoichiometric rate law and the rate constant.
+        """
+
+        rate_constant = self.calculate_rate_constant(temperature=temperature, reverse=reverse,
+                                                     kappa=kappa)
+
+        if reverse:
+            pro_comps = [p["molecule"].composition for p in self.products]
+            exponents = np.array([self.reaction.get_coeff(comp) for comp in pro_comps])
+            rate = rate_constant * np.array(concentrations) ** exponents
+        else:
+            rct_comps = [r["molecule"].composition for r in self.reactants]
+            exponents = np.array([self.reaction.get_coeff(comp) for comp in rct_comps])
+            rate = rate_constant * np.array(concentrations) ** exponents
+
+        return rate
+
