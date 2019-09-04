@@ -1,9 +1,12 @@
 import logging
+import operator
+from functools import reduce
 
 import numpy as np
-from scipy.constants import h, k, R
+from scipy.constants import h, k, R, N_A, pi
 
 from pymatgen.core.structure import Molecule
+from pymatgen.core.units import amu_to_kg
 from pymatgen.analysis.graphs import MoleculeGraph
 from pymatgen.entries.mol_entry import MoleculeEntry
 from pymatgen.analysis.reaction_calculator import Reaction, ReactionError
@@ -17,6 +20,10 @@ __version__ = "0.1"
 __email__ = "espottesmith@gmail.com"
 
 logger = logging.getLogger(__name__)
+
+
+def product(iterable):
+    return reduce(operator.mul, iterable, 1)
 
 
 class ReactionRateCalculator:
@@ -151,7 +158,7 @@ class ReactionRateCalculator:
     @property
     def net_energy(self):
         """
-        Calculate net reaction energy.
+        Calculate net reaction energy (in Hartree).
         """
         rct_energies = [r.energy for r in self.reactants]
         pro_energies = [p.energy for p in self.products]
@@ -161,7 +168,7 @@ class ReactionRateCalculator:
     @property
     def net_enthalpy(self):
         """
-        Calculate net reaction enthalpy.
+        Calculate net reaction enthalpy (in kcal/mol).
         """
         rct_enthalpies = [r.enthalpy for r in self.reactants]
         pro_enthalpies = [p.enthalpy for p in self.products]
@@ -171,7 +178,7 @@ class ReactionRateCalculator:
     @property
     def net_entropy(self):
         """
-        Calculate net reaction entropy.
+        Calculate net reaction entropy (in cal/mol-K).
         """
         rct_entropies = [r.entropy for r in self.reactants]
         pro_entropies = [p.entropy for p in self.products]
@@ -188,10 +195,10 @@ class ReactionRateCalculator:
             temperature (float): absolute temperature in Kelvin
 
         Returns:
-            float: net Gibbs free energy
+            float: net Gibbs free energy (in kcal/mol)
         """
 
-        return self.net_enthalpy - temperature * self.net_entropy
+        return self.net_enthalpy - temperature * self.net_entropy / 1000
 
     def calculate_net_thermo(self, temperature=300.0):
         """
@@ -220,7 +227,7 @@ class ReactionRateCalculator:
                 consider the forwards reaction
 
         Returns:
-            float: energy of activation
+            float: energy of activation (in Hartree)
 
         """
 
@@ -242,7 +249,7 @@ class ReactionRateCalculator:
                 consider the forwards reaction
 
         Returns:
-            float: enthalpy of activation
+            float: enthalpy of activation (in kcal/mol)
 
         """
 
@@ -264,7 +271,7 @@ class ReactionRateCalculator:
                 consider the forwards reaction
 
         Returns:
-            float: entropy of activation
+            float: entropy of activation (in cal/mol-K)
 
         """
 
@@ -289,10 +296,10 @@ class ReactionRateCalculator:
                 consider the forwards reaction
 
         Returns:
-            float: Gibbs free energy of activation
+            float: Gibbs free energy of activation (in kcal/mol)
         """
 
-        return self.calculate_act_enthalpy(reverse=reverse) - temperature * self.calculate_act_entropy(reverse=reverse)
+        return self.calculate_act_enthalpy(reverse=reverse) - temperature * self.calculate_act_entropy(reverse=reverse) / 1000
 
     def calculate_activation_thermo(self, temperature=300.0, reverse=False):
         """
@@ -331,7 +338,7 @@ class ReactionRateCalculator:
 
         gibbs = self.calculate_act_gibbs(temperature=temperature, reverse=reverse)
 
-        k_rate = kappa * k * temperature / h * np.exp(-gibbs / (R * temperature))
+        k_rate = kappa * k * temperature / h * np.exp(-gibbs * 4184 / (R * temperature))
         return k_rate
 
     def calculate_rate(self, concentrations, temperature=300.0, reverse=False, kappa=1.0):
@@ -347,10 +354,10 @@ class ReactionRateCalculator:
             reverse (bool): if True (default False), consider the reverse reaction; otherwise,
                 consider the forwards reaction
             kappa (float): transmission coefficient (by default, we assume the assumptions of
-                transition-state theory are valid, so kappa = 1.
+                transition-state theory are valid, so kappa = 1
 
         Returns:
-            rate (float): reaction rate, based on the stoichiometric rate law and the rate constant.
+            rate (float): reaction rate, based on the stoichiometric rate law and the rate constant
         """
 
         rate_constant = self.calculate_rate_constant(temperature=temperature, reverse=reverse,
@@ -365,5 +372,145 @@ class ReactionRateCalculator:
             exponents = np.array([self.reaction.get_coeff(comp) for comp in rct_comps])
             rate = rate_constant * np.array(concentrations) ** exponents
 
+        return rate
+
+
+class BellEvansPolanyiRateCalculator(ReactionRateCalculator):
+    """
+    A modified reaction rate calculator that uses the Bell-Evans-Polanyi principle to predict the
+    activation energies (and, thus, the rate constants and reaction rates) of chemical reactions).
+
+    The Bell-Evans-Polanyi principle states that, for reactions within a similar class or family,
+    the difference in activation energy between the reactions is proportional to the difference in
+    reaction enthalpy. That is,
+
+    E_a = E_a,0 + alpha * ΔH, where
+
+    E_a = the activation energy of the reaction of interest
+    E_a,0 = the activation energy of some reference reaction in the same reaction family
+    alpha = the location of the transition state along the reaction coordinate (0 <= alpha <= 1)
+    ΔH = the enthalpy of reaction
+
+    Whereas ReactionRateCalculator uses the Eyring equation, here we are forced to use collision
+    theory to estimate reaction rates.
+
+    Args:
+        reactants (list): list of MoleculeEntry objects
+        products (list): list of MoleculeEntry objects
+        ea_reference (float): activation energy reference point (in kcal/mol)
+        delta_h_reference (float): reaction enthalpy reference point (in kcal/mol)
+        reaction (dict, or None): optional. If None (default), the "reactants" and
+        "products" lists will serve as the basis for a Reaction object which represents the
+        balanced stoichiometric reaction. Otherwise, this dict will show the number of molecules
+        present in the reaction for each reactant and each product in the reaction.
+        alpha (float): the reaction coordinate (must between 0 and 1)
+    """
+
+    def __init__(self, reactants, products, ea_reference, delta_h_reference, reaction=None,
+                 alpha=0.5):
+        """
+
+        """
+
+        self.ea_reference = ea_reference
+        self.delta_h_reference = delta_h_reference
+        self.alpha = alpha
+
+        super().__init__(reactants, products, None, reaction=reaction)
+
+    def calculate_act_energy(self, reverse=False):
+        """
+        Use the Bell-Evans-Polanyi principle to calculate the activation energy of the reaction.
+
+        Args:
+            reverse (bool): if True (default False), consider the reverse reaction; otherwise,
+                consider the forwards reaction
+
+        Returns:
+            ea (float): the predicted energy of activation in kcal/mol
+        """
+
+        if reverse:
+            enthalpy = -self.net_enthalpy
+        else:
+            enthalpy = self.net_enthalpy
+
+        ea = self.ea_reference + self.alpha * (enthalpy - self.delta_h_reference)
+        return ea
+
+    def calculate_act_enthalpy(self, reverse=False):
+        raise NotImplementedError("Method calculate_act_enthalpy is not valid for "
+                                  "BellEvansPolanyiRateCalculator,")
+
+    def calculate_act_entropy(self, reverse=False):
+        raise NotImplementedError("Method calculate_act_entropy is not valid for "
+                                  "BellEvansPolanyiRateCalculator,")
+
+    def calculate_act_gibbs(self, temperature, reverse=False):
+        raise NotImplementedError("Method calculate_act_gibbs is not valid for "
+                                  "BellEvansPolanyiRateCalculator,")
+
+    def calculate_activation_thermo(self, temperature=300.0, reverse=False):
+        raise NotImplementedError("Method calculate_activation_thermo is not valid for "
+                                  "BellEvansPolanyiRateCalculator,")
+
+    def calculate_rate_constant(self, temperature=300.0, reverse=False, kappa=None):
+        """
+        Calculate the rate constant predicted by collision theory.
+
+        Args:
+            temperature (float): absolute temperature in Kelvin
+            reverse (bool): if True (default False), consider the reverse reaction; otherwise,
+                consider the forwards reaction
+            kappa (None): not used for BellEvansPolanyiRateCalculator
+
+        Returns:
+            k_rate (float): temperature-dependent rate constant
+        """
+
+        ea = self.calculate_act_energy(reverse=reverse)
+
+        k_rate = np.exp(-ea * 4184 / (R * temperature))
+
+        return k_rate
+
+    def calculate_rate(self, concentrations, temperature=300.0, reverse=False, kappa=1.0):
+        """
+        Calculate the rate using collision theory.
+
+        Args:
+            concentrations (list): concentrations of reactant molecules. Order of the reactants
+                DOES matter.
+            temperature (float): absolute temperature in Kelvin
+            reverse (bool): if True (default False), consider the reverse reaction; otherwise,
+                consider the forwards reaction
+            kappa (float): here, kappa represents the steric factor (default 1.0, meaning that all
+                collisions lead to appropriate conditions for a reaction
+
+        Returns:
+            rate (float): reaction rate, based on the stoichiometric rate law and the rate constant
+        """
+
+        k_rate = self.calculate_rate_constant(temperature=temperature, reverse=reverse)
+
+        if reverse:
+            mols = [p.mol_graph.molecule for p in self.products]
+        else:
+            mols = [r.mol_graph.molecule for r in self.reactants]
+
+        masses = [m.composition.weight for m in mols]
+        exponents = np.array([self.reaction.get_coeff(mol.composition) for mol in mols])
+
+        radius_factor = pi * sum([(max(mol.distance_matrix) / 2) ** 2 for mol in mols])
+
+        total_exponent = sum(exponents)
+        number_prefactor = (1000 * N_A) ** total_exponent
+        concentration_factor = np.array(concentrations) ** exponents
+        mass_factor = product(masses)/sum(masses) * amu_to_kg
+        root_factor = np.sqrt(8 * k * temperature / (pi * mass_factor))
+
+        z = number_prefactor * concentration_factor * radius_factor * root_factor
+
+        rate = z * kappa * k_rate
         return rate
 
